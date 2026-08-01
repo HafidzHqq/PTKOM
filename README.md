@@ -1,228 +1,260 @@
-# Kuliner-In
+<div align="center">
 
-> "Temukan rasa favoritmu di sekitarmu."
+# 🍜 Kuliner-In
 
-Kuliner-In adalah platform web berbasis AI untuk membantu pengguna menemukan kuliner terdekat, mendapatkan rekomendasi makanan personal, dan menemukan resep sesuai preferensi mereka.
+### ✨ Temukan rasa favoritmu di sekitarmu ✨
 
-## Ringkasan
+Platform web berbasis AI untuk menemukan kuliner terdekat, rekomendasi makanan personal, dan resep sesuai preferensi kamu.
 
-Kuliner-In menggabungkan pencarian kuliner terdekat, rekomendasi makanan berbasis AI, dan katalog resep makanan dalam satu aplikasi terintegrasi. Sistem rekomendasi menggunakan **content-based filtering** yang menghitung skor kemiripan antara profil preferensi user dengan katalog makanan/restoran.
+![Next.js](https://img.shields.io/badge/Next.js%2015-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)
+![Auth.js](https://img.shields.io/badge/Auth.js-6466F1?style=for-the-badge&logo=auth0&logoColor=white)
 
-Dokumentasi lengkap produk tersedia di [`docs/PRD.md`](docs/PRD.md) dan prosedur kerja tim di [`docs/SOP.md`](docs/SOP.md).
+**Hackathon MVP · v1.0**
 
-## Fitur
+</div>
 
-- ✅ Autentikasi (registrasi, login, logout, edit profil)
-- ✅ Preferensi pengguna (tingkat kepedasan, budget, kategori makanan favorit — many-to-many)
-- ✅ Kuliner terdekat dengan peta (OpenStreetMap + Leaflet) & filter harga, rating, kategori
-- ✅ Detail tempat kuliner (foto, menu, harga, lokasi, review)
-- ✅ Katalog resep makanan (bahan, langkah, waktu masak, tingkat kesulitan)
-- ✅ Sistem favorit untuk resep & restoran
-- ✅ Riwayat pencarian sebagai input recommendation engine
-- ✅ AI Recommendation Engine (content-based filtering via TypeScript)
-- ✅ Mobile-first & responsif
+---
 
-## Tech Stack
+## 📖 Daftar Isi
 
-| Layer | Pilihan |
+- [Tentang](#-tentang)
+- [Fitur](#-fitur)
+- [Tech Stack](#-tech-stack)
+- [Mulai Cepat](#-mulai-cepat)
+- [Struktur Proyek](#-struktur-proyek)
+- [API](#-api)
+- [Alur Kerja Tim](#-alur-kerja-tim-git)
+- [Definition of Done](#-definition-of-done)
+- [Deployment](#-deployment)
+
+---
+
+## 🍽️ Tentang
+
+> **Masalah:** Pengguna sering kesulitan menentukan makanan yang sesuai preferensi mereka dan menemukan lokasi kuliner yang relevan tanpa harus mencoba banyak aplikasi berbeda.
+
+Kuliner-In menggabungkan **3 hal dalam satu aplikasi**:
+
+| | | |
+|---|---|---|
+| 📍 **Kuliner Terdekat** | 🤖 **Rekomendasi AI** | 📖 **Katalog Resep** |
+| Temukan tempat makan di sekitarmu lewat peta | Skor kemiripan berbasis preferensi & riwayatmu | Lengkap dengan bahan, langkah, dan waktu masak |
+
+Sistem rekomendasi menggunakan **content-based filtering** — menghitung skor kemiripan (weighted scoring / cosine similarity) antara profil preferensi user dengan katalog makanan & restoran. Semua berjalan langsung di **TypeScript API Route**, tanpa service ML terpisah. 🚀
+
+📄 Dokumentasi lengkap: [PRD](docs/PRD.md) · [SOP](docs/SOP.md)
+
+---
+
+## ✨ Fitur
+
+| Fitur | Deskripsi |
 |---|---|
-| Framework | Next.js 15 (App Router) + TypeScript — fullstack |
-| Styling | Tailwind CSS + shadcn/ui |
-| Database | PostgreSQL (Neon / Supabase) |
-| ORM | Prisma atau Drizzle |
-| Auth | Auth.js (NextAuth) credentials + bcrypt |
-| Recommendation Engine | TypeScript di Next.js API Route (content-based filtering) |
-| Maps | OpenStreetMap + Leaflet.js |
-| Deployment | Vercel + database Neon/Supabase |
+| 🔐 **Autentikasi** | Registrasi, login, logout, dan edit profil dengan Auth.js + bcrypt |
+| 🎯 **Preferensi Pengguna** | Tingkat kepedasan, budget, dan kategori makanan favorit (many-to-many) |
+| 📍 **Kuliner Terdekat** | Peta OpenStreetMap + Leaflet, filter harga/rating/kategori, tampilkan jarak |
+| 🏪 **Detail Tempat** | Foto, menu, harga, lokasi, dan review |
+| 📖 **Resep Makanan** | Bahan, langkah memasak, waktu, tingkat kesulitan, kategori (sarapan/makan siang/makan malam/dessert) |
+| ⭐ **Sistem Favorit** | Simpan resep & restoran favorit |
+| 🕵️ **Riwayat Pencarian** | Mencatat interaksi user sebagai input recommendation engine |
+| 🧠 **AI Recommendation** | Top rekomendasi makanan & restoran dipersonalisasi |
+| 📱 **Mobile-First** | Responsif di semua perangkat |
 
-## Mulai Cepat
+---
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+| Layer | Teknologi |
+|---|---|
+| 🏗️ **Framework** | Next.js 15 (App Router) + TypeScript — fullstack |
+| 🎨 **Styling** | Tailwind CSS + shadcn/ui |
+| 🗄️ **Database** | PostgreSQL (Neon / Supabase) |
+| 📝 **ORM** | Prisma / Drizzle |
+| 🔐 **Auth** | Auth.js (NextAuth) credentials + bcrypt |
+| 🤖 **Recommendation** | TypeScript content-based filtering (API Route) |
+| 🗺️ **Maps** | OpenStreetMap + Leaflet.js |
+| 🚀 **Deployment** | Vercel + Neon/Supabase |
+
+</div>
+
+---
+
+## 🚀 Mulai Cepat
 
 ### Prasyarat
 
-- Node.js 20.x LTS
-- pnpm atau npm
-- PostgreSQL (Neon / Supabase) — lihat `ENV.example.md`
+- [Node.js](https://nodejs.org) 20.x LTS+
+- npm / pnpm
+- PostgreSQL (Neon / Supabase) — lihat [`ENV.example.md`](ENV.example.md)
 
 ### Instalasi
 
 ```bash
-# Install dependensi
+# 1. Install dependensi
 npm install
 
-# Salin file environment & isi variabel yang dibutuhkan
-cp ENV.example.md .env.local
+# 2. Siapkan environment
+cp ENV.example.md .env.local   # lalu isi variabel yang dibutuhkan
 
-# Jalankan server pengembangan
+# 3. Jalankan development server
 npm run dev
-
-# Build untuk produksi
-npm run build
-
-# Jalankan server produksi
-npm start
 ```
 
-> Jangan commit `.env*` ke repository — pastikan terdaftar di `.gitignore`.
+Buka [http://localhost:3000](http://localhost:3000) 🎉
 
-### Script yang Tersedia
+### Script
 
 | Command | Deskripsi |
-|---------|-----------|
-| `npm run dev` | Jalankan server pengembangan dengan Turbopack |
-| `npm run build` | Build untuk produksi |
-| `npm run start` | Jalankan server produksi |
-| `npm run lint` | Jalankan ESLint |
-| `npm run format` | Format dengan Prettier |
-| `npm run format:check` | Periksa format tanpa mengubah file |
+|---|---|
+| `npm run dev` | 🛠️ Development server (Turbopack) |
+| `npm run build` | 📦 Build produksi |
+| `npm start` | ▶️ Jalankan server produksi |
+| `npm run lint` | 🔍 ESLint |
+| `npm run format` | ✨ Format dengan Prettier |
+| `npm run format:check` | ✅ Cek format |
 
-## Struktur Proyek
+---
+
+## 📁 Struktur Proyek
 
 ```
 src/
-├── app/                    # Halaman App Router
-│   ├── (auth)/             # Login, register
-│   ├── dashboard/          # Dashboard
-│   ├── nearby-food/        # Kuliner terdekat + detail
-│   ├── recipes/            # Resep + detail
-│   ├── recommendations/    # Rekomendasi AI
-│   ├── favorites/          # Favorit
-│   ├── profile/            # Profil & edit profil
-│   └── settings/           # Pengaturan
-├── components/             # Komponen yang dapat digunakan ulang
-├── lib/                    # Fungsi utilitas & recommendation engine
-├── services/               # Layanan API / database
-├── hooks/                  # Custom hooks
-├── types/                  # Tipe TypeScript
-└── utils/                  # Helper functions
+├── app/                    # 📄 Halaman App Router
+│   ├── (auth)/             #    Login & register
+│   ├── dashboard/          #    Dashboard
+│   ├── nearby-food/        #    Kuliner terdekat + detail
+│   ├── recipes/            #    Resep + detail
+│   ├── recommendations/    #    Rekomendasi AI
+│   ├── favorites/          #    Favorit
+│   ├── profile/            #    Profil
+│   └── settings/           #    Pengaturan
+├── components/             # 🧩 Komponen reusable
+├── lib/                    # ⚙️ Utilitas & recommendation engine
+├── services/               # 🔌 Layanan API / database
+├── hooks/                  # 🪝 Custom hooks
+├── types/                  # 🏷️ Tipe TypeScript
+└── utils/                  # 🛠️ Helper functions
 
 docs/
-├── PRD.md                  # Product Requirements Document
-└── SOP.md                  # Standard Operating Procedure
-
-package.json              # Konfigurasi proyek
-next.config.ts            # Konfigurasi Next.js
-tsconfig.json             # Konfigurasi TypeScript
-eslint.config.mjs         # Konfigurasi ESLint
-postcss.config.mjs        # Konfigurasi PostCSS
-.prettierrc               # Konfigurasi Prettier
-.gitignore                # File Git ignore
+├── PRD.md                  # 📋 Product Requirements Document
+└── SOP.md                  # 📏 Standard Operating Procedure
 ```
 
-Arsitektur modular per domain: `auth`, `restaurants`, `recipes`, `recommendations`, `favorites`.
+---
 
-## API Standard
+## 🔌 API
 
-Semua endpoint API wajib mengikuti format response berikut agar konsisten:
-
-**Success response**
+**Standard response** — semua endpoint konsisten:
 
 ```json
-{
-  "success": true,
-  "message": "Success",
-  "data": {}
-}
+{ "success": true, "message": "Success", "data": {} }
 ```
-
-**Error response**
 
 ```json
-{
-  "success": false,
-  "message": "Something went wrong"
-}
+{ "success": false, "message": "Something went wrong" }
 ```
 
-**Endpoint utama:**
-
-- Auth: `POST /api/register`, `POST /api/login`, `POST /api/logout`
-- Restaurants: `GET /api/restaurants`, `GET /api/restaurants/{id}`
-- Recipes: `GET /api/recipes`, `GET /api/recipes/{id}`
-- Recommendations: `GET /api/recommendations`
-- Favorites: `POST /api/favorites`, `DELETE /api/favorites/{id}`
-
-## Konvensi Kode
-
-| Elemen | Konvensi | Contoh |
+| Method | Endpoint | Deskripsi |
 |---|---|---|
-| Komponen | PascalCase | `RecipeCard.tsx`, `RestaurantCard.tsx` |
-| Fungsi | camelCase | `getRecipes()`, `getNearbyRestaurants()` |
-| Konstanta | UPPER_CASE | `MAX_DISTANCE`, `DEFAULT_RADIUS`, `API_TIMEOUT` |
+| `POST` | `/api/register` | 🔐 Registrasi |
+| `POST` | `/api/login` | 🔐 Login |
+| `POST` | `/api/logout` | 🔐 Logout |
+| `GET` | `/api/restaurants` | 📍 Daftar restoran |
+| `GET` | `/api/restaurants/{id}` | 📍 Detail restoran |
+| `GET` | `/api/recipes` | 📖 Daftar resep |
+| `GET` | `/api/recipes/{id}` | 📖 Detail resep |
+| `GET` | `/api/recommendations` | 🤖 Rekomendasi AI |
+| `POST` | `/api/favorites` | ⭐ Tambah favorit |
+| `DELETE` | `/api/favorites/{id}` | ⭐ Hapus favorit |
 
-- Gunakan mode strict di `tsconfig.json`
-- Jalankan `npm run lint` dan `npm run format` sebelum commit
-- Gunakan alias `@/` untuk import dari `src/`
+---
 
-## Alur Kerja Tim (Git)
+## 🤝 Alur Kerja Tim (Git)
+
+> **⚠️ ATURAN WAJIB**
+> 1. **Pull dulu** sebelum mulai kerja
+> 2. **DILARANG** push/commit langsung ke `main` — kerja di branch sendiri
+> 3. **Wajib buat Pull Request** — minimal 1 reviewer
 
 ### Branch Strategy
 
 | Branch | Fungsi |
 |---|---|
-| `main` | Production branch. Tidak boleh commit langsung. |
-| `develop` | Branch integrasi seluruh fitur. |
-| `feature/*` | Branch fitur, dibuat dari `develop`. |
-
-Contoh: `feature/auth`, `feature/recipes`, `feature/maps`, `feature/recommendation-ai`
+| `main` | Production. **Dilarang commit/push langsung** — hanya lewat PR |
+| `develop` | Integrasi fitur. Perubahan masuk hanya lewat PR |
+| `feature/*` | Branch fitur kamu, dibuat dari `develop` |
 
 ### Git Flow
 
 ```bash
-# Ambil update terbaru
+# 1. WAJIB: ambil update terbaru
 git checkout develop
 git pull origin develop
 
-# Buat branch fitur
+# 2. Buat branch sendiri (JANGAN pernah di main)
 git checkout -b feature/nama-fitur
 
-# Commit dengan Conventional Commits
+# 3. Kerjakan & commit (Conventional Commits)
 git add .
 git commit -m "feat(recipes): add recipe detail page"
 
-# Push & buka PR ke develop
+# 4. Push ke branch sendiri
 git push origin feature/nama-fitur
-```
 
-Alur merge: `feature/*` → `develop` → `main`
+# 5. Buka Pull Request di GitHub: feature/nama-fitur → develop
+```
 
 ### Commit Convention
 
-Mengikuti [Conventional Commits](https://www.conventionalcommits.org/):
-
 | Tipe | Contoh |
 |---|---|
-| Feature | `feat(recipes): add recipe detail page` |
-| Fix | `fix(auth): login validation error` |
-| Documentation | `docs: update setup guide` |
-| Refactor | `refactor(map): optimize location query` |
+| 🚀 `feat` | `feat(recipes): add recipe detail page` |
+| 🐛 `fix` | `fix(auth): login validation error` |
+| 📝 `docs` | `docs: update setup guide` |
+| ♻️ `refactor` | `refactor(map): optimize location query` |
 
-### Pull Request Rules
+Mengikuti [Conventional Commits](https://www.conventionalcommits.org/).
 
-Setiap PR wajib berisi: deskripsi perubahan, detail perubahan, hasil testing (desktop & mobile), dan screenshot. Minimal **1 reviewer** wajib approve sebelum di-merge ke `develop`.
+---
 
-## Definition of Done
+## ✅ Definition of Done
 
-Sebuah task dianggap selesai jika:
+Sebuah task selesai jika:
 
-- ✅ Fitur berjalan sesuai PRD
-- ✅ Tidak ada error build
-- ✅ Sudah diuji manual (desktop & mobile)
-- ✅ Sudah direview tim
-- ✅ Sudah merge ke `develop`
-- ✅ Dokumentasi diperbarui
+- [x] Fitur berjalan sesuai PRD
+- [x] Tidak ada error build
+- [x] Sudah diuji manual (desktop & mobile)
+- [x] Sudah direview tim (PR + 1 reviewer)
+- [x] Sudah merge ke `develop`
+- [x] Dokumentasi diperbarui
 
-## Deployment
+---
 
-Proyek dioptimalkan untuk deployment di **Vercel**:
+## 🚀 Deployment
+
+Proyek dioptimalkan untuk **Vercel**:
 
 1. Push ke GitHub/GitLab/Bitbucket
 2. Import proyek di Vercel
 3. Vercel otomatis mendeteksi pengaturan Next.js
-4. Konfigurasi environment variables (database, auth) di dashboard Vercel
-5. Deploy!
+4. Konfigurasi environment variables (database, auth) di dashboard
+5. **Deploy!** 🎉
 
-Database PostgreSQL menggunakan Neon / Supabase. Untuk platform lain, jalankan `npm run build` dan `npm start`.
+> Database PostgreSQL menggunakan **Neon / Supabase**. Untuk platform lain: `npm run build` && `npm start`
 
-## Dukungan
+---
 
-Untuk pertanyaan atau dukungan, silakan hubungi tim pengembangan.
+<div align="center">
+
+**Kuliner-In** · Hackathon MVP v1.0 · dibuat dengan ❤️
+
+Temukan rasa favoritmu di sekitarmu. 🍜
+
+</div>

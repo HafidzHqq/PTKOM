@@ -145,8 +145,8 @@ uvicorn main:app --reload
 
 | Branch | Fungsi |
 |---|---|
-| `main` | Production branch. Tidak boleh commit langsung. |
-| `develop` | Branch integrasi seluruh fitur. |
+| `main` | Production branch. **DILARANG commit atau push langsung** — perubahan masuk hanya lewat PR. |
+| `develop` | Branch integrasi seluruh fitur. Perubahan masuk hanya lewat PR dari `feature/*`. |
 
 **Feature Branch**
 
@@ -168,26 +168,36 @@ feature/profile
 
 ## 6. Git Flow
 
-**Ambil update**
+> **⚠️ ATURAN WAJIB (harus dipatuhi):**
+> 1. **Wajib pull sebelum mulai kerja.** Selalu ambil update terbaru dari `develop` terlebih dahulu agar tidak terjadi konflik.
+> 2. **DILARANG push/commit langsung ke `main`.** Setiap pekerjaan wajib dikerjakan di branch sendiri (`feature/*`).
+> 3. **Wajib buat pull request (PR)** dari branch fitur ke `develop` setelah selesai — jangan pernah merge sendiri tanpa PR dan approval reviewer.
+
+**Ambil update (WAJIB sebelum mulai kerja)**
 ```bash
 git checkout develop
 git pull origin develop
 ```
 
-**Buat branch baru**
+**Buat branch sendiri (jangan pernah bekerja langsung di main)**
 ```bash
 git checkout -b feature/recipes
 ```
 
-**Push**
+**Push ke branch sendiri**
 ```bash
 git push origin feature/recipes
 ```
 
+**Buat pull request**
+```
+Setelah push, buka PR di GitHub: feature/nama-fitur → develop
+```
+
 **Merge**
 ```
-feature/* → develop
-develop   → main
+feature/* → develop (via PR + approval reviewer)
+develop   → main   (via PR/release)
 ```
 
 ---
@@ -258,6 +268,8 @@ MODEL_PATH=
 ---
 
 ## 11. Pull Request Rules
+
+> **⚠️ Wajib PR:** Dilarang merge/commit langsung ke `main` atau `develop`. Semua perubahan harus melalui PR yang di-approve minimal 1 reviewer.
 
 Setiap PR wajib berisi template berikut:
 
