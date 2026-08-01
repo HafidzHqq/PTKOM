@@ -14,8 +14,6 @@ Platform web berbasis AI untuk menemukan kuliner terdekat, rekomendasi makanan p
 ![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)
 ![Auth.js](https://img.shields.io/badge/Auth.js-6466F1?style=for-the-badge&logo=auth0&logoColor=white)
 
-**Hackathon MVP · v1.0**
-
 </div>
 
 ---
