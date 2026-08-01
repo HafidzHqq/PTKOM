@@ -251,7 +251,7 @@ Proyek dioptimalkan untuk **Vercel**:
 
 <div align="center">
 
-**Kuliner-In** · Hackathon MVP v1.0 · dibuat dengan ❤️
+**Kuliner-In**
 
 Temukan rasa favoritmu di sekitarmu. 🍜
 

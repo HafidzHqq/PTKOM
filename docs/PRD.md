@@ -1,4 +1,6 @@
 # PRD — Kuliner-In
+**Sistem Rekomendasi Kuliner Terpersonalisasi Berbasis Preferensi dan Lokasi Pengguna Menggunakan Content-Based Filterin**
+
 
 ## 1. Informasi Produk
 
@@ -6,7 +8,7 @@
 |---|---|
 | **Nama Produk** | Kuliner-In |
 | **Tagline** | "Temukan rasa favoritmu di sekitarmu." |
-| **Versi** | v1.0 (Hackathon MVP) |
+| **Versi** | v1.0 (MVP) |
 | **Jenis Produk** | Platform web berbasis AI untuk membantu pengguna menemukan kuliner terdekat, mendapatkan rekomendasi makanan personal, dan menemukan resep sesuai preferensi mereka. |
 
 ---
@@ -123,7 +125,7 @@ Sistem mencatat riwayat pencarian & interaksi user (pencarian kategori, tempat/r
 **Contoh output:**
 User suka Soto, Bakso, Rawon → direkomendasikan Sop Iga, Tongseng, Coto Makassar.
 
-> **Catatan implementasi:** Karena metode yang dipakai adalah content-based filtering sederhana (bukan deep learning), logika ini ditulis langsung sebagai fungsi scoring di TypeScript, berjalan di dalam Next.js API Route — tidak memerlukan service Python/Scikit-learn terpisah. Ini menyederhanakan deployment untuk timeline hackathon 3 hari (satu codebase, satu platform deploy).
+> **Catatan implementasi:** Karena metode yang dipakai adalah content-based filtering sederhana (bukan deep learning), logika ini ditulis langsung sebagai fungsi scoring di TypeScript, berjalan di dalam Next.js API Route — tidak memerlukan service Python/Scikit-learn terpisah. Ini menyederhanakan deployment (satu codebase, satu platform deploy).
 
 ---
 
@@ -292,7 +294,7 @@ User suka Soto, Bakso, Rawon → direkomendasikan Sop Iga, Tongseng, Coto Makass
 
 ---
 
-## 15. KPI Hackathon
+## 15. KPI Produk
 
 **KPI Produk**
 - 100 pengguna uji coba
@@ -305,7 +307,7 @@ User suka Soto, Bakso, Rawon → direkomendasikan Sop Iga, Tongseng, Coto Makass
 
 ---
 
-## 16. Roadmap Pengerjaan Hackathon
+## 16. Roadmap Pengerjaan
 
 **Hari 1**
 - Setup project Next.js + Prisma/Drizzle + PostgreSQL
