@@ -1,15 +1,14 @@
 # PRD — Kuliner-In
-**Sistem Rekomendasi Kuliner Terpersonalisasi Berbasis Preferensi dan Lokasi Pengguna Menggunakan Content-Based Filterin**
-
+**Sistem Rekomendasi Kuliner Terpersonalisasi Berbasis Preferensi, Lokasi, dan Nilai Gizi Menggunakan Machine Learning**
 
 ## 1. Informasi Produk
 
 | | |
 |---|---|
 | **Nama Produk** | Kuliner-In |
-| **Tagline** | "Temukan rasa favoritmu di sekitarmu." |
+| **Tagline** | "Temukan rasa favoritmu dan penuhi gizi harianmu." |
 | **Versi** | v1.0 (MVP) |
-| **Jenis Produk** | Platform web berbasis AI untuk membantu pengguna menemukan kuliner terdekat, mendapatkan rekomendasi makanan personal, dan menemukan resep sesuai preferensi mereka. |
+| **Jenis Produk** | Platform web berbasis Machine Learning (ML) untuk membantu pengguna menemukan kuliner terdekat, mendapatkan rekomendasi makanan personal dengan informasi nilai gizi, dan menemukan resep sesuai preferensi mereka. |
 
 ---
 
@@ -19,149 +18,170 @@ Banyak pengguna mengalami beberapa masalah:
 
 - Bingung menentukan makanan yang ingin dimakan.
 - Kesulitan menemukan tempat makan yang sesuai dengan selera dan budget.
-- Sulit menemukan resep yang sesuai dengan makanan yang mereka sukai.
-- Aplikasi kuliner saat ini umumnya hanya menampilkan daftar restoran tanpa personalisasi.
+- Kesadaran akan kesehatan meningkat, namun sulit mengetahui estimasi nilai gizi (kalori, protein, dll) dari makanan yang akan dibeli atau dimasak.
+- Aplikasi kuliner saat ini umumnya hanya menampilkan daftar restoran tanpa personalisasi berbasis AI/ML yang kuat dan kurang memperhatikan aspek gizi.
 
-Kuliner-In hadir sebagai platform yang menggabungkan pencarian kuliner terdekat, rekomendasi makanan berbasis AI, dan katalog resep makanan dalam satu aplikasi terintegrasi.
+Kuliner-In hadir sebagai platform yang menggabungkan pencarian kuliner terdekat (termasuk fokus area spesifik seperti Bekasi/sekitarnya), rekomendasi makanan cerdas berbasis Machine Learning, serta sajian informasi nilai gizi dalam satu aplikasi terintegrasi.
 
 ---
 
 ## 3. Tujuan Produk
 
 **Tujuan Utama**
-Membantu pengguna menemukan makanan yang sesuai dengan lokasi, selera, budget, dan preferensi kuliner.
+Membantu pengguna menemukan makanan yang sesuai dengan lokasi, selera, budget, preferensi kuliner, serta memberikan informasi terkait nilai gizi dari makanan tersebut.
 
 **Tujuan Bisnis**
-- Meningkatkan engagement pengguna
-- Menjadi platform discovery kuliner berbasis AI
-- Menjadi jembatan antara UMKM kuliner dan pelanggan
+- Meningkatkan engagement pengguna yang peduli dengan gaya hidup sehat maupun pencarian kuliner praktis.
+- Menjadi platform discovery kuliner utama berbasis Machine Learning.
+- Menjadi jembatan antara UMKM kuliner dan pelanggan.
 
 ---
 
-## 4. Target Pengguna
+## 4. Target Pengguna & Peran (User Roles)
 
-**Persona 1 — Mahasiswa**
-Andi, 20 tahun. Budget terbatas, bingung mau makan apa, sering cari tempat makan murah. Butuh rekomendasi murah dan lokasi dekat kampus.
+Sistem ini memiliki tiga peran (role) utama untuk mendukung ekosistem aplikasi:
 
-**Persona 2 — Pekerja**
-Sarah, 27 tahun. Tidak punya waktu mencari makanan. Butuh rekomendasi cepat dan tempat makan dekat kantor.
+**1. Regular User (Pengguna / Pelanggan)**
+- **Deskripsi:** Pengguna akhir yang mencari makanan atau resep.
+- **Aktivitas Utama:** Mencari tempat makan, melihat rekomendasi makanan dan nilai gizi, menyimpan restoran/resep favorit, serta memberikan ulasan (review).
+- **Persona:** Mahasiswa (fokus budget), Pekerja Kantoran (fokus gizi/kecepatan), Pecinta Kuliner (fokus eksplorasi).
 
-**Persona 3 — Pecinta Kuliner**
-Budi, 25 tahun. Ingin mencoba makanan baru. Butuh rekomendasi unik dan resep makanan.
+**2. Mitra (Pemilik Kedai / Restoran)**
+- **Deskripsi:** Pemilik usaha kuliner yang mendaftarkan usahanya ke platform.
+- **Aktivitas Utama:** Mengelola profil restoran, menambahkan menu makanan beserta harganya, dan menginput/memperbarui estimasi nilai gizi dari menu mereka.
+
+**3. Admin Utama**
+- **Deskripsi:** Pengelola sistem internal aplikasi.
+- **Aktivitas Utama:** Memverifikasi pendaftaran restoran mitra, mengelola database resep makanan standar, serta memonitor aktivitas pengguna dan performa sistem.
 
 ---
 
 ## 5. Problem Statement
 
-> Pengguna sering kesulitan menentukan makanan yang sesuai dengan preferensi mereka dan menemukan lokasi kuliner yang relevan tanpa harus mencoba banyak aplikasi berbeda.
+> Pengguna sering kesulitan menentukan makanan yang sesuai dengan preferensi, budget, dan kebutuhan gizi mereka, serta butuh sistem yang cerdas untuk memberikan rekomendasi makanan dan lokasi terdekat tanpa harus repot mencari secara manual.
 
 ---
 
 ## 6. Solusi
 
-- Sistem rekomendasi makanan berbasis AI (content-based filtering)
-- Peta kuliner terdekat
-- Koleksi resep makanan
-- Personalisasi berdasarkan preferensi pengguna
+- Sistem rekomendasi makanan menggunakan model Machine Learning.
+- Informasi estimasi nilai gizi (kalori, makronutrien) untuk setiap makanan dan resep.
+- Peta kuliner terdekat untuk menemukan rekomendasi di lokasi pengguna.
+- Personalisasi yang mempertimbangkan preferensi rasa, budget, kebutuhan gizi, dan riwayat aktivitas.
 
 ---
 
 ## 7. Ruang Lingkup MVP
 
-### Authentication
-Registrasi, Login, Logout, Edit profil.
+### Authentication & Role Management
+Registrasi, Login, Logout, Edit profil dengan sistem otorisasi berdasarkan *role* (User, Mitra, Admin).
 
 ### Preferensi Pengguna
-Pengguna memilih:
+Pengguna (Regular User) memilih:
 - Tingkat kepedasan
-- Budget
-- Jenis makanan favorit (pedas, manis, gurih, dst.)
-- Kategori makanan favorit — **many-to-many**, user bisa pilih lebih dari satu kategori (Nusantara, Jepang, Korea, Barat, Seafood, dst.)
+- Budget maksimal
+- Kategori makanan favorit (Nusantara, Jepang, Korea, Barat, Seafood, dll.)
+- Preferensi gizi / diet (misal: batasan kalori harian) - *opsional*
 
 ### Kuliner Terdekat
-Menampilkan nama tempat, alamat, rating, jam operasional, jarak dari pengguna. Filter: harga, rating, kategori.
+Menampilkan nama tempat, alamat, rating, jam operasional, jarak dari pengguna. Filter: harga, rating, kategori, dan kalori.
 
-### Detail Tempat Kuliner
-Foto, menu, harga, lokasi, review.
+### Detail Makanan & Tempat Kuliner
+Foto, menu, harga, lokasi, review, serta **Estimasi Nilai Gizi** (Kalori, Karbohidrat, Protein, Lemak) pada menu yang direkomendasikan. Mitra dapat mengelola data ini untuk restorannya sendiri.
 
 ### Resep Makanan
-Nama resep, bahan, langkah memasak, waktu memasak, tingkat kesulitan. Kategori: sarapan, makan siang, makan malam, dessert.
+Nama resep, bahan, langkah memasak, waktu memasak, tingkat kesulitan, dan **Kandungan Gizi per porsi**. (Dikelola oleh Admin).
 
 ### Sistem Favorit
-User dapat menyimpan resep dan restoran favorit.
+User dapat menyimpan resep dan restoran/menu favorit.
 
-### Riwayat Pencarian
-Sistem mencatat riwayat pencarian & interaksi user (pencarian kategori, tempat/resep yang dibuka) sebagai salah satu input recommendation engine.
+### User Activity Tracking
+Sistem secara aktif mencatat interaksi pengguna sebagai data latih ML, meliputi:
+- **Search:** Kata kunci yang dicari.
+- **View:** Melihat detail menu, resep, atau restoran.
+- **Interaction:** Like (simpan ke favorit), Review, atau Skip (mengabaikan rekomendasi).
 
-### AI Recommendation Engine
-**Input:** preferensi user, riwayat pencarian, riwayat favorit
-**Output:** top rekomendasi makanan, top rekomendasi restoran
+### Recommendation Engine (Machine Learning)
+**Input:** preferensi user, data *User Activity Tracking* (riwayat pencarian, view, favorit), dan filter gizi.
+**Output:** top rekomendasi makanan/menu, top rekomendasi restoran yang relevan.
 
 ---
 
 ## 8. Fitur Machine Learning
 
-**Tujuan:** Mempersonalisasi rekomendasi makanan.
+**Tujuan:** Mempersonalisasi rekomendasi makanan dan menyortir menu berdasarkan kecocokan preferensi, lokasi, dan kebutuhan gizi.
 
-**Metode:** Content-Based Filtering — menggunakan kategori makanan, harga, dan tingkat kepedasan untuk menghitung skor kemiripan (weighted scoring / cosine similarity) antara profil preferensi user dan katalog makanan/restoran.
+**Metode:** Content-Based Filtering dan/atau Collaborative Filtering menggunakan model Machine Learning (misalnya menggunakan Scikit-learn atau TensorFlow di Python). Model akan mempelajari pola kesukaan pengguna berdasarkan fitur makanan (kategori, harga, gizi, kepedasan) dan data historis aktivitas (User Activity).
 
-**Contoh input (user preference):**
+**Contoh input (user profile & preference):**
 
 | Field | Contoh |
 |---|---|
 | Budget | 20000 |
 | Pedas | Ya |
-| Seafood | Tidak |
+| Kalori Maksimal | 600 kcal |
 | Nusantara | Ya |
 
-**Contoh input (activity):**
+**Contoh input (User Activity Tracking):**
 
-| Aktivitas | Suka? |
+| Aktivitas | Suka/Interaksi? |
 |---|---|
-| Like Bakso | Ya |
-| Like Soto | Ya |
-| Like Seblak | Tidak |
+| View & Like Ayam Bakar (400 kcal) | Ya |
+| Skip Seblak Jeletot (700 kcal) | Ya (Di-skip) |
 
 **Contoh output:**
-User suka Soto, Bakso, Rawon → direkomendasikan Sop Iga, Tongseng, Coto Makassar.
-
-> **Catatan implementasi:** Karena metode yang dipakai adalah content-based filtering sederhana (bukan deep learning), logika ini ditulis langsung sebagai fungsi scoring di TypeScript, berjalan di dalam Next.js API Route — tidak memerlukan service Python/Scikit-learn terpisah. Ini menyederhanakan deployment (satu codebase, satu platform deploy).
+Sistem memprediksi pengguna menyukai makanan Nusantara berkalori sedang-rendah, sehingga merekomendasikan: *Soto Ayam (350 kcal)*, *Gado-Gado (400 kcal)*, atau *Ikan Bakar (300 kcal)* di restoran/kedai terdekat.
 
 ---
 
 ## 9. User Flow
 
-**Registrasi:** Landing Page → Register → Pilih Preferensi → Dashboard
+**1. Regular User:** Landing Page → Register/Login → Pilih Preferensi → Dashboard → Cari Kuliner / Resep → Sistem mencatat *User Activity* → Dashboard menampilkan Rekomendasi ML hasil pemrosesan aktivitas.
 
-**Cari Kuliner:** Dashboard → Cari Kuliner → Filter → Pilih Tempat → Detail Tempat
+**2. Mitra Restoran:** Landing Page → Register/Login sebagai Mitra → Verifikasi Admin → Dashboard Mitra → Tambah/Kelola Restoran → Tambah Menu & Nilai Gizi.
 
-**Cari Resep:** Dashboard → Cari Resep → Detail Resep → Simpan Favorit
-
-**Recommendation:** Dashboard → Rekomendasi → Daftar Makanan → Detail Tempat / Resep
+**3. Admin:** Login Admin → Dashboard Admin → Approve Mitra Baru / Kelola Resep Makanan → Pantau Metrik Sistem.
 
 ---
 
-## 10. Sitemap
+## 10. Struktur Proyek & Sitemap
 
+Pengembangan sistem dipisah secara struktur folder antara Frontend dan Backend untuk modularitas dan skalabilitas (*Decoupled Architecture*).
+
+**Struktur Direktori:**
+```
+/kuliner-in
+├── /frontend         # Aplikasi Web (Next.js / React)
+│   ├── /src/app      # UI, Pages, Components
+│   └── ...
+└── /backend          # API Server & Machine Learning
+    ├── /api          # Endpoint CRUD (Node.js/Express atau Python/FastAPI)
+    └── /ml-service   # Recommendation Engine (Python)
+```
+
+**Sitemap (Frontend):**
 ```
 /
-├── login
-├── register
-├── dashboard
+├── auth
+│   ├── login
+│   └── register
 │
-├── nearby-food
-│   └── detail
+├── user-dashboard (Regular User)
+│   ├── nearby-food (detail, menu, nilai gizi)
+│   ├── recipes
+│   ├── recommendations (ML)
+│   ├── favorites
+│   └── profile & settings
 │
-├── recipes
-│   └── detail
+├── mitra-dashboard (Mitra)
+│   ├── manage-restaurant
+│   ├── manage-menus (input harga & gizi)
+│   └── reviews
 │
-├── recommendations
-│
-├── favorites
-│
-├── profile
-│
-└── settings
+└── admin-dashboard (Admin)
+    ├── verify-mitra
+    ├── manage-recipes
+    └── system-metrics
 ```
 
 ---
@@ -175,18 +195,19 @@ User suka Soto, Bakso, Rawon → direkomendasikan Sop Iga, Tongseng, Coto Makass
 | name | text |
 | email | text, unique |
 | password_hash | text |
+| role | text (enum: 'user', 'mitra', 'admin') |
 | created_at | timestamp |
-| updated_at | timestamp |
 
-**preferences**
+**preferences** *(hanya untuk role = user)*
 | Kolom | Tipe |
 |---|---|
 | id | uuid, PK |
 | user_id | uuid, FK → users |
 | budget | integer |
 | spicy_level | text/enum |
+| max_calories | integer, nullable |
 
-**preference_categories** *(baru — many-to-many kategori favorit)*
+**preference_categories**
 | Kolom | Tipe |
 |---|---|
 | id | uuid, PK |
@@ -197,71 +218,73 @@ User suka Soto, Bakso, Rawon → direkomendasikan Sop Iga, Tongseng, Coto Makass
 | Kolom | Tipe |
 |---|---|
 | id | uuid, PK |
+| owner_id | uuid, FK → users (role: mitra) |
 | name | text |
 | address | text |
 | latitude | numeric |
 | longitude | numeric |
 | rating | numeric |
-| price_range | text |
+| is_verified | boolean |
+
+**menus** *(tabel untuk menyimpan detail makanan dan gizi per restoran)*
+| Kolom | Tipe |
+|---|---|
+| id | uuid, PK |
+| restaurant_id | uuid, FK → restaurants |
+| name | text |
+| price | integer |
+| nutrition_info | jsonb (kalori, protein, lemak, karbo) |
 
 **recipes**
 | Kolom | Tipe |
 |---|---|
 | id | uuid, PK |
 | title | text |
-| description | text |
 | ingredients | jsonb |
 | steps | jsonb |
-| cooking_time | integer |
-| difficulty | text |
+| nutrition_info | jsonb (kalori, protein, lemak, karbo) |
+| created_by | uuid, FK → users (role: admin) |
 
 **favorites**
 | Kolom | Tipe |
 |---|---|
 | id | uuid, PK |
 | user_id | uuid, FK → users |
-| restaurant_id | uuid, FK → restaurants, nullable |
-| recipe_id | uuid, FK → recipes, nullable |
+| restaurant_id | uuid, nullable |
+| menu_id | uuid, nullable |
+| recipe_id | uuid, nullable |
 
-> **Constraint:** `CHECK (restaurant_id IS NOT NULL OR recipe_id IS NOT NULL)` — salah satu wajib diisi, tidak boleh dua-duanya kosong.
-
-**search_history** *(baru — input untuk recommendation engine)*
+**user_activities** *(input dataset utama untuk Machine Learning)*
 | Kolom | Tipe |
 |---|---|
 | id | uuid, PK |
 | user_id | uuid, FK → users |
-| query_type | text (category / restaurant / recipe) |
-| query_value | text |
+| activity_type | text (enum: 'search', 'view_menu', 'view_recipe', 'like', 'skip') |
+| target_id | uuid (ID dari restoran/menu/resep yang berinteraksi), nullable |
+| query_value | text (untuk kata kunci pencarian), nullable |
 | created_at | timestamp |
-
-**reviews**
-| Kolom | Tipe |
-|---|---|
-| id | uuid, PK |
-| user_id | uuid, FK → users |
-| restaurant_id | uuid, FK → restaurants |
-| rating | integer |
-| comment | text |
 
 ---
 
 ## 12. API Endpoint
 
-**Authentication**
-- `POST /api/register`
-- `POST /api/login`
-- `POST /api/logout`
+**Authentication & Users**
+- `POST /api/auth/register`
+- `POST /api/auth/login`
 
-**Restaurants**
+**Mitra & Restaurants**
+- `POST /api/mitra/restaurants` (Register restoran)
+- `POST /api/mitra/restaurants/{id}/menus` (Tambah/edit menu dan gizi)
 - `GET /api/restaurants`
-- `GET /api/restaurants/{id}`
+- `GET /api/restaurants/{id}/menus`
 
 **Recipes**
 - `GET /api/recipes`
-- `GET /api/recipes/{id}`
+- `POST /api/admin/recipes` (Tambah resep oleh admin)
 
-**Recommendations**
-- `GET /api/recommendations`
+**User Activities & Recommendations**
+- `POST /api/activities` (Mencatat event dari frontend: view, click, dll)
+- `GET /api/recommendations` *(Endpoint rekomendasi yang didukung ML)*
 
 **Favorites**
 - `POST /api/favorites`
@@ -273,24 +296,25 @@ User suka Soto, Bakso, Rawon → direkomendasikan Sop Iga, Tongseng, Coto Makass
 
 | Layer | Pilihan |
 |---|---|
-| Framework | Next.js 15 (App Router) + TypeScript — fullstack (frontend & backend jadi satu) |
+| **Frontend** | **Next.js 15 (App Router)** + TypeScript (Terletak di folder `/frontend`) |
 | Styling | Tailwind CSS + shadcn/ui |
+| **Backend API** | **Node.js (Express.js / NestJS)** atau **Python (FastAPI)** (Terletak di folder `/backend`) |
+| **Machine Learning** | **Python (FastAPI / Flask)** + Scikit-Learn / TensorFlow |
 | Database | PostgreSQL (Neon / Supabase) |
-| ORM | Prisma atau Drizzle |
-| Auth | Auth.js (NextAuth) credentials provider + bcrypt untuk hashing password |
-| Recommendation Engine | TypeScript, dijalankan di Next.js API Route (content-based filtering manual) |
+| ORM | Prisma / Drizzle (Node.js) atau SQLAlchemy (Python) |
+| Auth | JWT Authentication (Custom atau via Auth.js / penyedia pihak ketiga) |
 | Maps | OpenStreetMap + Leaflet.js |
-| Deployment | Vercel (frontend + API routes), database di Neon/Supabase |
-
-> **Perubahan dari draft sebelumnya:** backend terpisah (Laravel 12 + Sanctum) dan recommendation service Python/Scikit-learn dihapus, digabung menjadi satu codebase Next.js fullstack untuk mempercepat development dalam timeline 3 hari.
 
 ---
 
 ## 14. Non-Functional Requirements
 
-**Performance:** Response < 2 detik, mobile-first.
-**Security:** Password hashing (bcrypt), session/JWT via Auth.js, rate limiting pada API routes.
-**Scalability:** REST API, arsitektur modular per domain (auth, restaurants, recipes, recommendations, favorites).
+**Arsitektur Terpisah (*Decoupled*):**
+- Frontend (`/frontend`) dan Backend (`/backend`) berjalan di servis yang berbeda. Hal ini memastikan frontend murni berfokus pada UI, dan backend fokus memproses logika bisnis serta ML.
+
+**Performance:** Response API < 2 detik, inferensi ML < 500ms.
+**Security:** Password hashing, JWT, otorisasi berbasis Role (RBAC), rate limiting.
+**Scalability:** Arsitektur terpisah ini memungkinkan backend API, ML service, dan frontend di-*scale up* secara independen berdasarkan beban *traffic*.
 
 ---
 
@@ -298,36 +322,35 @@ User suka Soto, Bakso, Rawon → direkomendasikan Sop Iga, Tongseng, Coto Makass
 
 **KPI Produk**
 - 100 pengguna uji coba
-- 70% pengguna mencoba rekomendasi AI
-- 50% pengguna menyimpan favorit
+- 10 Mitra/Restoran terdaftar di fase awal
+- 70% pengguna mencoba rekomendasi makanan ML
+- 50% pengguna memanfaatkan informasi nilai gizi
 
 **KPI Teknis**
 - API uptime > 95%
-- Error rate < 5%
+- Akurasi atau relevansi rekomendasi ML > 80%
 
 ---
 
 ## 16. Roadmap Pengerjaan
 
 **Hari 1**
-- Setup project Next.js + Prisma/Drizzle + PostgreSQL
-- Landing Page, Login/Register, Dashboard
-- Schema database & authentication
-- Dataset makanan awal + fungsi scoring recommendation engine (TS)
+- Setup struktur repository (pembuatan folder `/frontend` dan `/backend`)
+- Inisiasi DB PostgreSQL
+- UI/UX Landing Page, Login/Register di Frontend
+- Pengembangan ML Model awal di Backend (Python)
 
 **Hari 2**
-- Nearby Food page + integrasi Leaflet/OpenStreetMap
-- Recipe page
-- API routes: restaurants, recipes, favorites
-- Integrasi recommendation engine ke UI
+- Pembuatan API CRUD (Auth, Restoran, Resep) di Backend
+- Integrasi Dashboard Mitra, Nearby Food, & Recipes di Frontend
 
 **Hari 3**
-- Testing & bug fix
-- Deployment ke Vercel + Neon/Supabase
-- Pitch deck & demo video
+- Integrasi Frontend dengan API Python ML (Sistem Rekomendasi)
+- Testing API terintegrasi, perbaikan bug, deployment (Vercel untuk Frontend, Railway/Render untuk Backend)
+- Pitch deck & demo
 
 ---
 
 ## 17. Elevator Pitch
 
-Kuliner-In adalah platform pencarian kuliner berbasis AI yang membantu pengguna menemukan makanan terbaik berdasarkan lokasi, preferensi, dan kebiasaan mereka. Dengan menggabungkan peta kuliner, resep makanan, dan sistem rekomendasi cerdas, Kuliner-In memberikan pengalaman menemukan makanan yang lebih personal, cepat, dan relevan dibandingkan platform kuliner tradisional.
+Kuliner-In adalah platform web cerdas yang mendisrupsi cara orang mencari makanan. Dengan memanfaatkan Machine Learning, Kuliner-In tidak sekadar menampilkan tempat makan, tapi merekomendasikan makanan yang paling cocok dengan selera, budget, dan bahkan memberikan informasi **Nilai Gizi** (kalori, protein, dll). Platform ini juga memberdayakan UMKM melalui dashboard mitra, sehingga cocok untuk mereka yang ingin makan enak, hemat, sadar kesehatan, sekaligus memajukan bisnis kuliner lokal!
