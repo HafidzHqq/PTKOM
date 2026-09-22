@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🥗 GiziKost
+# 🥗 Dompet Gizi
 
 ### Asisten Gizi Cerdas untuk Anak Kost 💡
 
@@ -30,9 +30,9 @@ Platform web berbasis AI yang membantu anak kost menghitung kandungan gizi makan
 
 ## 🍽️ Tentang
 
-**GiziKost** hadir untuk memecahkan masalah anak kost yang memiliki budget makan terbatas namun ingin tetap menjaga asupan gizi. 
+**Dompet Gizi** hadir untuk memecahkan masalah anak kost yang memiliki budget makan terbatas namun ingin tetap menjaga asupan gizi. 
 
-Cukup dengan memfoto makanan, GiziKost akan mengenali jenis makanan, menghitung kalori & makronutrisi, serta mencocokkannya dengan kebutuhan harianmu. Jika ada nutrisi yang kurang, GiziKost akan merekomendasikan tambahan makanan murah (seperti tempe/tahu) yang bisa dibeli di warteg/kantin sekitar!
+Cukup dengan memfoto makanan, Dompet Gizi akan mengenali jenis makanan, menghitung kalori & makronutrisi, serta mencocokkannya dengan kebutuhan harianmu. Jika ada nutrisi yang kurang, Dompet Gizi akan merekomendasikan tambahan makanan murah (seperti tempe/tahu) yang bisa dibeli di warteg/kantin sekitar!
 
 Aplikasi ini 100% menggunakan teknologi **Gratis** (Free Tier) dan mengandalkan sistem **AI Round-Robin Load Balancer** (mendistribusikan *request* pemindaian gambar ke berbagai *provider* seperti Gemini, Groq, dan Mistral agar tetap berada di batas gratis tiap *provider*).
 
@@ -109,7 +109,7 @@ frontend/
 ├── public/                     # Assets statis
 └── .env.local                  # Environment variables (JANGAN DI-COMMIT)
 docs/
-└── PRD.md                      # Product Requirements Document GiziKost
+└── PRD.md                      # Product Requirements Document Dompet Gizi
 ```
 
 ---
@@ -131,6 +131,6 @@ docs/
 
 <div align="center">
 
-**GiziKost** — Makan Sehat, Sesuai Budget Kost! 🥗
+**Dompet Gizi** — Makan Sehat, Sesuai Budget Kost! 🥗
 
 </div>
