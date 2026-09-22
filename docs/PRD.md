@@ -68,7 +68,7 @@
 ### 5.1 📸 Scan & Analisis Makanan (Core Feature)
 
 ```
-Flow: Foto Makanan → AI Recognition → Estimasi Gizi
+Flow: Foto Makanan → AI Recognition → Estimasi Giziiku
 ```
 
 | Detail | Deskripsi |
