@@ -1,4 +1,9 @@
 fastapi[standard]
-scikit-learn
-pandas
+uvicorn[standard]
 python-dotenv
+httpx
+google-genai
+groq
+openai
+python-multipart
+pydantic-settings
