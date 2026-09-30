@@ -1,7 +1,196 @@
+"use client";
+
+import { useState } from "react";
+import { FoodAnalysisResult } from "@/lib/ai";
+
 export default function Home() {
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<FoodAnalysisResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAnalyze = async () => {
+    if (!preview) return;
+
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      const response = await fetch("/api/analyze-food", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: preview }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Gagal menganalisis gambar");
+      }
+
+      setResult(data);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <main>
-      <h1>Wellcome</h1>
+    <main className="min-h-screen bg-gray-50 p-8 font-sans text-gray-900">
+      <div className="mx-auto max-w-3xl space-y-8">
+        <header className="space-y-2 text-center">
+          <h1 className="text-4xl font-bold text-green-600">
+            🥗 GiziKost (Test UI)
+          </h1>
+          <p className="text-gray-500">
+            Upload foto makanan untuk dianalisis oleh AI Round-Robin.
+          </p>
+        </header>
+
+        <section className="space-y-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div className="space-y-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Pilih Foto Makanan
+            </label>
+            <input
+              type="file"
+              accept="image/jpeg, image/png, image/webp"
+              onChange={handleImageChange}
+              className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-green-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-green-700 hover:file:bg-green-100"
+            />
+          </div>
+
+          {preview && (
+            <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={preview}
+                alt="Preview"
+                className="max-h-full object-contain"
+              />
+            </div>
+          )}
+
+          <button
+            onClick={handleAnalyze}
+            disabled={!preview || loading}
+            className={`w-full rounded-md px-4 py-3 font-semibold text-white transition-colors ${
+              !preview || loading
+                ? "cursor-not-allowed bg-gray-400"
+                : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
+            {loading ? "Menganalisis dengan AI..." : "🔍 Analisis Makanan"}
+          </button>
+        </section>
+
+        {error && (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+
+        {result && (
+          <section className="space-y-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h2 className="border-b pb-2 text-2xl font-semibold">
+              Hasil Analisis
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-5">
+              <div className="rounded-lg bg-orange-50 p-3">
+                <p className="text-sm font-medium text-orange-600">Kalori</p>
+                <p className="text-xl font-bold">
+                  {result.total_nutrition.calories}{" "}
+                  <span className="text-sm font-normal">kcal</span>
+                </p>
+              </div>
+              <div className="rounded-lg bg-blue-50 p-3">
+                <p className="text-sm font-medium text-blue-600">Protein</p>
+                <p className="text-xl font-bold">
+                  {result.total_nutrition.protein_g}{" "}
+                  <span className="text-sm font-normal">g</span>
+                </p>
+              </div>
+              <div className="rounded-lg bg-yellow-50 p-3">
+                <p className="text-sm font-medium text-yellow-600">Lemak</p>
+                <p className="text-xl font-bold">
+                  {result.total_nutrition.fat_g}{" "}
+                  <span className="text-sm font-normal">g</span>
+                </p>
+              </div>
+              <div className="rounded-lg bg-purple-50 p-3">
+                <p className="text-sm font-medium text-purple-600">Karbo</p>
+                <p className="text-xl font-bold">
+                  {result.total_nutrition.carbs_g}{" "}
+                  <span className="text-sm font-normal">g</span>
+                </p>
+              </div>
+              <div className="rounded-lg bg-green-50 p-3">
+                <p className="text-sm font-medium text-green-600">Serat</p>
+                <p className="text-xl font-bold">
+                  {result.total_nutrition.fiber_g}{" "}
+                  <span className="text-sm font-normal">g</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium">Makanan yang terdeteksi:</h3>
+              <ul className="space-y-2">
+                {result.foods.map((food, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 p-3"
+                  >
+                    <div>
+                      <p className="font-medium">{food.name}</p>
+                      <p className="text-xs text-gray-500">
+                        {food.name_en} • Estimasi: {food.portion_grams}g
+                      </p>
+                    </div>
+                    <div className="text-right text-sm text-gray-600">
+                      {food.nutrition.calories} kcal
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">Catatan Gizi:</h3>
+              <ul className="list-disc space-y-1 pl-5 text-gray-700">
+                {result.health_notes.map((note, idx) => (
+                  <li key={idx}>{note}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-4 border-t border-gray-100 pt-4">
+              <h3 className="mb-2 text-sm font-medium text-gray-500">
+                Raw JSON:
+              </h3>
+              <pre className="overflow-x-auto rounded-lg bg-gray-900 p-4 text-xs text-green-400">
+                {JSON.stringify(result, null, 2)}
+              </pre>
+            </div>
+          </section>
+        )}
+      </div>
     </main>
   );
 }
