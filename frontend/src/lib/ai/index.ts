@@ -25,6 +25,15 @@ export interface FoodAnalysisResult {
     fiber_g: number;
   };
   health_notes: string[];
+  metadata?: {
+    provider: string;
+    model: string;
+    usage?: {
+      promptTokens: number;
+      completionTokens: number;
+      totalTokens: number;
+    };
+  };
 }
 
 // Ensure clean JSON string extraction
@@ -54,7 +63,21 @@ const geminiAdapter = {
       },
     ]);
     const response = await result.response;
-    return cleanJson(response.text());
+    const parsed = cleanJson(response.text());
+
+    parsed.metadata = {
+      provider: "Gemini",
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+      usage: response.usageMetadata
+        ? {
+            promptTokens: response.usageMetadata.promptTokenCount || 0,
+            completionTokens: response.usageMetadata.candidatesTokenCount || 0,
+            totalTokens: response.usageMetadata.totalTokenCount || 0,
+          }
+        : undefined,
+    };
+
+    return parsed;
   },
 };
 
@@ -81,7 +104,22 @@ const groqAdapter = {
       response_format: { type: "json_object" },
     });
 
-    return cleanJson(result.choices[0]?.message?.content || "{}");
+    const parsed = cleanJson(result.choices[0]?.message?.content || "{}");
+
+    parsed.metadata = {
+      provider: "Groq",
+      model:
+        process.env.GROQ_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct",
+      usage: result.usage
+        ? {
+            promptTokens: result.usage.prompt_tokens || 0,
+            completionTokens: result.usage.completion_tokens || 0,
+            totalTokens: result.usage.total_tokens || 0,
+          }
+        : undefined,
+    };
+
+    return parsed;
   },
 };
 
@@ -111,7 +149,21 @@ const mistralAdapter = {
       response_format: { type: "json_object" },
     });
 
-    return cleanJson(result.choices[0]?.message?.content || "{}");
+    const parsed = cleanJson(result.choices[0]?.message?.content || "{}");
+
+    parsed.metadata = {
+      provider: "Mistral",
+      model: process.env.MISTRAL_MODEL || "mistral-small-latest",
+      usage: result.usage
+        ? {
+            promptTokens: result.usage.prompt_tokens || 0,
+            completionTokens: result.usage.completion_tokens || 0,
+            totalTokens: result.usage.total_tokens || 0,
+          }
+        : undefined,
+    };
+
+    return parsed;
   },
 };
 
@@ -141,7 +193,21 @@ const openrouterAdapter = {
       response_format: { type: "json_object" },
     });
 
-    return cleanJson(result.choices[0]?.message?.content || "{}");
+    const parsed = cleanJson(result.choices[0]?.message?.content || "{}");
+
+    parsed.metadata = {
+      provider: "OpenRouter",
+      model: "qwen/qwen-2.5-vl-72b-instruct:free",
+      usage: result.usage
+        ? {
+            promptTokens: result.usage.prompt_tokens || 0,
+            completionTokens: result.usage.completion_tokens || 0,
+            totalTokens: result.usage.total_tokens || 0,
+          }
+        : undefined,
+    };
+
+    return parsed;
   },
 };
 
