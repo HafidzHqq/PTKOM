@@ -17,13 +17,12 @@ export async function POST(req: NextRequest) {
     const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
     const result = await analyzeFood(cleanBase64);
-    
+
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[POST /api/analyze-food] Error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to analyze food" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to analyze food";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

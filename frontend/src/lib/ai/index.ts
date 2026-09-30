@@ -29,8 +29,8 @@ export interface FoodAnalysisResult {
 
 // Ensure clean JSON string extraction
 const cleanJson = (str: string) => {
-  const start = str.indexOf('{');
-  const end = str.lastIndexOf('}');
+  const start = str.indexOf("{");
+  const end = str.lastIndexOf("}");
   if (start === -1 || end === -1) throw new Error("Invalid JSON response");
   return JSON.parse(str.substring(start, end + 1));
 };
@@ -39,54 +39,61 @@ const geminiAdapter = {
   analyze: async (base64Image: string): Promise<FoodAnalysisResult> => {
     if (!process.env.GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.5-flash" });
-    
+    const model = genAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+    });
+
     // Assumes base64Image is just the raw base64 string without data:image/... prefix
     const result = await model.generateContent([
       UNIFIED_PROMPT,
       {
         inlineData: {
           data: base64Image,
-          mimeType: "image/jpeg"
-        }
-      }
+          mimeType: "image/jpeg",
+        },
+      },
     ]);
     const response = await result.response;
     return cleanJson(response.text());
-  }
+  },
 };
 
 const groqAdapter = {
   analyze: async (base64Image: string): Promise<FoodAnalysisResult> => {
     if (!process.env.GROQ_API_KEY) throw new Error("Missing GROQ_API_KEY");
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-    
+
     const result = await groq.chat.completions.create({
-      model: process.env.GROQ_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct",
+      model:
+        process.env.GROQ_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct",
       messages: [
         {
           role: "user",
           content: [
             { type: "text", text: UNIFIED_PROMPT },
-            { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
-          ]
-        }
+            {
+              type: "image_url",
+              image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+            },
+          ],
+        },
       ],
-      response_format: { type: "json_object" }
+      response_format: { type: "json_object" },
     });
-    
+
     return cleanJson(result.choices[0]?.message?.content || "{}");
-  }
+  },
 };
 
 const mistralAdapter = {
   analyze: async (base64Image: string): Promise<FoodAnalysisResult> => {
-    if (!process.env.MISTRAL_API_KEY) throw new Error("Missing MISTRAL_API_KEY");
-    const client = new OpenAI({ 
-      apiKey: process.env.MISTRAL_API_KEY, 
-      baseURL: "https://api.mistral.ai/v1" 
+    if (!process.env.MISTRAL_API_KEY)
+      throw new Error("Missing MISTRAL_API_KEY");
+    const client = new OpenAI({
+      apiKey: process.env.MISTRAL_API_KEY,
+      baseURL: "https://api.mistral.ai/v1",
     });
-    
+
     const result = await client.chat.completions.create({
       model: process.env.MISTRAL_MODEL || "mistral-small-latest",
       messages: [
@@ -94,25 +101,29 @@ const mistralAdapter = {
           role: "user",
           content: [
             { type: "text", text: UNIFIED_PROMPT },
-            { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
-          ]
-        }
+            {
+              type: "image_url",
+              image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+            },
+          ],
+        },
       ],
-      response_format: { type: "json_object" }
+      response_format: { type: "json_object" },
     });
-    
+
     return cleanJson(result.choices[0]?.message?.content || "{}");
-  }
+  },
 };
 
 const openrouterAdapter = {
   analyze: async (base64Image: string): Promise<FoodAnalysisResult> => {
-    if (!process.env.OPENROUTER_API_KEY) throw new Error("Missing OPENROUTER_API_KEY");
-    const client = new OpenAI({ 
-      apiKey: process.env.OPENROUTER_API_KEY, 
-      baseURL: "https://openrouter.ai/api/v1" 
+    if (!process.env.OPENROUTER_API_KEY)
+      throw new Error("Missing OPENROUTER_API_KEY");
+    const client = new OpenAI({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      baseURL: "https://openrouter.ai/api/v1",
     });
-    
+
     const result = await client.chat.completions.create({
       model: "qwen/qwen-2.5-vl-72b-instruct:free",
       messages: [
@@ -120,29 +131,34 @@ const openrouterAdapter = {
           role: "user",
           content: [
             { type: "text", text: UNIFIED_PROMPT },
-            { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
-          ]
-        }
+            {
+              type: "image_url",
+              image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+            },
+          ],
+        },
       ],
-      response_format: { type: "json_object" }
+      response_format: { type: "json_object" },
     });
-    
+
     return cleanJson(result.choices[0]?.message?.content || "{}");
-  }
+  },
 };
 
 const AI_PROVIDERS = [
-  { name: 'gemini',     adapter: geminiAdapter,     dailyLimit: 1500, used: 0 },
-  { name: 'groq',       adapter: groqAdapter,       dailyLimit: 1000, used: 0 },
-  { name: 'mistral',    adapter: mistralAdapter,     dailyLimit: 500,  used: 0 },
-  { name: 'openrouter', adapter: openrouterAdapter,  dailyLimit: 500,  used: 0 },
+  { name: "gemini", adapter: geminiAdapter, dailyLimit: 1500, used: 0 },
+  { name: "groq", adapter: groqAdapter, dailyLimit: 1000, used: 0 },
+  { name: "mistral", adapter: mistralAdapter, dailyLimit: 500, used: 0 },
+  { name: "openrouter", adapter: openrouterAdapter, dailyLimit: 500, used: 0 },
 ];
 
 let currentIndex = 0;
 
-export async function analyzeFood(imageBase64: string): Promise<FoodAnalysisResult> {
+export async function analyzeFood(
+  imageBase64: string,
+): Promise<FoodAnalysisResult> {
   const maxRetries = AI_PROVIDERS.length;
-  let lastError: any = null;
+  let lastError: unknown = null;
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const provider = AI_PROVIDERS[currentIndex % AI_PROVIDERS.length];
@@ -157,11 +173,18 @@ export async function analyzeFood(imageBase64: string): Promise<FoodAnalysisResu
       provider.used++;
       return result;
     } catch (error) {
-      console.warn(`[AI Load Balancer] ${provider.name} failed, trying next...`, (error as Error).message);
+      console.warn(
+        `[AI Load Balancer] ${provider.name} failed, trying next...`,
+        (error as Error).message,
+      );
       lastError = error;
       continue;
     }
   }
 
-  throw new Error(`Semua AI provider sedang tidak tersedia. Last error: ${lastError?.message}`);
+  const errorMessage =
+    lastError instanceof Error ? lastError.message : "Unknown error";
+  throw new Error(
+    `Semua AI provider sedang tidak tersedia. Last error: ${errorMessage}`,
+  );
 }
