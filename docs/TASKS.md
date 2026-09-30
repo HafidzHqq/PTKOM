@@ -16,12 +16,12 @@ Dokumen ini berisi daftar tugas (backlog) komprehensif untuk pengembangan **Domp
 
 ### 1.2. Database & Auth (Supabase)
 - [ ] Buat project baru di Supabase
-- [ ] Setup koneksi Supabase di Next.js (`@supabase/ssr` atau `@supabase/supabase-js`)
-- [ ] Buat skema tabel `users` (profil, budget, target gizi)
-- [ ] Buat skema tabel `food_logs` (histori makanan & hasil scan)
-- [ ] Buat skema tabel `local_foods` (seed data makanan warteg/kantin)
-- [ ] Setup Supabase Storage bucket untuk upload foto (`food-images`)
-- [ ] Setup Row Level Security (RLS) agar user hanya bisa melihat datanya sendiri
+- [x] Setup koneksi Supabase di Next.js (`@supabase/ssr` atau `@supabase/supabase-js`)
+- [x] Buat skema tabel `users` (profil, budget, target gizi)
+- [x] Buat skema tabel `food_logs` (histori makanan & hasil scan)
+- [x] Buat skema tabel `local_foods` (seed data makanan warteg/kantin)
+- [x] Setup Supabase Storage bucket untuk upload foto (`food-images`)
+- [x] Setup Row Level Security (RLS) agar user hanya bisa melihat datanya sendiri
 - [ ] Implementasi Login/Register (Google OAuth & Email)
 
 ---
@@ -29,16 +29,17 @@ Dokumen ini berisi daftar tugas (backlog) komprehensif untuk pengembangan **Domp
 ## 🧠 Phase 2: Core AI Engine (Minggu 2)
 
 ### 2.1. Integrasi AI Providers
-- [ ] Buat service adapter untuk **Gemini 3.5 Flash** (via `@google/generative-ai`)
-- [ ] Buat service adapter untuk **Groq Qwen 3.8** (via OpenAI compatible SDK)
-- [ ] Buat service adapter untuk **Mistral Small** (via `@mistralai/mistralai`)
-- [ ] Susun *Unified System Prompt* agar semua AI merespon dengan format JSON yang identik
-- [ ] Define tipe data/interface output dari AI (Kalori, Makro, Rekomendasi, Confidence Score)
+- [x] Buat service adapter untuk **Gemini 2.5 Flash** (via `@google/generative-ai`)
+- [x] Buat service adapter untuk **Groq — Llama 4 Scout** (via OpenAI compatible SDK)
+- [x] Buat service adapter untuk **Mistral Vision** (`mistral-small-latest`, via `@mistralai/mistralai`)
+- [x] Buat service adapter untuk **OpenRouter** (free models, via OpenAI compatible SDK)
+- [x] Susun *Unified System Prompt* agar semua AI merespon dengan format JSON yang identik
+- [x] Define tipe data/interface output dari AI (Kalori, Makro, Rekomendasi, Confidence Score)
 
 ### 2.2. AI Round-Robin Load Balancer
-- [ ] Buat logika Load Balancer di API Route (`/api/analyze-food`)
-- [ ] Buat sistem *failover*: jika AI 1 error/limit, otomatis pindah ke AI 2
-- [ ] Parsing dan validasi output JSON dari AI menggunakan Zod
+- [x] Buat logika Load Balancer di API Route (`/api/analyze-food`)
+- [x] Buat sistem *failover*: jika AI 1 error/limit, otomatis pindah ke AI 2
+- [x] Parsing dan validasi output JSON dari AI menggunakan Zod
 
 ---
 
