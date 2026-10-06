@@ -6,7 +6,10 @@ import { z } from "zod";
 export const maxDuration = 60; // Limit execution to 60s for Vercel Hobby
 
 const requestSchema = z.object({
-  imageBase64: z.string().min(1, "Image is required"),
+  imageBase64: z.string().optional(),
+  text: z.string().optional(),
+}).refine((data) => data.imageBase64 || data.text, {
+  message: "Either imageBase64 or text must be provided",
 });
 
 export async function POST(req: NextRequest) {
@@ -21,12 +24,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { imageBase64 } = requestSchema.parse(body);
+    const { imageBase64, text } = requestSchema.parse(body);
 
-    // Clean base64 prefix if present
-    const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-
-    const result = await analyzeFood(cleanBase64);
+    let result;
+    if (imageBase64) {
+      // Clean base64 prefix if present
+      const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+      result = await analyzeFood({ imageBase64: cleanBase64 });
+    } else if (text) {
+      result = await analyzeFood({ text });
+    }
 
     return NextResponse.json(result);
   } catch (error: unknown) {

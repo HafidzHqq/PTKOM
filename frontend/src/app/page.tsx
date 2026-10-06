@@ -10,6 +10,7 @@ export default function Home() {
   const { user, signOut } = useAuth();
   // const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [foodName, setFoodName] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<FoodAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -23,13 +24,21 @@ export default function Home() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
+        setFoodName(""); // Clear text input when image is selected
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFoodName(e.target.value);
+    if (e.target.value) {
+      setPreview(null); // Clear image when text is typed
+    }
+  };
+
   const handleAnalyze = async () => {
-    if (!preview) return;
+    if (!preview && !foodName.trim()) return;
 
     setLoading(true);
     setError(null);
@@ -37,10 +46,14 @@ export default function Home() {
     setHistorySaveError(null);
 
     try {
+      const payload = preview 
+        ? { imageBase64: preview } 
+        : { text: foodName.trim() };
+
       const response = await fetch("/api/analyze-food", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: preview }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -115,13 +128,32 @@ export default function Home() {
             🥗 GiziKost (Test UI)
           </h1>
           <p className="text-gray-500">
-            Upload foto makanan untuk dianalisis oleh AI Round-Robin.
+            Upload foto makanan atau ketik nama makanan untuk dianalisis oleh AI Round-Robin.
           </p>
         </header>
 
         <NutritionHistory refreshKey={historyRefreshKey} />
 
         <section className="space-y-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div className="space-y-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Ketik Nama Makanan
+            </label>
+            <input
+              type="text"
+              placeholder="Contoh: Nasi Goreng Telur, Ayam Bakar..."
+              value={foodName}
+              onChange={handleTextChange}
+              className="block w-full rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+            />
+          </div>
+
+          <div className="relative flex items-center py-2">
+            <div className="flex-grow border-t border-gray-200"></div>
+            <span className="mx-4 flex-shrink-0 text-sm text-gray-400">ATAU</span>
+            <div className="flex-grow border-t border-gray-200"></div>
+          </div>
+
           <div className="space-y-4">
             <label className="block text-sm font-medium text-gray-700">
               Pilih Foto Makanan
@@ -147,9 +179,9 @@ export default function Home() {
 
           <button
             onClick={handleAnalyze}
-            disabled={!preview || loading}
+            disabled={(!preview && !foodName.trim()) || loading}
             className={`w-full rounded-md px-4 py-3 font-semibold text-white transition-colors ${
-              !preview || loading
+              (!preview && !foodName.trim()) || loading
                 ? "cursor-not-allowed bg-gray-400"
                 : "bg-green-600 hover:bg-green-700"
             }`}
