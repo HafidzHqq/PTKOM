@@ -167,8 +167,8 @@ export default function FoodRecommendations({
                     <p className="mt-1 text-xs text-gray-600">{item.reason}</p>
                   </div>
                   <div className="mt-4 border-t border-green-100 pt-2 text-[11px] text-gray-500">
-                    <span>🔥 {item.estimated_nutrition.calories} kcal</span> •{" "}
-                    <span>🥩 {item.estimated_nutrition.protein_g}g P</span>
+                    <span>🔥 {item.estimated_nutrition?.calories ?? 0} kcal</span> •{" "}
+                    <span>🥩 {item.estimated_nutrition?.protein_g ?? 0}g P</span>
                   </div>
                 </div>
               ))}
