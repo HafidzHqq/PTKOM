@@ -67,10 +67,35 @@ export async function GET() {
 
     const result = await response.json();
 
+    const mappedRecommendations = (result.data.recommendations || []).map(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (item: any) => ({
+        food_name: item.food?.name || item.food_name,
+        estimated_price_idr: item.food?.avg_price_idr || item.estimated_price_idr,
+        estimated_nutrition: {
+          calories: item.food?.calories ?? item.estimated_nutrition?.calories ?? 0,
+          protein_g: item.food?.protein_g ?? item.estimated_nutrition?.protein_g ?? 0,
+          fat_g: item.food?.fat_g ?? item.estimated_nutrition?.fat_g ?? 0,
+          carbs_g: item.food?.carbs_g ?? item.estimated_nutrition?.carbs_g ?? 0,
+          fiber_g: item.food?.fiber_g ?? item.estimated_nutrition?.fiber_g ?? 0,
+        },
+        reason: item.reason,
+      }),
+    );
+
     return NextResponse.json({
       target,
       consumed,
-      recommendations: result.data.recommendations,
+      deficiency: {
+        calories: Math.max(0, target.calories - consumed.calories),
+        protein_g: Math.max(0, target.protein_g - consumed.protein_g),
+        fat_g: Math.max(0, target.fat_g - consumed.fat_g),
+        carbs_g: Math.max(0, target.carbs_g - consumed.carbs_g),
+        fiber_g: Math.max(0, target.fiber_g - consumed.fiber_g),
+      },
+      recommendations: mappedRecommendations,
+      advice:
+        result.data.deficiencies?.join(". ") || "Tetap jaga pola makan sehat!",
     });
   } catch (error) {
     console.error("[GET /api/recommendations] Error:", error);
