@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { getRecommendations } from "@/lib/ai/recommend";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -40,13 +39,38 @@ export async function GET() {
       fiber_g: 25,
     };
 
-    // Get recommendations from AI
-    const recommendations = await getRecommendations(target, consumed);
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+    
+    const response = await fetch(`${backendUrl}/api/recommendations`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        daily_calorie_target: target.calories,
+        daily_protein_target: target.protein_g,
+        daily_fat_target: target.fat_g,
+        daily_carb_target: target.carbs_g,
+        daily_fiber_target: target.fiber_g,
+        current_calories: consumed.calories,
+        current_protein_g: consumed.protein_g,
+        current_fat_g: consumed.fat_g,
+        current_carbs_g: consumed.carbs_g,
+        current_fiber_g: consumed.fiber_g,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Backend error: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
 
     return NextResponse.json({
       target,
       consumed,
-      ...recommendations,
+      recommendations: result.data.recommendations,
     });
   } catch (error) {
     console.error("[GET /api/recommendations] Error:", error);

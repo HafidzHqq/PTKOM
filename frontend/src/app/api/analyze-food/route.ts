@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyzeFood } from "@/lib/ai";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 import { z } from "zod";
 
 export const maxDuration = 60; // Limit execution to 60s for Vercel Hobby
@@ -16,26 +13,36 @@ const requestSchema = z
   });
 
 export async function POST(req: NextRequest) {
-  // Bypass auth for now
-  // const session = await getServerSession(authOptions);
-  // if (!session?.user) {
-  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  // }
-
   try {
     const body = await req.json();
     const { imageBase64, text } = requestSchema.parse(body);
 
-    let result;
+    let cleanBase64 = imageBase64;
     if (imageBase64) {
       // Clean base64 prefix if present
-      const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-      result = await analyzeFood({ imageBase64: cleanBase64 });
-    } else if (text) {
-      result = await analyzeFood({ text });
+      cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
     }
 
-    return NextResponse.json(result);
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+    
+    const response = await fetch(`${backendUrl}/api/analyze-food`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        image_base64: cleanBase64,
+        text: text,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Backend error: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
+    return NextResponse.json(result.data || result);
   } catch (error: unknown) {
     console.error("[POST /api/analyze-food] Error:", error);
     const errorMessage =
