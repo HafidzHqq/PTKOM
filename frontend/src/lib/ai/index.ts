@@ -99,7 +99,10 @@ const groqAdapter = {
     if (!process.env.GROQ_API_KEY) throw new Error("Missing GROQ_API_KEY");
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-    let content: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }>;
+    let content: Array<
+      | { type: "text"; text: string }
+      | { type: "image_url"; image_url: { url: string } }
+    >;
     if (input.imageBase64) {
       content = [
         { type: "text", text: UNIFIED_PROMPT },
@@ -118,8 +121,7 @@ const groqAdapter = {
     }
 
     const result = await groq.chat.completions.create({
-      model:
-        process.env.GROQ_MODEL || "llama-3.2-11b-vision-preview",
+      model: process.env.GROQ_MODEL || "llama-3.2-11b-vision-preview",
       messages: [
         {
           role: "user",
@@ -132,8 +134,7 @@ const groqAdapter = {
 
     parsed.metadata = {
       provider: "Groq",
-      model:
-        process.env.GROQ_MODEL || "llama-3.2-11b-vision-preview",
+      model: process.env.GROQ_MODEL || "llama-3.2-11b-vision-preview",
       usage: result.usage
         ? {
             promptTokens: result.usage.prompt_tokens || 0,
@@ -156,7 +157,10 @@ const mistralAdapter = {
       baseURL: "https://api.mistral.ai/v1",
     });
 
-    let content: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }>;
+    let content: Array<
+      | { type: "text"; text: string }
+      | { type: "image_url"; image_url: { url: string } }
+    >;
     if (input.imageBase64) {
       content = [
         { type: "text", text: UNIFIED_PROMPT },
@@ -211,7 +215,10 @@ const openrouterAdapter = {
       baseURL: "https://openrouter.ai/api/v1",
     });
 
-    let content: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }>;
+    let content: Array<
+      | { type: "text"; text: string }
+      | { type: "image_url"; image_url: { url: string } }
+    >;
     if (input.imageBase64) {
       content = [
         { type: "text", text: UNIFIED_PROMPT },

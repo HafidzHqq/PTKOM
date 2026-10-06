@@ -6,12 +6,14 @@ import { z } from "zod";
 
 export const maxDuration = 60; // Limit execution to 60s for Vercel Hobby
 
-const requestSchema = z.object({
-  imageBase64: z.string().optional(),
-  text: z.string().optional(),
-}).refine((data) => data.imageBase64 || data.text, {
-  message: "Either imageBase64 or text must be provided",
-});
+const requestSchema = z
+  .object({
+    imageBase64: z.string().optional(),
+    text: z.string().optional(),
+  })
+  .refine((data) => data.imageBase64 || data.text, {
+    message: "Either imageBase64 or text must be provided",
+  });
 
 export async function POST(req: NextRequest) {
   // Bypass auth for now

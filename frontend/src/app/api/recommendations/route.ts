@@ -10,13 +10,13 @@ export async function GET() {
 
   try {
     const db = await getDb();
-    
+
     // Get today's nutrition history
     const rows = await db.all(
       `SELECT calories, protein_g, fat_g, carbs_g, fiber_g 
        FROM nutrition_history 
        WHERE user_id = ? AND date(logged_at) = date('now', 'localtime')`,
-      [userId]
+      [userId],
     );
 
     // Calculate total consumed today
@@ -28,7 +28,7 @@ export async function GET() {
         carbs_g: acc.carbs_g + (row.carbs_g || 0),
         fiber_g: acc.fiber_g + (row.fiber_g || 0),
       }),
-      { calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 }
+      { calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 },
     );
 
     // Standard daily target (can be customized later based on user profile)
@@ -46,13 +46,18 @@ export async function GET() {
     return NextResponse.json({
       target,
       consumed,
-      ...recommendations
+      ...recommendations,
     });
   } catch (error) {
     console.error("[GET /api/recommendations] Error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Gagal mendapatkan rekomendasi" },
-      { status: 500 }
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Gagal mendapatkan rekomendasi",
+      },
+      { status: 500 },
     );
   }
 }

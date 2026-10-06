@@ -20,7 +20,11 @@ interface RecommendationData extends RecommendationResult {
   };
 }
 
-export default function FoodRecommendations({ refreshKey }: { refreshKey?: number }) {
+export default function FoodRecommendations({
+  refreshKey,
+}: {
+  refreshKey?: number;
+}) {
   const [data, setData] = useState<RecommendationData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,25 +90,27 @@ export default function FoodRecommendations({ refreshKey }: { refreshKey?: numbe
               📊 Status Kebutuhan Gizi Hari Ini
             </h3>
             <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
-              <div className="rounded bg-white p-2 border">
+              <div className="rounded border bg-white p-2">
                 <span className="text-gray-500">Kalori</span>
                 <p className="font-bold text-orange-600">
-                  {Math.max(0, data.target.calories - data.consumed.calories)} kcal kurang
+                  {Math.max(0, data.target.calories - data.consumed.calories)}{" "}
+                  kcal kurang
                 </p>
                 <span className="text-[10px] text-gray-400">
                   ({data.consumed.calories}/{data.target.calories})
                 </span>
               </div>
-              <div className="rounded bg-white p-2 border">
+              <div className="rounded border bg-white p-2">
                 <span className="text-gray-500">Protein</span>
                 <p className="font-bold text-blue-600">
-                  {Math.max(0, data.target.protein_g - data.consumed.protein_g)}g kurang
+                  {Math.max(0, data.target.protein_g - data.consumed.protein_g)}
+                  g kurang
                 </p>
                 <span className="text-[10px] text-gray-400">
                   ({data.consumed.protein_g}/{data.target.protein_g}g)
                 </span>
               </div>
-              <div className="rounded bg-white p-2 border">
+              <div className="rounded border bg-white p-2">
                 <span className="text-gray-500">Lemak</span>
                 <p className="font-bold text-yellow-600">
                   {Math.max(0, data.target.fat_g - data.consumed.fat_g)}g kurang
@@ -113,19 +119,21 @@ export default function FoodRecommendations({ refreshKey }: { refreshKey?: numbe
                   ({data.consumed.fat_g}/{data.target.fat_g}g)
                 </span>
               </div>
-              <div className="rounded bg-white p-2 border">
+              <div className="rounded border bg-white p-2">
                 <span className="text-gray-500">Karbo</span>
                 <p className="font-bold text-purple-600">
-                  {Math.max(0, data.target.carbs_g - data.consumed.carbs_g)}g kurang
+                  {Math.max(0, data.target.carbs_g - data.consumed.carbs_g)}g
+                  kurang
                 </p>
                 <span className="text-[10px] text-gray-400">
                   ({data.consumed.carbs_g}/{data.target.carbs_g}g)
                 </span>
               </div>
-              <div className="rounded bg-white p-2 border">
+              <div className="rounded border bg-white p-2">
                 <span className="text-gray-500">Serat</span>
                 <p className="font-bold text-green-600">
-                  {Math.max(0, data.target.fiber_g - data.consumed.fiber_g)}g kurang
+                  {Math.max(0, data.target.fiber_g - data.consumed.fiber_g)}g
+                  kurang
                 </p>
                 <span className="text-[10px] text-gray-400">
                   ({data.consumed.fiber_g}/{data.target.fiber_g}g)
@@ -147,9 +155,13 @@ export default function FoodRecommendations({ refreshKey }: { refreshKey?: numbe
                 >
                   <div>
                     <div className="flex items-start justify-between">
-                      <h4 className="font-bold text-green-900">{item.food_name}</h4>
-                      <span className="whitespace-nowrap rounded-full bg-green-200 px-2 py-0.5 text-[10px] font-bold text-green-800">
-                        Rp {item.estimated_price_idr?.toLocaleString("id-ID") || "-"}
+                      <h4 className="font-bold text-green-900">
+                        {item.food_name}
+                      </h4>
+                      <span className="rounded-full bg-green-200 px-2 py-0.5 text-[10px] font-bold whitespace-nowrap text-green-800">
+                        Rp{" "}
+                        {item.estimated_price_idr?.toLocaleString("id-ID") ||
+                          "-"}
                       </span>
                     </div>
                     <p className="mt-1 text-xs text-gray-600">{item.reason}</p>

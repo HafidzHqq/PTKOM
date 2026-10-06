@@ -42,13 +42,13 @@ export async function GET() {
        WHERE user_id = ? AND logged_at >= datetime('now', '-7 days')
        ORDER BY logged_at DESC 
        LIMIT 100`,
-      [userId]
+      [userId],
     );
 
     // Parse JSON string back to object for foods
-    const data = rows.map(row => ({
+    const data = rows.map((row) => ({
       ...row,
-      foods: typeof row.foods === 'string' ? JSON.parse(row.foods) : row.foods
+      foods: typeof row.foods === "string" ? JSON.parse(row.foods) : row.foods,
     }));
 
     return NextResponse.json(data);
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { data: nutrition } = parsed;
-  
+
   try {
     const db = await getDb();
     const result = await db.run(
@@ -97,8 +97,8 @@ export async function POST(request: NextRequest) {
         nutrition.total_nutrition.protein_g,
         nutrition.total_nutrition.fat_g,
         nutrition.total_nutrition.carbs_g,
-        nutrition.total_nutrition.fiber_g
-      ]
+        nutrition.total_nutrition.fiber_g,
+      ],
     );
 
     const insertId = result.lastID;
@@ -107,12 +107,12 @@ export async function POST(request: NextRequest) {
       `SELECT id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at 
        FROM nutrition_history 
        WHERE id = ?`,
-      [insertId]
+      [insertId],
     );
 
     const data = {
       ...row,
-      foods: typeof row.foods === 'string' ? JSON.parse(row.foods) : row.foods
+      foods: typeof row.foods === "string" ? JSON.parse(row.foods) : row.foods,
     };
 
     return NextResponse.json(data, { status: 201 });

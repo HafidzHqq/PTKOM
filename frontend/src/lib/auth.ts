@@ -17,20 +17,26 @@ export const authOptions: NextAuthOptions = {
           // Check if user exists
           const existingUser = await db.get(
             "SELECT id FROM users WHERE email = ?",
-            [user.email]
+            [user.email],
           );
 
           if (!existingUser) {
             // Insert new user
             await db.run(
               "INSERT INTO users (email, name, image, provider, provider_id) VALUES (?, ?, ?, ?, ?)",
-              [user.email, user.name, user.image, account.provider, account.providerAccountId]
+              [
+                user.email,
+                user.name,
+                user.image,
+                account.provider,
+                account.providerAccountId,
+              ],
             );
           } else {
             // Update existing user's name and image if they changed
             await db.run(
               "UPDATE users SET name = ?, image = ? WHERE email = ?",
-              [user.name, user.image, user.email]
+              [user.name, user.image, user.email],
             );
           }
           return true;
@@ -47,7 +53,7 @@ export const authOptions: NextAuthOptions = {
           const db = await getDb();
           const existingUser = await db.get(
             "SELECT id FROM users WHERE email = ?",
-            [token.email]
+            [token.email],
           );
           if (existingUser) {
             // Add user ID to session

@@ -9,7 +9,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const { data: session, status } = useSession();
-  
+
   return {
     user: session?.user ?? null,
     loading: status === "loading",

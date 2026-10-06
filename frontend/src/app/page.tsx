@@ -47,8 +47,8 @@ export default function Home() {
     setHistorySaveError(null);
 
     try {
-      const payload = preview 
-        ? { imageBase64: preview } 
+      const payload = preview
+        ? { imageBase64: preview }
         : { text: foodName.trim() };
 
       const response = await fetch("/api/analyze-food", {
@@ -94,7 +94,7 @@ export default function Home() {
   const displayUser = user || {
     name: "Tamu (Guest)",
     email: "guest@gizikost.local",
-    image: null
+    image: null,
   };
 
   return (
@@ -115,8 +115,12 @@ export default function Home() {
               </div>
             )}
             <div>
-              <p className="font-medium">{displayUser.name || displayUser.email}</p>
-              <p className="text-xs text-gray-500">Siap menganalisis makanan!</p>
+              <p className="font-medium">
+                {displayUser.name || displayUser.email}
+              </p>
+              <p className="text-xs text-gray-500">
+                Siap menganalisis makanan!
+              </p>
             </div>
           </div>
           {user ? (
@@ -144,7 +148,8 @@ export default function Home() {
             🥗 GiziKost (Test UI)
           </h1>
           <p className="text-gray-500">
-            Upload foto makanan atau ketik nama makanan untuk dianalisis oleh AI Round-Robin.
+            Upload foto makanan atau ketik nama makanan untuk dianalisis oleh AI
+            Round-Robin.
           </p>
         </header>
 
@@ -162,13 +167,15 @@ export default function Home() {
               placeholder="Contoh: Nasi Goreng Telur, Ayam Bakar..."
               value={foodName}
               onChange={handleTextChange}
-              className="block w-full rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="block w-full rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none"
             />
           </div>
 
           <div className="relative flex items-center py-2">
             <div className="flex-grow border-t border-gray-200"></div>
-            <span className="mx-4 flex-shrink-0 text-sm text-gray-400">ATAU</span>
+            <span className="mx-4 flex-shrink-0 text-sm text-gray-400">
+              ATAU
+            </span>
             <div className="flex-grow border-t border-gray-200"></div>
           </div>
 
@@ -215,8 +222,12 @@ export default function Home() {
         )}
 
         {historySaveError && (
-          <div role="alert" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
-            Analisis berhasil, tetapi riwayat belum tersimpan: {historySaveError}
+          <div
+            role="alert"
+            className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900"
+          >
+            Analisis berhasil, tetapi riwayat belum tersimpan:{" "}
+            {historySaveError}
           </div>
         )}
 

@@ -77,7 +77,7 @@ function LoginContent() {
         {/* Footer */}
         <p className="text-center text-xs text-gray-400">
           Dengan masuk, kamu menyetujui{" "}
-          <span className="text-green-600 underline cursor-pointer">
+          <span className="cursor-pointer text-green-600 underline">
             Syarat & Ketentuan
           </span>{" "}
           kami.

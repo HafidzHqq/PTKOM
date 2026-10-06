@@ -23,7 +23,11 @@ interface DailyNutrition {
   fiber_g: number;
 }
 
-export default function NutritionHistory({ refreshKey }: { refreshKey: number }) {
+export default function NutritionHistory({
+  refreshKey,
+}: {
+  refreshKey: number;
+}) {
   const [entries, setEntries] = useState<NutritionHistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,7 +117,10 @@ export default function NutritionHistory({ refreshKey }: { refreshKey: number })
 
       <div className="space-y-4">
         {Object.values(dailyHistory).map((day) => (
-          <article key={day.label} className="border-b border-gray-100 pb-4 last:border-0">
+          <article
+            key={day.label}
+            className="border-b border-gray-100 pb-4 last:border-0"
+          >
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="font-medium capitalize">{day.label}</h3>
               <span className="text-sm font-semibold text-green-700">
@@ -121,7 +128,9 @@ export default function NutritionHistory({ refreshKey }: { refreshKey: number })
               </span>
             </div>
             <p className="mt-1 text-sm text-gray-600">
-              Protein {day.protein_g.toFixed(1)} g · Lemak {day.fat_g.toFixed(1)} g · Karbo {day.carbs_g.toFixed(1)} g · Serat {day.fiber_g.toFixed(1)} g
+              Protein {day.protein_g.toFixed(1)} g · Lemak{" "}
+              {day.fat_g.toFixed(1)} g · Karbo {day.carbs_g.toFixed(1)} g ·
+              Serat {day.fiber_g.toFixed(1)} g
             </p>
             <ul className="mt-2 space-y-1 text-sm text-gray-500">
               {day.entries.map((entry) => (
@@ -133,7 +142,9 @@ export default function NutritionHistory({ refreshKey }: { refreshKey: number })
                     })}{" "}
                     · {entry.foods.map((food) => food.name).join(", ")}
                   </span>
-                  <span className="shrink-0">{Math.round(Number(entry.calories))} kcal</span>
+                  <span className="shrink-0">
+                    {Math.round(Number(entry.calories))} kcal
+                  </span>
                 </li>
               ))}
             </ul>
