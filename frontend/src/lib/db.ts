@@ -35,6 +35,9 @@ export async function getDb() {
         logged_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
+
+      INSERT OR IGNORE INTO users (id, email, name, provider)
+      VALUES (1, 'guest@gizikost.local', 'Tamu (Guest)', 'guest');
     `);
   }
   return db;

@@ -119,14 +119,13 @@ const groqAdapter = {
 
     const result = await groq.chat.completions.create({
       model:
-        process.env.GROQ_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct",
+        process.env.GROQ_MODEL || "llama-3.2-11b-vision-preview",
       messages: [
         {
           role: "user",
           content: content,
         },
       ],
-      response_format: { type: "json_object" },
     });
 
     const parsed = cleanJson(result.choices[0]?.message?.content || "{}");
@@ -134,7 +133,7 @@ const groqAdapter = {
     parsed.metadata = {
       provider: "Groq",
       model:
-        process.env.GROQ_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct",
+        process.env.GROQ_MODEL || "llama-3.2-11b-vision-preview",
       usage: result.usage
         ? {
             promptTokens: result.usage.prompt_tokens || 0,
@@ -176,21 +175,20 @@ const mistralAdapter = {
     }
 
     const result = await client.chat.completions.create({
-      model: process.env.MISTRAL_MODEL || "mistral-small-latest",
+      model: process.env.MISTRAL_MODEL || "pixtral-12b-2409",
       messages: [
         {
           role: "user",
           content: content,
         },
       ],
-      response_format: { type: "json_object" },
     });
 
     const parsed = cleanJson(result.choices[0]?.message?.content || "{}");
 
     parsed.metadata = {
       provider: "Mistral",
-      model: process.env.MISTRAL_MODEL || "mistral-small-latest",
+      model: process.env.MISTRAL_MODEL || "pixtral-12b-2409",
       usage: result.usage
         ? {
             promptTokens: result.usage.prompt_tokens || 0,
@@ -239,7 +237,6 @@ const openrouterAdapter = {
           content: content,
         },
       ],
-      response_format: { type: "json_object" },
     });
 
     const parsed = cleanJson(result.choices[0]?.message?.content || "{}");
@@ -261,10 +258,34 @@ const openrouterAdapter = {
 };
 
 const AI_PROVIDERS = [
-  { name: "gemini", adapter: geminiAdapter, dailyLimit: 1500, used: 0 },
-  { name: "groq", adapter: groqAdapter, dailyLimit: 1000, used: 0 },
-  { name: "mistral", adapter: mistralAdapter, dailyLimit: 500, used: 0 },
-  { name: "openrouter", adapter: openrouterAdapter, dailyLimit: 500, used: 0 },
+  {
+    name: "gemini",
+    adapter: geminiAdapter,
+    dailyLimit: 1500,
+    used: 0,
+    isAvailable: () => Boolean(process.env.GEMINI_API_KEY),
+  },
+  {
+    name: "groq",
+    adapter: groqAdapter,
+    dailyLimit: 1000,
+    used: 0,
+    isAvailable: () => Boolean(process.env.GROQ_API_KEY),
+  },
+  {
+    name: "mistral",
+    adapter: mistralAdapter,
+    dailyLimit: 500,
+    used: 0,
+    isAvailable: () => Boolean(process.env.MISTRAL_API_KEY),
+  },
+  {
+    name: "openrouter",
+    adapter: openrouterAdapter,
+    dailyLimit: 500,
+    used: 0,
+    isAvailable: () => Boolean(process.env.OPENROUTER_API_KEY),
+  },
 ];
 
 let currentIndex = 0;
@@ -272,15 +293,22 @@ let currentIndex = 0;
 export async function analyzeFood(
   input: AnalyzeInput,
 ): Promise<FoodAnalysisResult> {
-  const maxRetries = AI_PROVIDERS.length;
+  const availableProviders = AI_PROVIDERS.filter(
+    (p) => p.isAvailable() && p.used < p.dailyLimit,
+  );
+
+  if (availableProviders.length === 0) {
+    throw new Error(
+      "Tidak ada AI provider yang tersedia atau API Key belum dikonfigurasi.",
+    );
+  }
+
   let lastError: unknown = null;
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    const provider = AI_PROVIDERS[currentIndex % AI_PROVIDERS.length];
+  for (let attempt = 0; attempt < availableProviders.length; attempt++) {
+    const provider =
+      availableProviders[currentIndex % availableProviders.length];
     currentIndex++;
-
-    // Skip if provider has reached daily limit
-    if (provider.used >= provider.dailyLimit) continue;
 
     try {
       console.log(`[AI Load Balancer] Using provider: ${provider.name}`);
@@ -300,6 +328,6 @@ export async function analyzeFood(
   const errorMessage =
     lastError instanceof Error ? lastError.message : "Unknown error";
   throw new Error(
-    `Semua AI provider sedang tidak tersedia. Last error: ${errorMessage}`,
+    `Semua AI provider yang tersedia gagal memproses permintaan. Last error: ${errorMessage}`,
   );
 }

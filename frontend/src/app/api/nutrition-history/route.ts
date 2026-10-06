@@ -31,11 +31,8 @@ const historySchema = z.object({
 export async function GET() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user || !session.user.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const userId = session.user.id;
+  // Bypass auth for now, use guest user ID 1
+  const userId = session?.user?.id || 1;
 
   try {
     const db = await getDb();
@@ -67,11 +64,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user || !session.user.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const userId = session.user.id;
+  // Bypass auth for now, use guest user ID 1
+  const userId = session?.user?.id || 1;
 
   let body: unknown;
   try {

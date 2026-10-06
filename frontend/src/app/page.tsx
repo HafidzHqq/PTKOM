@@ -90,34 +90,49 @@ export default function Home() {
     }
   };
 
+  const displayUser = user || {
+    name: "Tamu (Guest)",
+    email: "guest@gizikost.local",
+    image: null
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 p-8 font-sans text-gray-900">
       <div className="mx-auto max-w-3xl space-y-8">
         {/* Header with User Info */}
         <div className="flex items-center justify-between rounded-xl bg-white p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            {user?.image ? (
+            {displayUser.image ? (
               <img
-                src={user.image}
+                src={displayUser.image}
                 alt="Avatar"
                 className="h-10 w-10 rounded-full"
               />
             ) : (
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-700">
-                {user?.email?.[0].toUpperCase() || "U"}
+                {displayUser.email?.[0].toUpperCase() || "U"}
               </div>
             )}
             <div>
-              <p className="font-medium">{user?.name || user?.email}</p>
+              <p className="font-medium">{displayUser.name || displayUser.email}</p>
               <p className="text-xs text-gray-500">Siap menganalisis makanan!</p>
             </div>
           </div>
-          <button
-            onClick={signOut}
-            className="rounded-md border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-          >
-            Keluar
-          </button>
+          {user ? (
+            <button
+              onClick={signOut}
+              className="rounded-md border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Keluar
+            </button>
+          ) : (
+            <a
+              href="/login"
+              className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-100"
+            >
+              Login
+            </a>
+          )}
         </div>
 
         <header className="space-y-2 text-center">
