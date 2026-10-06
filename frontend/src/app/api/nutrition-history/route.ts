@@ -24,6 +24,20 @@ const historySchema = z.object({
     carbs_g: z.number().nonnegative(),
     fiber_g: z.number().nonnegative(),
   }),
+  health_notes: z.array(z.string()).default([]),
+  metadata: z
+    .object({
+      provider: z.string(),
+      model: z.string(),
+      usage: z
+        .object({
+          promptTokens: z.number(),
+          completionTokens: z.number(),
+          totalTokens: z.number(),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 export async function GET() {
@@ -40,7 +54,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from("nutrition_history")
     .select(
-      "id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at",
+      "id, foods, analysis_result, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at",
     )
     .eq("user_id", user.id)
     .gte("logged_at", since)
@@ -89,10 +103,11 @@ export async function POST(request: NextRequest) {
     .insert({
       user_id: user.id,
       foods: nutrition.foods,
+      analysis_result: nutrition,
       ...nutrition.total_nutrition,
     })
     .select(
-      "id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at",
+      "id, foods, analysis_result, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at",
     )
     .single();
 

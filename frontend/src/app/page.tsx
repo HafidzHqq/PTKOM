@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FoodAnalysisResult } from "@/lib/ai";
 import LogoutButton from "@/components/logout-button";
 import NutritionHistory from "@/components/nutrition-history";
+import NutritionRecommendations from "@/components/nutrition-recommendations";
 
 export default function Home() {
   // const [image, setImage] = useState<File | null>(null);
@@ -90,6 +91,7 @@ export default function Home() {
           </p>
         </header>
 
+        <NutritionRecommendations refreshKey={historyRefreshKey} />
         <NutritionHistory refreshKey={historyRefreshKey} />
 
         <section className="space-y-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">

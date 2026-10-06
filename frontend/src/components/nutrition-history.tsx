@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 interface NutritionHistoryEntry {
   id: string;
   foods: { name: string }[];
+  analysis_result?: {
+    health_notes?: string[];
+    metadata?: { provider: string; model: string };
+  };
   calories: number;
   protein_g: number;
   fat_g: number;
@@ -125,15 +129,27 @@ export default function NutritionHistory({ refreshKey }: { refreshKey: number })
             </p>
             <ul className="mt-2 space-y-1 text-sm text-gray-500">
               {day.entries.map((entry) => (
-                <li key={entry.id} className="flex justify-between gap-4">
-                  <span className="truncate">
-                    {new Date(entry.logged_at).toLocaleTimeString("id-ID", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}{" "}
-                    · {entry.foods.map((food) => food.name).join(", ")}
-                  </span>
-                  <span className="shrink-0">{Math.round(Number(entry.calories))} kcal</span>
+                <li key={entry.id}>
+                  <div className="flex justify-between gap-4">
+                    <span className="truncate">
+                      {new Date(entry.logged_at).toLocaleTimeString("id-ID", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      · {entry.foods.map((food) => food.name).join(", ")}
+                    </span>
+                    <span className="shrink-0">{Math.round(Number(entry.calories))} kcal</span>
+                  </div>
+                  {entry.analysis_result?.health_notes?.length ? (
+                    <p className="mt-1 text-xs text-gray-500">
+                      Catatan AI: {entry.analysis_result.health_notes.join(" ")}
+                    </p>
+                  ) : null}
+                  {entry.analysis_result?.metadata && (
+                    <p className="mt-1 text-xs text-gray-400">
+                      {entry.analysis_result.metadata.provider} · {entry.analysis_result.metadata.model}
+                    </p>
+                  )}
                 </li>
               ))}
             </ul>

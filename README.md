@@ -200,7 +200,9 @@ NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 
 #### Riwayat Gizi Harian
 
-Jalankan `supabase/migrations/00002_nutrition_history.sql` melalui Supabase SQL Editor setelah skema awal tersedia. Migrasi ini membuat penyimpanan hasil scan per akun dan mengaktifkan kebijakan RLS; setiap analisis baru akan tersimpan otomatis dan ditampilkan sebagai total harian untuk 7 hari terakhir.
+Jalankan `supabase/migrations/00002_nutrition_history.sql` dan `00003_store_ai_analysis.sql` melalui Supabase SQL Editor setelah skema awal tersedia. Migrasi ini menyimpan hasil scan AI per akun dan mengaktifkan kebijakan RLS; riwayat harian menampilkan total nutrisi serta catatan AI.
+
+Untuk rekomendasi, jalankan backend FastAPI dan pastikan `NEXT_PUBLIC_BACKEND_URL` menunjuk ke backend tersebut. Panel rekomendasi menghitung asupan dari semua scan hari ini, lalu memakai engine lokal makanan. Target bawaan saat ini 2.000 kcal, protein 60 g, lemak 65 g, karbohidrat 300 g, dan serat 30 g; personalisasi target mengikuti fitur profil bila sudah tersedia.
 
 ---
 
