@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PTKOM",
-  description: "PTKOM App",
+  title: "GiziKost - Analisis Nutrisi Makanan",
+  description: "Analisis nutrisi makanan kamu dengan AI",
 };
 
 export default function RootLayout({
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
