@@ -55,6 +55,6 @@ class BaseAIProvider(ABC):
     name: str = "base"
 
     @abstractmethod
-    async def analyze(self, image_base64: str) -> dict:
-        """Analyze a food image and return nutrition data as dict."""
+    async def analyze(self, image_base64: str = None, text: str = None) -> dict:
+        """Analyze a food image or text and return nutrition data as dict."""
         ...

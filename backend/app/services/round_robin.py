@@ -49,8 +49,8 @@ class AILoadBalancer:
         for p in self._providers:
             self._daily_usage[p.name] = 0
 
-    async def analyze_food(self, image_base64: str) -> FoodAnalysisResult:
-        """Analyze food image using round-robin AI providers with failover."""
+    async def analyze_food(self, image_base64: Optional[str] = None, text: Optional[str] = None) -> FoodAnalysisResult:
+        """Analyze food image or text using round-robin AI providers with failover."""
         if not self._providers:
             raise RuntimeError("No AI providers configured. Set API keys in .env")
 
@@ -69,7 +69,10 @@ class AILoadBalancer:
 
             try:
                 logger.info(f"[Load Balancer] Using provider: {provider.name}")
-                result_dict = await provider.analyze(image_base64)
+                if image_base64:
+                    result_dict = await provider.analyze(image_base64=image_base64)
+                else:
+                    result_dict = await provider.analyze(text=text)
                 self._daily_usage[provider.name] = (
                     self._daily_usage.get(provider.name, 0) + 1
                 )

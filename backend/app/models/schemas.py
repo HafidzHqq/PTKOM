@@ -51,7 +51,8 @@ class FoodAnalysisResult(BaseModel):
 # ── Requests ───────────────────────────────────────────────
 
 class AnalyzeFoodRequest(BaseModel):
-    image_base64: str = Field(..., min_length=1, description="Base64 encoded food image")
+    image_base64: Optional[str] = Field(None, description="Base64 encoded food image")
+    text: Optional[str] = Field(None, description="Text description of the food")
 
 
 class BMRRequest(BaseModel):

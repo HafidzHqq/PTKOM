@@ -16,23 +16,26 @@ class GroqProvider(BaseAIProvider):
         self.api_key = api_key
         self.model_name = model_name
 
-    async def analyze(self, image_base64: str) -> dict:
+    async def analyze(self, image_base64: str = None, text: str = None) -> dict:
         client = AsyncGroq(api_key=self.api_key)
+
+        content = [{"type": "text", "text": UNIFIED_PROMPT}]
+        if image_base64:
+            content.append({
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{image_base64}"
+                },
+            })
+        if text:
+            content.append({"type": "text", "text": f"Makanan yang diinput: {text}"})
 
         result = await client.chat.completions.create(
             model=self.model_name,
             messages=[
                 {
                     "role": "user",
-                    "content": [
-                        {"type": "text", "text": UNIFIED_PROMPT},
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{image_base64}"
-                            },
-                        },
-                    ],
+                    "content": content,
                 }
             ],
             response_format={"type": "json_object"},

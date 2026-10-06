@@ -9,20 +9,26 @@ router = APIRouter()
 
 @router.post("/analyze-food")
 async def analyze_food(request: AnalyzeFoodRequest):
-    """Analyze food photo using round-robin AI providers.
+    """Analyze food photo or text using round-robin AI providers.
 
-    Accepts a base64-encoded image, sends it to an AI provider,
+    Accepts a base64-encoded image or text, sends it to an AI provider,
     and returns nutritional analysis.
     Ref: PRD §5.1
     """
     try:
-        # Strip data URL prefix if present
-        image = request.image_base64
-        if "," in image:
-            image = image.split(",", 1)[1]
+        if not request.image_base64 and not request.text:
+            raise HTTPException(status_code=400, detail="Either image_base64 or text must be provided")
 
         lb = get_load_balancer()
-        result = await lb.analyze_food(image)
+        
+        if request.image_base64:
+            # Strip data URL prefix if present
+            image = request.image_base64
+            if "," in image:
+                image = image.split(",", 1)[1]
+            result = await lb.analyze_food(image_base64=image)
+        else:
+            result = await lb.analyze_food(text=request.text)
 
         return {
             "success": True,

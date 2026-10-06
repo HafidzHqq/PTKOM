@@ -19,18 +19,18 @@ class GeminiProvider(BaseAIProvider):
         self.client = genai.Client(api_key=api_key)
         self.model_name = model_name
 
-    async def analyze(self, image_base64: str) -> dict:
-        image_bytes = base64.b64decode(image_base64)
+    async def analyze(self, image_base64: str = None, text: str = None) -> dict:
+        parts = [types.Part.from_text(text=UNIFIED_PROMPT)]
+        
+        if image_base64:
+            image_bytes = base64.b64decode(image_base64)
+            parts.append(types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"))
+        
+        if text:
+            parts.append(types.Part.from_text(text=f"Makanan yang diinput: {text}"))
 
         response = await self.client.aio.models.generate_content(
             model=self.model_name,
-            contents=[
-                types.Content(
-                    parts=[
-                        types.Part.from_text(text=UNIFIED_PROMPT),
-                        types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
-                    ]
-                )
-            ],
+            contents=[types.Content(parts=parts)],
         )
         return clean_json(response.text)
