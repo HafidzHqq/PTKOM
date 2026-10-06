@@ -1,8 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import Groq from "groq-sdk";
-import OpenAI from "openai";
-import { RECOMMENDATION_PROMPT } from "./prompts";
-
 export interface RecommendationResult {
   deficiency: {
     calories: number;
@@ -13,6 +8,7 @@ export interface RecommendationResult {
   };
   recommendations: {
     food_name: string;
+    estimated_price_idr: number;
     estimated_nutrition: {
       calories: number;
       protein_g: number;
@@ -29,77 +25,31 @@ export interface RecommendationResult {
   };
 }
 
-const cleanJson = (str: string) => {
-  const start = str.indexOf("{");
-  const end = str.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("Invalid JSON response");
-  return JSON.parse(str.substring(start, end + 1));
-};
+const FOOD_DATABASE = [
+  { name: "Pecel Lele + Nasi", price: 15000, nutrition: { calories: 450, protein_g: 25, fat_g: 20, carbs_g: 40, fiber_g: 3 } },
+  { name: "Gado-Gado", price: 12000, nutrition: { calories: 300, protein_g: 12, fat_g: 15, carbs_g: 35, fiber_g: 8 } },
+  { name: "Dada Ayam Bakar + Nasi", price: 18000, nutrition: { calories: 350, protein_g: 30, fat_g: 8, carbs_g: 40, fiber_g: 2 } },
+  { name: "Soto Ayam + Nasi", price: 15000, nutrition: { calories: 400, protein_g: 20, fat_g: 12, carbs_g: 50, fiber_g: 2 } },
+  { name: "Nasi Padang (Rendang)", price: 20000, nutrition: { calories: 600, protein_g: 25, fat_g: 30, carbs_g: 60, fiber_g: 4 } },
+  { name: "Nasi Padang (Ayam Pop)", price: 18000, nutrition: { calories: 500, protein_g: 22, fat_g: 20, carbs_g: 55, fiber_g: 3 } },
+  { name: "Ketoprak", price: 13000, nutrition: { calories: 450, protein_g: 15, fat_g: 20, carbs_g: 55, fiber_g: 6 } },
+  { name: "Sate Ayam (10 tusuk) + Lontong", price: 20000, nutrition: { calories: 500, protein_g: 28, fat_g: 22, carbs_g: 45, fiber_g: 3 } },
+  { name: "Sayur Sop + Tempe Goreng", price: 10000, nutrition: { calories: 250, protein_g: 12, fat_g: 10, carbs_g: 25, fiber_g: 5 } },
+  { name: "Telur Rebus (2 butir)", price: 6000, nutrition: { calories: 140, protein_g: 12, fat_g: 10, carbs_g: 1, fiber_g: 0 } },
+  { name: "Buah Pisang (2 buah)", price: 5000, nutrition: { calories: 180, protein_g: 2, fat_g: 0, carbs_g: 46, fiber_g: 6 } },
+  { name: "Tahu & Tempe Bacem", price: 5000, nutrition: { calories: 180, protein_g: 12, fat_g: 6, carbs_g: 18, fiber_g: 3 } },
+  { name: "Nasi Goreng Telur", price: 13000, nutrition: { calories: 500, protein_g: 12, fat_g: 20, carbs_g: 65, fiber_g: 2 } },
+  { name: "Mie Ayam", price: 12000, nutrition: { calories: 400, protein_g: 15, fat_g: 15, carbs_g: 50, fiber_g: 3 } },
+  { name: "Bubur Ayam", price: 10000, nutrition: { calories: 300, protein_g: 12, fat_g: 8, carbs_g: 45, fiber_g: 2 } },
+  { name: "Omelet Sayur", price: 8000, nutrition: { calories: 200, protein_g: 14, fat_g: 12, carbs_g: 5, fiber_g: 3 } },
+  { name: "Tumis Kangkung + Nasi", price: 10000, nutrition: { calories: 250, protein_g: 6, fat_g: 5, carbs_g: 45, fiber_g: 6 } },
+  { name: "Ikan Nila Bakar + Nasi", price: 22000, nutrition: { calories: 400, protein_g: 35, fat_g: 10, carbs_g: 40, fiber_g: 2 } },
+];
 
 export async function getRecommendations(
   target: Record<string, number>,
   consumed: Record<string, number>
 ): Promise<RecommendationResult> {
-  const prompt = `${RECOMMENDATION_PROMPT}\n\nTarget Harian:\n${JSON.stringify(target, null, 2)}\n\nSudah Dikonsumsi Hari Ini:\n${JSON.stringify(consumed, null, 2)}`;
-  const errors: string[] = [];
-
-  // Try Gemini first
-  if (process.env.GEMINI_API_KEY) {
-    try {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-1.5-flash" });
-      const result = await model.generateContent(prompt);
-      const parsed = cleanJson(result.response.text());
-      parsed.metadata = { provider: "Gemini", model: process.env.GEMINI_MODEL || "gemini-1.5-flash" };
-      return parsed;
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      console.error("Gemini recommendation failed:", msg);
-      errors.push(`Gemini: ${msg}`);
-    }
-  }
-
-  // Try Groq
-  if (process.env.GROQ_API_KEY) {
-    try {
-      const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-      const result = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile", // Use text model for recommendations
-        messages: [{ role: "user", content: prompt }],
-        response_format: { type: "json_object" },
-      });
-      const parsed = cleanJson(result.choices[0]?.message?.content || "{}");
-      parsed.metadata = { provider: "Groq", model: "llama-3.3-70b-versatile" };
-      return parsed;
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      console.error("Groq recommendation failed:", msg);
-      errors.push(`Groq: ${msg}`);
-    }
-  }
-
-  // Try Mistral
-  if (process.env.MISTRAL_API_KEY) {
-    try {
-      const client = new OpenAI({ apiKey: process.env.MISTRAL_API_KEY, baseURL: "https://api.mistral.ai/v1" });
-      const result = await client.chat.completions.create({
-        model: "mistral-small-latest",
-        messages: [{ role: "user", content: prompt }],
-        response_format: { type: "json_object" },
-      });
-      const parsed = cleanJson(result.choices[0]?.message?.content || "{}");
-      parsed.metadata = { provider: "Mistral", model: "mistral-small-latest" };
-      return parsed;
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      console.error("Mistral recommendation failed:", msg);
-      errors.push(`Mistral: ${msg}`);
-    }
-  }
-
-  console.warn("Semua AI gagal, menggunakan rekomendasi cerdas lokal (fallback).");
-
-  // Fallback lokal berdasarkan kekurangan gizi
   const deficiency = {
     calories: Math.max(0, (target.calories || 2000) - (consumed.calories || 0)),
     protein_g: Math.max(0, (target.protein_g || 60) - (consumed.protein_g || 0)),
@@ -108,48 +58,77 @@ export async function getRecommendations(
     fiber_g: Math.max(0, (target.fiber_g || 25) - (consumed.fiber_g || 0)),
   };
 
-  const localRecs = [];
+  // Score each food based on how well it fills the deficiency without exceeding it too much
+  const scoredFoods = FOOD_DATABASE.map(food => {
+    let score = 0;
+    let reason = "";
 
-  if (deficiency.protein_g > 15) {
-    localRecs.push({
-      food_name: "Dada Ayam Bakar / Pecel Lele",
-      estimated_nutrition: { calories: 300, protein_g: 28, fat_g: 12, carbs_g: 0, fiber_g: 0 },
-      reason: "Tinggi protein untuk membantu menutupi kekurangan protein harian Anda."
-    });
-  }
+    // Protein is usually the most important to hit
+    if (deficiency.protein_g > 10 && food.nutrition.protein_g >= 15) {
+      score += 30;
+      reason = "Tinggi protein untuk membantu memenuhi target harian Anda.";
+    } else if (deficiency.protein_g > 5 && food.nutrition.protein_g >= 10) {
+      score += 15;
+      reason = "Sumber protein yang baik.";
+    }
 
-  if (deficiency.fiber_g > 5) {
-    localRecs.push({
-      food_name: "Gado-Gado / Sayur Bayam",
-      estimated_nutrition: { calories: 250, protein_g: 10, fat_g: 8, carbs_g: 35, fiber_g: 8 },
-      reason: "Kaya akan serat dan mikronutrien penting untuk pencernaan."
-    });
-  }
+    // Fiber is also important
+    if (deficiency.fiber_g > 5 && food.nutrition.fiber_g >= 5) {
+      score += 25;
+      reason = "Kaya serat untuk pencernaan dan memenuhi target serat Anda.";
+    }
 
-  if (deficiency.calories > 300) {
-    localRecs.push({
-      food_name: "Nasi Campur Warteg (Nasi + Tempe Orek + Telur)",
-      estimated_nutrition: { calories: 450, protein_g: 16, fat_g: 14, carbs_g: 65, fiber_g: 4 },
-      reason: "Pilihan seimbang dan terjangkau untuk memenuhi sisa kebutuhan energi/kalori."
-    });
-  }
+    // Penalize if it exceeds remaining calories significantly
+    if (food.nutrition.calories > deficiency.calories + 200) {
+      score -= 50; // Too many calories
+    } else if (food.nutrition.calories <= deficiency.calories) {
+      score += 10; // Fits well within calorie budget
+      if (!reason) reason = "Kalori pas untuk sisa kebutuhan energi Anda hari ini.";
+    }
 
-  // Jika sudah cukup atau list masih kurang dari 3
-  if (localRecs.length < 3) {
-    localRecs.push({
-      food_name: "Tahu & Tempe Bacem",
-      estimated_nutrition: { calories: 180, protein_g: 12, fat_g: 6, carbs_g: 18, fiber_g: 3 },
-      reason: "Camilan bernutrisi tinggi protein nabati yang ramah di kantong."
-    });
+    // Penalize if it exceeds remaining fat significantly
+    if (food.nutrition.fat_g > deficiency.fat_g + 10) {
+      score -= 20;
+    }
+
+    // Default reason if none matched
+    if (!reason) {
+      reason = "Pilihan seimbang untuk melengkapi nutrisi harian Anda.";
+    }
+
+    // Add some randomness to avoid always recommending the exact same things
+    score += Math.random() * 10;
+
+    return { ...food, score, reason };
+  });
+
+  // Sort by score descending
+  scoredFoods.sort((a, b) => b.score - a.score);
+
+  // Take top 3
+  const top3 = scoredFoods.slice(0, 3).map(food => ({
+    food_name: food.name,
+    estimated_price_idr: food.price,
+    estimated_nutrition: food.nutrition,
+    reason: food.reason
+  }));
+
+  let advice = "Kebutuhan gizi Anda hampir terpenuhi! Tetap jaga asupan air putih dan istirahat yang cukup.";
+  if (deficiency.protein_g > 20) {
+    advice = "Anda masih kekurangan cukup banyak protein hari ini. Prioritaskan lauk pauk seperti ayam, ikan, telur, atau tempe/tahu.";
+  } else if (deficiency.fiber_g > 10) {
+    advice = "Asupan serat Anda masih kurang. Jangan lupa tambahkan sayur-sayuran atau buah-buahan pada menu makan Anda.";
+  } else if (deficiency.calories > 800) {
+    advice = "Anda masih membutuhkan banyak kalori hari ini. Pastikan Anda tidak melewatkan waktu makan utama.";
   }
 
   return {
     deficiency,
-    recommendations: localRecs.slice(0, 3),
-    advice: "Kebutuhan gizi Anda hampir terpenuhi! Tetap jaga asupan air putih dan istirahat yang cukup.",
+    recommendations: top3,
+    advice,
     metadata: {
-      provider: "Local Rule-Based (Fallback)",
-      model: "gizi-local-v1"
+      provider: "Local Algorithm",
+      model: "gizi-local-v2"
     }
   };
 }

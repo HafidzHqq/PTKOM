@@ -80,6 +80,7 @@ Tugasmu:
 1. Hitung sisa kebutuhan gizi (kekurangan gizi) hari ini.
 2. Berikan 3 rekomendasi makanan/menu lokal Indonesia yang bisa memenuhi kekurangan gizi tersebut.
 3. Jelaskan alasan mengapa makanan tersebut direkomendasikan.
+4. Berikan perkiraan harga (dalam Rupiah) untuk porsi standar makanan tersebut di warung/tempat makan biasa.
 
 Respond WAJIB HANYA dalam format JSON (Output in JSON format) TANPA markdown backticks atau penjelasan tambahan, seperti contoh berikut:
 {
@@ -93,6 +94,7 @@ Respond WAJIB HANYA dalam format JSON (Output in JSON format) TANPA markdown bac
   "recommendations": [
     {
       "food_name": "Pecel Lele dengan Nasi Setengah",
+      "estimated_price_idr": 15000,
       "estimated_nutrition": {
         "calories": 450,
         "protein_g": 25,

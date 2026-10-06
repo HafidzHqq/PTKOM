@@ -146,7 +146,12 @@ export default function FoodRecommendations({ refreshKey }: { refreshKey?: numbe
                   className="flex flex-col justify-between rounded-lg border border-green-100 bg-green-50/50 p-4"
                 >
                   <div>
-                    <h4 className="font-bold text-green-900">{item.food_name}</h4>
+                    <div className="flex items-start justify-between">
+                      <h4 className="font-bold text-green-900">{item.food_name}</h4>
+                      <span className="whitespace-nowrap rounded-full bg-green-200 px-2 py-0.5 text-[10px] font-bold text-green-800">
+                        Rp {item.estimated_price_idr?.toLocaleString("id-ID") || "-"}
+                      </span>
+                    </div>
                     <p className="mt-1 text-xs text-gray-600">{item.reason}</p>
                   </div>
                   <div className="mt-4 border-t border-green-100 pt-2 text-[11px] text-gray-500">
