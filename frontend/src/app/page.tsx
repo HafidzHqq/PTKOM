@@ -145,7 +145,7 @@ export default function Home() {
             <LogoutButton />
           </div>
           <h1 className="text-4xl font-bold text-green-600">
-            🥗 GiziKost (Test UI)
+            🥗 Dompet Gizi (Test UI)
           </h1>
           <p className="text-gray-500">
             Upload foto makanan atau ketik nama makanan untuk dianalisis oleh AI

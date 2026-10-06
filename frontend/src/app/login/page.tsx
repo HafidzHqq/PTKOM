@@ -18,7 +18,7 @@ function LoginContent() {
         {/* Logo & Header */}
         <div className="space-y-3 text-center">
           <div className="text-6xl">🥗</div>
-          <h1 className="text-3xl font-bold text-gray-900">GiziKost</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Dompet Gizi</h1>
           <p className="text-gray-500">
             Analisis nutrisi makanan kamu dengan AI
           </p>

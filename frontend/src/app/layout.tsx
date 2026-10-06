@@ -3,7 +3,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "GiziKost - Analisis Nutrisi Makanan",
+  title: "Dompet Gizi - Analisis Nutrisi Makanan",
   description: "Analisis nutrisi makanan kamu dengan AI",
 };
 
