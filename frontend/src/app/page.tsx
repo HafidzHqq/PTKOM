@@ -5,6 +5,7 @@ import { FoodAnalysisResult } from "@/lib/ai";
 import { useAuth } from "@/context/AuthContext";
 import LogoutButton from "@/components/logout-button";
 import NutritionHistory from "@/components/nutrition-history";
+import FoodRecommendations from "@/components/food-recommendations";
 
 export default function Home() {
   const { user, signOut } = useAuth();
@@ -146,6 +147,8 @@ export default function Home() {
             Upload foto makanan atau ketik nama makanan untuk dianalisis oleh AI Round-Robin.
           </p>
         </header>
+
+        <FoodRecommendations refreshKey={historyRefreshKey} />
 
         <NutritionHistory refreshKey={historyRefreshKey} />
 
