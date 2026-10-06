@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import Groq from "groq-sdk";
 import OpenAI from "openai"; // For OpenRouter and Mistral if using openai compatibility
 import { UNIFIED_PROMPT, TEXT_PROMPT } from "./prompts";
@@ -57,7 +57,7 @@ const geminiAdapter = {
       model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
     });
 
-    let content: Array<string | Record<string, unknown>>;
+    let content: Array<string | Part>;
     if (input.imageBase64) {
       content = [
         UNIFIED_PROMPT,

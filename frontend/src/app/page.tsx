@@ -96,9 +96,9 @@ export default function Home() {
         {/* Header with User Info */}
         <div className="flex items-center justify-between rounded-xl bg-white p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            {user?.user_metadata?.avatar_url ? (
+            {user?.image ? (
               <img
-                src={user.user_metadata.avatar_url}
+                src={user.image}
                 alt="Avatar"
                 className="h-10 w-10 rounded-full"
               />
@@ -108,7 +108,7 @@ export default function Home() {
               </div>
             )}
             <div>
-              <p className="font-medium">{user?.user_metadata?.full_name || user?.email}</p>
+              <p className="font-medium">{user?.name || user?.email}</p>
               <p className="text-xs text-gray-500">Siap menganalisis makanan!</p>
             </div>
           </div>

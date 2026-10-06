@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { getDb } from "@/lib/db";
 
 const foodSchema = z.object({
   name: z.string().min(1),
@@ -27,46 +29,49 @@ const historySchema = z.object({
 });
 
 export async function GET() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getServerSession(authOptions);
 
-  if (!user) {
+  if (!session?.user || !session.user.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const { data, error } = await supabase
-    .from("nutrition_history")
-    .select(
-      "id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at",
-    )
-    .eq("user_id", user.id)
-    .gte("logged_at", since)
-    .order("logged_at", { ascending: false })
-    .limit(100);
+  const userId = session.user.id;
 
-  if (error) {
+  try {
+    const db = await getDb();
+    const rows = await db.all(
+      `SELECT id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at 
+       FROM nutrition_history 
+       WHERE user_id = ? AND logged_at >= datetime('now', '-7 days')
+       ORDER BY logged_at DESC 
+       LIMIT 100`,
+      [userId]
+    );
+
+    // Parse JSON string back to object for foods
+    const data = rows.map(row => ({
+      ...row,
+      foods: typeof row.foods === 'string' ? JSON.parse(row.foods) : row.foods
+    }));
+
+    return NextResponse.json(data);
+  } catch (error) {
     console.error("[GET /api/nutrition-history] Error:", error);
     return NextResponse.json(
       { error: "Gagal memuat riwayat gizi" },
       { status: 500 },
     );
   }
-
-  return NextResponse.json(data);
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getServerSession(authOptions);
 
-  if (!user) {
+  if (!session?.user || !session.user.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const userId = session.user.id;
 
   let body: unknown;
   try {
@@ -84,25 +89,44 @@ export async function POST(request: NextRequest) {
   }
 
   const { data: nutrition } = parsed;
-  const { data, error } = await supabase
-    .from("nutrition_history")
-    .insert({
-      user_id: user.id,
-      foods: nutrition.foods,
-      ...nutrition.total_nutrition,
-    })
-    .select(
-      "id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at",
-    )
-    .single();
+  
+  try {
+    const db = await getDb();
+    const result = await db.run(
+      `INSERT INTO nutrition_history 
+       (user_id, foods, calories, protein_g, fat_g, carbs_g, fiber_g) 
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        userId,
+        JSON.stringify(nutrition.foods),
+        nutrition.total_nutrition.calories,
+        nutrition.total_nutrition.protein_g,
+        nutrition.total_nutrition.fat_g,
+        nutrition.total_nutrition.carbs_g,
+        nutrition.total_nutrition.fiber_g
+      ]
+    );
 
-  if (error) {
+    const insertId = result.lastID;
+
+    const row = await db.get(
+      `SELECT id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at 
+       FROM nutrition_history 
+       WHERE id = ?`,
+      [insertId]
+    );
+
+    const data = {
+      ...row,
+      foods: typeof row.foods === 'string' ? JSON.parse(row.foods) : row.foods
+    };
+
+    return NextResponse.json(data, { status: 201 });
+  } catch (error) {
     console.error("[POST /api/nutrition-history] Error:", error);
     return NextResponse.json(
       { error: "Gagal menyimpan riwayat gizi" },
       { status: 500 },
     );
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

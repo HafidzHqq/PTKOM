@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeFood } from "@/lib/ai";
-import { createClient } from "@/lib/supabase/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import { z } from "zod";
 
 export const maxDuration = 60; // Limit execution to 60s for Vercel Hobby
@@ -13,12 +14,9 @@ const requestSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getServerSession(authOptions);
 
-  if (!user) {
+  if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
