@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🥗 GiziKost
+# 🥗 DOMPET GIZI
 
 ### Asisten Gizi Cerdas untuk Anak Kost 💡
 
