@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { FoodAnalysisResult } from "@/lib/ai";
 import { useAuth } from "@/context/AuthContext";
+import LogoutButton from "@/components/logout-button";
+import NutritionHistory from "@/components/nutrition-history";
 
 export default function Home() {
   const { user, signOut } = useAuth();
@@ -11,6 +13,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<FoodAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [historySaveError, setHistorySaveError] = useState<string | null>(null);
+  const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -30,6 +34,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setHistorySaveError(null);
 
     try {
       const response = await fetch("/api/analyze-food", {
@@ -45,6 +50,26 @@ export default function Home() {
       }
 
       setResult(data);
+      try {
+        const saveResponse = await fetch("/api/nutrition-history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!saveResponse.ok) {
+          const saveData = await saveResponse.json();
+          setHistorySaveError(
+            saveData.error || "Hasil analisis tidak berhasil disimpan.",
+          );
+        } else {
+          setHistoryRefreshKey((key) => key + 1);
+        }
+      } catch {
+        setHistorySaveError(
+          "Koneksi gagal. Hasil analisis belum masuk ke riwayat.",
+        );
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Terjadi kesalahan");
     } finally {
@@ -83,6 +108,9 @@ export default function Home() {
         </div>
 
         <header className="space-y-2 text-center">
+          <div className="flex justify-end">
+            <LogoutButton />
+          </div>
           <h1 className="text-4xl font-bold text-green-600">
             🥗 GiziKost (Test UI)
           </h1>
@@ -90,6 +118,8 @@ export default function Home() {
             Upload foto makanan untuk dianalisis oleh AI Round-Robin.
           </p>
         </header>
+
+        <NutritionHistory refreshKey={historyRefreshKey} />
 
         <section className="space-y-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
           <div className="space-y-4">
@@ -131,6 +161,12 @@ export default function Home() {
         {error && (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
             <strong>Error:</strong> {error}
+          </div>
+        )}
+
+        {historySaveError && (
+          <div role="alert" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
+            Analisis berhasil, tetapi riwayat belum tersimpan: {historySaveError}
           </div>
         )}
 
