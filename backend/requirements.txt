@@ -1,9 +1,0 @@
-fastapi[standard]
-uvicorn[standard]
-python-dotenv
-httpx
-google-genai
-groq
-openai
-python-multipart
-pydantic-settings

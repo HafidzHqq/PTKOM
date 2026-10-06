@@ -46,8 +46,9 @@ venv/
 env/
 .env
 
-# Monorepo node_modules
-frontend/node_modules/
+# local db
+local.db
+local.db-journal
 backend/node_modules/
 
 # Frontend build files

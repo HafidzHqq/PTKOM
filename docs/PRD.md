@@ -602,7 +602,7 @@ Rate Limit: 1.000 request/jam
 Penggunaan:
 - Lookup data gizi generic food (nasi, telur, daging, dll)
 - Data lebih akurat & ilmiah sebagai fallback
-```
+```![alt text](image.png)
 
 ### 13.4 Supabase (Auth + Database + Storage)
 
