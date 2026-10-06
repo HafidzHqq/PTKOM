@@ -191,6 +191,17 @@ MISTRAL_MODEL="mistral-small-latest"
 NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 ```
 
+#### Mengaktifkan Login Google
+
+1. Di Supabase Dashboard, buka **Authentication → Providers → Google** dan aktifkan provider dengan OAuth Client ID dan Client Secret dari Google Cloud Console.
+2. Salin callback URI yang ditampilkan Supabase (format `https://<project-ref>.supabase.co/auth/v1/callback`) ke **Authorized redirect URIs** pada OAuth Client di Google Cloud Console.
+3. Di **Authentication → URL Configuration** Supabase, tambahkan `http://localhost:3000/auth/callback` ke daftar redirect URLs. Untuk produksi, tambahkan juga callback URL pada domain HTTPS aplikasi.
+4. Buka aplikasi dan pilih **Lanjutkan dengan Google**. Halaman utama dan endpoint analisis hanya dapat digunakan setelah login.
+
+#### Riwayat Gizi Harian
+
+Jalankan `supabase/migrations/00002_nutrition_history.sql` melalui Supabase SQL Editor setelah skema awal tersedia. Migrasi ini membuat penyimpanan hasil scan per akun dan mengaktifkan kebijakan RLS; setiap analisis baru akan tersimpan otomatis dan ditampilkan sebagai total harian untuk 7 hari terakhir.
+
 ---
 
 ## 📁 Struktur Proyek
