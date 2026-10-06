@@ -12,7 +12,7 @@ LOCAL_FOODS = [
     # MAKANAN POKOK — Nasi, Mie, Roti
     # ═══════════════════════════════════════════════════════════
     {
-        "name": "Nasi Putih (1 porsi warteg)",
+        "name": "Nasi Putih",
         "category": "pokok",
         "avg_price_idr": 3000,
         "calories": 260,
@@ -36,7 +36,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nasi Kucing (1 bungkus)",
+        "name": "Nasi Kucing",
         "category": "pokok",
         "avg_price_idr": 3000,
         "calories": 180,
@@ -48,7 +48,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Lontong / Ketupat (2 buah)",
+        "name": "Lontong",
         "category": "pokok",
         "avg_price_idr": 4000,
         "calories": 180,
@@ -60,7 +60,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Mie Instan Goreng (masak sendiri)",
+        "name": "Mie Instan Goreng",
         "category": "pokok",
         "avg_price_idr": 3500,
         "calories": 380,
@@ -72,7 +72,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Mie Instan Kuah (masak sendiri)",
+        "name": "Mie Instan Kuah",
         "category": "pokok",
         "avg_price_idr": 3500,
         "calories": 350,
@@ -84,7 +84,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Indomie Goreng + Telur (burjo)",
+        "name": "Indomie Goreng Telur",
         "category": "pokok",
         "avg_price_idr": 8000,
         "calories": 530,
@@ -96,7 +96,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Indomie Kuah + Telur (burjo)",
+        "name": "Indomie Kuah Telur",
         "category": "pokok",
         "avg_price_idr": 8000,
         "calories": 500,
@@ -108,7 +108,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Indomie Double (burjo)",
+        "name": "Indomie Double",
         "category": "pokok",
         "avg_price_idr": 10000,
         "calories": 760,
@@ -120,7 +120,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Roti Tawar + Selai Kacang (2 lembar)",
+        "name": "Roti Selai Kacang",
         "category": "pokok",
         "avg_price_idr": 3000,
         "calories": 250,
@@ -132,7 +132,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Roti Bakar Coklat Keju ",
+        "name": "Roti Bakar Coklat Keju",
         "category": "pokok",
         "avg_price_idr": 8000,
         "calories": 320,
@@ -160,7 +160,7 @@ LOCAL_FOODS = [
     # LAUK — Protein Nabati (Tempe, Tahu)
     # ═══════════════════════════════════════════════════════════
     {
-        "name": "Tempe Goreng Tepung (2 potong)",
+        "name": "Tempe Goreng",
         "category": "lauk",
         "avg_price_idr": 3000,
         "calories": 200,
@@ -172,7 +172,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Tempe Bacem (2 potong)",
+        "name": "Tempe Bacem",
         "category": "lauk",
         "avg_price_idr": 3000,
         "calories": 180,
@@ -184,7 +184,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Tempe Orek Kering (1 porsi)",
+        "name": "Tempe Orek",
         "category": "lauk",
         "avg_price_idr": 3000,
         "calories": 190,
@@ -196,7 +196,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Tempe Mendoan (3 potong)",
+        "name": "Tempe Mendoan",
         "category": "lauk",
         "avg_price_idr": 5000,
         "calories": 250,
@@ -208,7 +208,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Tahu Goreng Krispi (3 buah)",
+        "name": "Tahu Goreng",
         "category": "lauk",
         "avg_price_idr": 3000,
         "calories": 170,
@@ -220,7 +220,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Tahu Bacem (2 buah)",
+        "name": "Tahu Bacem",
         "category": "lauk",
         "avg_price_idr": 3000,
         "calories": 150,
@@ -232,7 +232,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Tahu Isi / Tahu Bulat (3 buah)",
+        "name": "Tahu Isi",
         "category": "lauk",
         "avg_price_idr": 5000,
         "calories": 210,
@@ -248,7 +248,7 @@ LOCAL_FOODS = [
     # LAUK — Telur (Andalan Anak Kost)
     # ═══════════════════════════════════════════════════════════
     {
-        "name": "Telur Dadar Warteg",
+        "name": "Telur Dadar",
         "category": "lauk",
         "avg_price_idr": 4000,
         "calories": 160,
@@ -260,7 +260,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Telur Ceplok / Mata Sapi",
+        "name": "Telur Ceplok",
         "category": "lauk",
         "avg_price_idr": 4000,
         "calories": 145,
@@ -272,7 +272,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Telur Balado (1 butir)",
+        "name": "Telur Balado",
         "category": "lauk",
         "avg_price_idr": 4000,
         "calories": 150,
@@ -284,7 +284,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Telur Rebus (2 butir, masak sendiri)",
+        "name": "Telur Rebus",
         "category": "lauk",
         "avg_price_idr": 4000,
         "calories": 155,
@@ -296,7 +296,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Orak-arik Telur (masak sendiri)",
+        "name": "Orak-arik Telur",
         "category": "lauk",
         "avg_price_idr": 3000,
         "calories": 170,
@@ -312,7 +312,7 @@ LOCAL_FOODS = [
     # LAUK — Ayam, Ikan, Daging
     # ═══════════════════════════════════════════════════════════
     {
-        "name": "Ayam Goreng Warteg (1 potong)",
+        "name": "Ayam Goreng",
         "category": "lauk",
         "avg_price_idr": 10000,
         "calories": 290,
@@ -324,7 +324,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Ayam Suwir Pedas (1 porsi)",
+        "name": "Ayam Suwir Pedas",
         "category": "lauk",
         "avg_price_idr": 7000,
         "calories": 180,
@@ -336,7 +336,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Ati Ampela Goreng (1 tusuk)",
+        "name": "Ati Ampela Goreng",
         "category": "lauk",
         "avg_price_idr": 4000,
         "calories": 160,
@@ -348,7 +348,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Sate Usus Ayam (5 tusuk)",
+        "name": "Sate Usus Ayam",
         "category": "lauk",
         "avg_price_idr": 5000,
         "calories": 180,
@@ -360,7 +360,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Ikan Tongkol Balado (1 potong)",
+        "name": "Ikan Tongkol Balado",
         "category": "lauk",
         "avg_price_idr": 7000,
         "calories": 210,
@@ -384,7 +384,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Ikan Lele Goreng (1 ekor)",
+        "name": "Ikan Lele Goreng",
         "category": "lauk",
         "avg_price_idr": 8000,
         "calories": 240,
@@ -396,7 +396,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Sarden Kaleng (masak sendiri)",
+        "name": "Sarden Kaleng",
         "category": "lauk",
         "avg_price_idr": 7000,
         "calories": 200,
@@ -408,7 +408,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Kornet Sapi Kaleng (masak sendiri)",
+        "name": "Kornet Sapi Kaleng",
         "category": "lauk",
         "avg_price_idr": 8000,
         "calories": 190,
@@ -420,7 +420,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nugget Goreng (5 buah, masak sendiri)",
+        "name": "Nugget Goreng",
         "category": "lauk",
         "avg_price_idr": 6000,
         "calories": 250,
@@ -432,7 +432,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Sosis Goreng (3 buah, masak sendiri)",
+        "name": "Sosis Goreng",
         "category": "lauk",
         "avg_price_idr": 5000,
         "calories": 220,
@@ -444,7 +444,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Perkedel Kentang (2 buah)",
+        "name": "Perkedel Kentang",
         "category": "lauk",
         "avg_price_idr": 4000,
         "calories": 220,
@@ -596,7 +596,7 @@ LOCAL_FOODS = [
     # PAKET HEMAT — Favorit Anak Kost
     # ═══════════════════════════════════════════════════════════
     {
-        "name": "Paket Warteg Hemat (nasi + tempe + sayur)",
+        "name": "Paket Hemat (nasi + tempe + sayur)",
         "category": "paket",
         "avg_price_idr": 10000,
         "calories": 460,
@@ -608,7 +608,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Paket Warteg Komplit (nasi + ayam + sayur)",
+        "name": "Paket Komplit (nasi + ayam + sayur)",
         "category": "paket",
         "avg_price_idr": 15000,
         "calories": 590,
@@ -620,7 +620,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nasi Goreng Telur (burjo)",
+        "name": "Nasi Goreng Telur",
         "category": "paket",
         "avg_price_idr": 10000,
         "calories": 480,
@@ -632,7 +632,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nasi Goreng Spesial (burjo)",
+        "name": "Nasi Goreng Spesial",
         "category": "paket",
         "avg_price_idr": 13000,
         "calories": 580,
@@ -644,7 +644,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nasi Ayam Geprek + Nasi",
+        "name": "Nasi Ayam Geprek",
         "category": "paket",
         "avg_price_idr": 13000,
         "calories": 620,
@@ -656,7 +656,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nasi Ayam Penyet + Lalapan",
+        "name": "Nasi Ayam Penyet",
         "category": "paket",
         "avg_price_idr": 14000,
         "calories": 600,
@@ -668,7 +668,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Pecel Lele + Nasi + Lalapan",
+        "name": "Pecel Lele Nasi",
         "category": "paket",
         "avg_price_idr": 13000,
         "calories": 560,
@@ -680,7 +680,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nasi Padang Hemat (nasi + rendang kecil + sayur)",
+        "name": "Nasi Padang Rendang",
         "category": "paket",
         "avg_price_idr": 15000,
         "calories": 650,
@@ -692,7 +692,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nasi Kuning Komplit (angkringan)",
+        "name": "Nasi Kuning Komplit",
         "category": "paket",
         "avg_price_idr": 8000,
         "calories": 420,
@@ -704,7 +704,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Sego Kucing 3 bungkus (angkringan)",
+        "name": "Sego Kucing (3 bungkus)",
         "category": "paket",
         "avg_price_idr": 9000,
         "calories": 540,
@@ -728,7 +728,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Bakso Urat (1 mangkuk)",
+        "name": "Bakso Urat",
         "category": "paket",
         "avg_price_idr": 12000,
         "calories": 380,
@@ -740,7 +740,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Soto Ayam + Nasi",
+        "name": "Soto Ayam Nasi",
         "category": "paket",
         "avg_price_idr": 12000,
         "calories": 480,
@@ -752,7 +752,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Rawon + Nasi",
+        "name": "Rawon Nasi",
         "category": "paket",
         "avg_price_idr": 15000,
         "calories": 520,
@@ -788,7 +788,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Nasi + Telur + Mie Instan (masak sendiri)",
+        "name": "Nasi Telur Mie Instan",
         "category": "paket",
         "avg_price_idr": 6000,
         "calories": 680,
@@ -900,7 +900,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Kentang Goreng Gerobak (1 porsi)",
+        "name": "Kentang Goreng (1 porsi)",
         "category": "snack",
         "avg_price_idr": 7000,
         "calories": 280,
@@ -980,7 +980,7 @@ LOCAL_FOODS = [
     # MINUMAN — Anak Kost Favorites
     # ═══════════════════════════════════════════════════════════
     {
-        "name": "Es Teh Manis (gelas)",
+        "name": "Es Teh Manis",
         "category": "minuman",
         "avg_price_idr": 3000,
         "calories": 80,
@@ -992,7 +992,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Teh Anget (angkringan)",
+        "name": "Teh Anget",
         "category": "minuman",
         "avg_price_idr": 2000,
         "calories": 40,
@@ -1004,7 +1004,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Kopi Sachet + Gula (masak sendiri)",
+        "name": "Kopi Sachet Gula",
         "category": "minuman",
         "avg_price_idr": 2000,
         "calories": 90,
@@ -1052,7 +1052,7 @@ LOCAL_FOODS = [
         "is_budget_friendly": True,
     },
     {
-        "name": "Pop Ice / Minuman Sachet (burjo)",
+        "name": "Pop Ice",
         "category": "minuman",
         "avg_price_idr": 5000,
         "calories": 130,
