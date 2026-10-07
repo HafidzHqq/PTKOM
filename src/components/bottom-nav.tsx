@@ -11,9 +11,9 @@ export default function BottomNav() {
       <div className="mx-auto flex max-w-md items-center justify-between px-6 py-2 relative">
         {/* Beranda */}
         <Link
-          href="/"
+          href="/dashboard"
           className={`flex flex-col items-center justify-center p-2 transition-colors ${
-            pathname === "/" ? "text-green-600" : "text-gray-400 hover:text-green-500"
+            pathname === "/dashboard" ? "text-green-600" : "text-gray-400 hover:text-green-500"
           }`}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

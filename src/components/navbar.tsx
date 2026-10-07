@@ -11,7 +11,7 @@ export default function Navbar() {
   const { user } = useAuth();
 
   const navLinks = [
-    { name: "Dashboard", href: "/" },
+    { name: "Dashboard", href: "/dashboard" },
     { name: "Analisis", href: "/analyze" },
     { name: "Rekomendasi", href: "/recommendations" },
     { name: "Riwayat", href: "/history" },
