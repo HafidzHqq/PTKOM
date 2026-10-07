@@ -6,6 +6,9 @@ import { usePathname } from "next/navigation";
 export default function BottomNav() {
   const pathname = usePathname();
 
+  // Hide bottom nav on landing page
+  if (pathname === "/") return null;
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white pb-safe md:hidden">
       <div className="mx-auto flex max-w-md items-center justify-between px-6 py-2 relative">
