@@ -1,6 +1,6 @@
-# 📝 Task List & Roadmap: Dompet Gizi
+# 📝 Task List & Roadmap: DompetKost
 
-Dokumen ini berisi daftar tugas (backlog) komprehensif untuk pengembangan **Dompet Gizi**. Beri tanda `[x]` jika tugas sudah selesai.
+Dokumen ini berisi daftar tugas (backlog) komprehensif untuk pengembangan **DompetKost**. Beri tanda `[x]` jika tugas sudah selesai.
 
 ---
 
@@ -12,7 +12,7 @@ Dokumen ini berisi daftar tugas (backlog) komprehensif untuk pengembangan **Domp
 - [x] Konfigurasi ESLint & Prettier
 - [x] Setup `.env.local` untuk API Keys (Gemini, Groq, Mistral)
 - [x] Perbaikan CI/CD GitHub Actions untuk folder `frontend/`
-- [x] Rebranding & Update README + PRD ke "Dompet Gizi"
+- [x] Rebranding & Update README + PRD ke "DompetKost"
 
 ### 1.2. Database & Auth (Supabase)
 - [ ] Buat project baru di Supabase
@@ -80,7 +80,7 @@ Dokumen ini berisi daftar tugas (backlog) komprehensif untuk pengembangan **Domp
 
 ### 4.1. Fitur PWA (Progressive Web App)
 - [ ] Install & konfigurasi `next-pwa`
-- [ ] Buat `manifest.json` beserta icon/logo Dompet Gizi (ukuran 192x192, 512x512)
+- [ ] Buat `manifest.json` beserta icon/logo DompetKost (ukuran 192x192, 512x512)
 - [ ] Pastikan UI ramah *mobile* / *bottom safe-area*
 
 ### 4.2. Testing & Bugfix

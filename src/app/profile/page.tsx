@@ -35,9 +35,9 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">👤 Profil & Target Gizi</h1>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-900 tracking-tight">👤 Profil & Target Gizi</h1>
         <p className="text-sm text-gray-500 mt-1">Atur profil Anda untuk mendapatkan target gizi yang lebih akurat.</p>
       </div>
 
@@ -54,7 +54,7 @@ export default function ProfilePage() {
           )}
           <div>
             <h2 className="text-xl font-bold text-gray-900">{user?.name || "Tamu (Guest)"}</h2>
-            <p className="text-sm text-gray-500">{user?.email || "guest@gizikost.local"}</p>
+            <p className="text-sm text-gray-500">{user?.email || "guest@dompetkost.local"}</p>
           </div>
           <div className="w-full pt-4 border-t border-gray-100">
             <LogoutButton />

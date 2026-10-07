@@ -1,4 +1,4 @@
-# 📋 PRD: Dompet Gizi — Asisten Gizi Cerdas untuk Anak Kost
+# 📋 PRD: DompetKost — Asisten Gizi Cerdas untuk Anak Kost
 
 > **Versi:** 1.0  
 > **Tanggal:** 19 September 2026  
@@ -8,7 +8,7 @@
 
 ## 1. Ringkasan Eksekutif
 
-**Dompet Gizi** adalah web app berbasis AI yang membantu anak kost menghitung kandungan gizi makanan cukup dengan memfoto makanan mereka. Aplikasi ini memberikan analisis nutrisi instan dan rekomendasi makanan murah & bergizi yang sesuai budget anak kost.
+**DompetKost** adalah web app berbasis AI yang membantu anak kost menghitung kandungan gizi makanan cukup dengan memfoto makanan mereka. Aplikasi ini memberikan analisis nutrisi instan dan rekomendasi makanan murah & bergizi yang sesuai budget anak kost.
 
 **Semua teknologi yang digunakan 100% gratis** (free tier / open source).
 
@@ -393,7 +393,7 @@ flowchart LR
 
 ```
 ┌─────────────────────────────────┐
-│  🥗 Dompet Gizi         👤 Profil  │
+│  🥗 DompetKost         👤 Profil  │
 ├─────────────────────────────────┤
 │                                 │
 │  Hai, Rina! 👋                  │
@@ -699,7 +699,7 @@ flowchart LR
 
 ## 19. Competitive Landscape
 
-| Kompetitor | Kelebihan Mereka | Kelemahan Mereka | Diferensiasi Dompet Gizi |
+| Kompetitor | Kelebihan Mereka | Kelemahan Mereka | Diferensiasi DompetKost |
 |-----------|------------------|------------------|-----------------------|
 | MyFitnessPal | Database besar, tracking lengkap | Input manual, tidak ada foto scan gratis, fokus western food | Auto-scan foto, konteks Indonesia |
 | FatSecret | Gratis, database lumayan | UI kuno, tidak ada rekomendasi budget | Rekomendasi budget anak kost |
@@ -727,4 +727,4 @@ Contoh AKG untuk kelompok usia mahasiswa/pekerja muda:
 
 ---
 
-*Dokumen ini siap untuk dijadikan dasar pengembangan. Klik **Proceed** untuk mulai membangun Dompet Gizi! 🚀*
+*Dokumen ini siap untuk dijadikan dasar pengembangan. Klik **Proceed** untuk mulai membangun DompetKost! 🚀*

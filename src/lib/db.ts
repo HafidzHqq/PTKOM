@@ -37,7 +37,7 @@ export async function getDb() {
       );
 
       INSERT OR IGNORE INTO users (id, email, name, provider)
-      VALUES (1, 'guest@gizikost.local', 'Tamu (Guest)', 'guest');
+      VALUES (1, 'guest@dompetkost.local', 'Tamu (Guest)', 'guest');
     `);
   }
   return db;

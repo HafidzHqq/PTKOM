@@ -20,11 +20,11 @@ export function LogoContent({ size = "md", className }: Omit<LogoProps, "withLin
   return (
     <span className={cn("flex items-center select-none", className)}>
       <Image
-        src="/logo.svg"
-        alt="GiziKost"
+        src="/logo.jpeg"
+        alt="DompetKost"
         width={s.width}
         height={s.height}
-        className="object-contain"
+        className="object-contain mix-blend-multiply"
         priority
       />
     </span>
@@ -34,7 +34,7 @@ export function LogoContent({ size = "md", className }: Omit<LogoProps, "withLin
 export default function Logo({ size = "md", withLink = true, className }: LogoProps) {
   if (!withLink) return <LogoContent size={size} className={className} />;
   return (
-    <Link href="/" className={cn("flex items-center", className)} aria-label="GiziKost - Beranda">
+    <Link href="/" className={cn("flex items-center", className)} aria-label="DompetKost - Beranda">
       <LogoContent size={size} />
     </Link>
   );
