@@ -8,11 +8,16 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.{ts,tsx,mdx}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,mdx}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,mdx}\"",
+    "postinstall": "prisma skills sync || exit 0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@mistralai/mistralai": "^2.7.0",
+    "@prisma/client": "^7.10.0",
     "clsx": "^2.1.1",
     "groq-sdk": "^1.6.0",
     "mysql2": "^3.24.5",
@@ -36,7 +41,9 @@
     "eslint-config-next": "^15.3.4",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.12",
+    "prisma": "^8.0.0-rc.20",
     "tailwindcss": "^4.1.8",
+    "tsx": "^4.23.15",
     "typescript": "^5.8.3"
   },
   "allowScripts": {

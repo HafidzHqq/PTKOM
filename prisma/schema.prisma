@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum FoodType {
+  BELI
+  MASAK
+  KEDUANYA
+}
+
+enum FoodCategory {
+  SARAPAN
+  MAKAN_SIANG
+  MAKAN_MALAM
+  CAMILAN
+  MINUMAN
+}
+
+model Food {
+  id                String         @id @default(cuid())
+  name              String
+  category          FoodCategory
+  type              FoodType
+  pricePerPortion   Float?         // Harga jika beli jadi
+  portionsYielded   Int?           // Jumlah porsi jika masak sendiri
+  calories          Float
+  protein           Float
+  carbs             Float
+  fat               Float
+  isHalal           Boolean        @default(true)
+  isVegetarian      Boolean        @default(false)
+  allergens         Json?          // MySQL doesn't support String[], using Json
+  tags              Json?          // MySQL doesn't support String[], using Json
+  cookTimeMinutes   Int?
+  imageUrl          String?
+  
+  // Relations
+  recipeItems       RecipeItem[]
+  places            FoodPlace[]
+  
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model Ingredient {
+  id                String         @id @default(cuid())
+  name              String
+  unit              String         // kg, gram, liter, butir, ikat, buah
+  pricePerUnit      Float
+  region            String?        // e.g., "Bandar Lampung"
+  priceUpdatedAt    DateTime       @default(now())
+  
+  // Relations
+  recipeItems       RecipeItem[]
+}
+
+model RecipeItem {
+  id                String         @id @default(cuid())
+  foodId            String
+  ingredientId      String
+  quantity          Float
+  unit              String         // Unit spesifik untuk resep ini
+  
+  food              Food           @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  ingredient        Ingredient     @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  @@unique([foodId, ingredientId])
+}
+
+model Place {
+  id                String         @id @default(cuid())
+  name              String
+  priceRange        String         // e.g., "Rp 10.000 - Rp 25.000"
+  location          String
+  source            String         // warteg, restoran, kantin, delivery
+  
+  // Relations
+  foods             FoodPlace[]
+}
+
+model FoodPlace {
+  foodId            String
+  placeId           String
+  
+  food              Food           @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  place             Place          @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@id([foodId, placeId])
+}

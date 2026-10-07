@@ -17,7 +17,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/dashboard"
+                href="/budget"
                 className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-8 py-3.5 text-base font-bold text-white shadow-sm hover:bg-emerald-700 transition-all hover:scale-105 active:scale-95"
               >
                 Mulai Sekarang
@@ -94,10 +94,10 @@ export default function LandingPage() {
             Bergabunglah dengan ribuan anak kost lainnya yang sudah membuktikan bahwa makan sehat tidak harus mahal.
           </p>
           <Link
-            href="/dashboard"
+            href="/budget"
             className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-lg font-bold text-emerald-700 shadow-lg hover:bg-emerald-50 transition-all hover:scale-105 active:scale-95"
           >
-            Buka Dashboard Sekarang
+            Atur Budget Makan
           </Link>
         </div>
       </section>
