@@ -14,6 +14,7 @@ export default function Navbar() {
     { name: "Dashboard", href: "/dashboard" },
     { name: "Analisis", href: "/analyze" },
     { name: "Rekomendasi", href: "/recommendations" },
+    { name: "Budget", href: "/budget" },
     { name: "Riwayat", href: "/history" },
     { name: "Profil", href: "/profile" },
   ];
