@@ -9,25 +9,25 @@ type LogoProps = {
 };
 
 const sizes = {
-  sm: { width: 100, height: 30 },
-  md: { width: 140, height: 42 },
-  lg: { width: 180, height: 54 },
-  xl: { width: 240, height: 72 },
+  sm: { width: 110, height: 28 },
+  md: { width: 150, height: 38 },
+  lg: { width: 190, height: 48 },
+  xl: { width: 240, height: 60 },
 };
 
 export function LogoContent({ size = "md", className }: Omit<LogoProps, "withLink">) {
   const s = sizes[size];
   return (
-    <div className={cn("relative flex items-center", className)}>
+    <span className={cn("flex items-center select-none", className)}>
       <Image
-        src="/GiziKost.png"
-        alt="GiziKost Logo"
+        src="/logo.svg"
+        alt="GiziKost"
         width={s.width}
         height={s.height}
         className="object-contain"
         priority
       />
-    </div>
+    </span>
   );
 }
 
