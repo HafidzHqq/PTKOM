@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import LogoutButton from "@/components/logout-button";
+import Logo from "@/components/logo";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -21,12 +22,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur-md">
       <div className="flex w-full items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl">🥗</span>
-          <span className="font-bold text-lg text-green-600 sm:text-xl">
-            Dompet Gizi
-          </span>
-        </Link>
+        <Logo size="md" />
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-1">

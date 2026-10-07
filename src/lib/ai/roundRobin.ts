@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
 import { Mistral } from "@mistralai/mistralai";
 
-const SYSTEM_PROMPT = `Anda adalah ahli gizi AI untuk aplikasi Dompet Gizi.
+const SYSTEM_PROMPT = `Anda adalah ahli gizi AI untuk aplikasi GiziKost.
 Tugas Anda adalah menganalisis makanan dari gambar atau teks yang diberikan.
 Berikan estimasi nutrisi yang realistis untuk porsi standar (sekitar 200-250g).
 Fokus pada makanan lokal Indonesia (warteg, padang, jajanan).

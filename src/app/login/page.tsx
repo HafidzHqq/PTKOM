@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import Logo from "@/components/logo";
 
 function LoginContent() {
   const searchParams = useSearchParams();
@@ -16,10 +17,9 @@ function LoginContent() {
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
       <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-lg">
         {/* Logo & Header */}
-        <div className="space-y-3 text-center">
-          <div className="text-6xl">🥗</div>
-          <h1 className="text-3xl font-bold text-gray-900">Dompet Gizi</h1>
-          <p className="text-gray-500">
+        <div className="space-y-3 text-center flex flex-col items-center">
+          <Logo size="xl" withLink={false} />
+          <p className="text-gray-500 mt-2">
             Analisis nutrisi makanan kamu dengan AI
           </p>
         </div>

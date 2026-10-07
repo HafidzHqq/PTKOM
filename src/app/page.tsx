@@ -38,7 +38,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">Halo, {user?.name?.split(" ")[0] || "Tamu"}! 👋</h1>
           <p className="mt-2 text-green-50 max-w-md text-sm sm:text-base">
-            Selamat datang di Dompet Gizi. Pantau asupan nutrisi harianmu dan dapatkan rekomendasi makanan sehat sesuai budget.
+            Selamat datang di GiziKost. Pantau asupan nutrisi harianmu dan dapatkan rekomendasi makanan sehat sesuai budget.
           </p>
         </div>
         <Link

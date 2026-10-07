@@ -5,7 +5,7 @@ import Navbar from "@/components/navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Dompet Gizi - Analisis Nutrisi Makanan",
+  title: "GiziKost - Analisis Nutrisi Makanan",
   description: "Analisis nutrisi makanan kamu dengan AI",
 };
 

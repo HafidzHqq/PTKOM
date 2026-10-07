@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🥗 DOMPET GIZI
+# � GIZIKOST
 
 ### Asisten Gizi Cerdas untuk Anak Kost 💡
 
@@ -32,9 +32,9 @@ Platform web berbasis AI yang membantu anak kost menghitung kandungan gizi makan
 
 ## 🍽️ Tentang
 
-**Dompet Gizi** hadir untuk memecahkan masalah anak kost yang memiliki budget makan terbatas namun ingin tetap menjaga asupan gizi.
+**GiziKost** hadir untuk memecahkan masalah anak kost yang memiliki budget makan terbatas namun ingin tetap menjaga asupan gizi.
 
-Cukup dengan memfoto makanan, Dompet Gizi akan mengenali jenis makanan, menghitung kalori & makronutrisi, serta mencocokkannya dengan kebutuhan harianmu. Jika ada nutrisi yang kurang, Dompet Gizi akan merekomendasikan tambahan makanan murah (seperti tempe/tahu) yang bisa dibeli di warteg/kantin sekitar!
+Cukup dengan memfoto makanan, GiziKost akan mengenali jenis makanan, menghitung kalori & makronutrisi, serta mencocokkannya dengan kebutuhan harianmu. Jika ada nutrisi yang kurang, GiziKost akan merekomendasikan tambahan makanan murah (seperti tempe/tahu) yang bisa dibeli di warteg/kantin sekitar!
 
 Aplikasi ini 100% menggunakan teknologi **Gratis** (Free Tier) dan mengandalkan sistem **AI Round-Robin Load Balancer** yang mendistribusikan request pemindaian gambar ke **4 provider AI** (Gemini, Groq, Mistral, OpenRouter) agar tetap berada di batas gratis tiap provider (~4.000+ request/hari).
 
@@ -170,7 +170,7 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:3000/
 ```env
 # Application
 NEXT_PUBLIC_APP_URL=http://localhost:3000/
-NEXT_PUBLIC_APP_NAME="Dompet Gizi"
+NEXT_PUBLIC_APP_NAME="GiziKost"
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=       # dari dashboard Supabase
@@ -285,6 +285,6 @@ git push origin feature/nama-fitur
 
 <div align="center">
 
-**Dompet Gizi** — Makan Sehat, Sesuai Budget Kost! 🥗
+**GiziKost** — Makan Sehat, Sesuai Budget Kost! 🥦
 
 </div>
