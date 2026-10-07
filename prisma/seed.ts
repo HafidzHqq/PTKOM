@@ -5,17 +5,25 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Mulai seeding data untuk Bandar Lampung...');
 
-  // 1. Seed Ingredients (Bahan Baku - Harga Bandar Lampung)
+  // Clear existing data
+  await prisma.recipeItem.deleteMany();
+  await prisma.foodPlace.deleteMany();
+  await prisma.food.deleteMany();
+  await prisma.ingredient.deleteMany();
+  await prisma.place.deleteMany();
+  console.log('✅ Data lama berhasil dihapus.');
+
+  // 1. Seed Ingredients (Bahan Baku - Harga Bandar Lampung dari Dataset WFP & Bapanas 2025)
   const ingredientsData = [
-    { name: 'Beras', unit: 'kg', pricePerUnit: 14000, region: 'Bandar Lampung' },
-    { name: 'Telur Ayam', unit: 'kg', pricePerUnit: 28000, region: 'Bandar Lampung' },
-    { name: 'Daging Ayam', unit: 'kg', pricePerUnit: 35000, region: 'Bandar Lampung' },
+    { name: 'Beras', unit: 'kg', pricePerUnit: 15100, region: 'Bandar Lampung' }, // WFP: Rice (medium quality)
+    { name: 'Telur Ayam', unit: 'kg', pricePerUnit: 28500, region: 'Bandar Lampung' }, // WFP: Eggs
+    { name: 'Daging Ayam', unit: 'kg', pricePerUnit: 33800, region: 'Bandar Lampung' }, // WFP: Meat (chicken)
     { name: 'Tempe', unit: 'papan', pricePerUnit: 5000, region: 'Bandar Lampung' },
     { name: 'Tahu', unit: 'bungkus', pricePerUnit: 4000, region: 'Bandar Lampung' },
-    { name: 'Bawang Merah', unit: 'kg', pricePerUnit: 30000, region: 'Bandar Lampung' },
-    { name: 'Bawang Putih', unit: 'kg', pricePerUnit: 35000, region: 'Bandar Lampung' },
-    { name: 'Cabai Merah', unit: 'kg', pricePerUnit: 45000, region: 'Bandar Lampung' },
-    { name: 'Minyak Goreng', unit: 'liter', pricePerUnit: 16000, region: 'Bandar Lampung' },
+    { name: 'Bawang Merah', unit: 'kg', pricePerUnit: 45500, region: 'Bandar Lampung' }, // WFP: Onions (shallot, medium)
+    { name: 'Bawang Putih', unit: 'kg', pricePerUnit: 32500, region: 'Bandar Lampung' }, // WFP: Garlic (medium)
+    { name: 'Cabai Merah', unit: 'kg', pricePerUnit: 57500, region: 'Bandar Lampung' }, // Bapanas: Cabai Merah Keriting
+    { name: 'Minyak Goreng', unit: 'liter', pricePerUnit: 21000, region: 'Bandar Lampung' }, // WFP: Oil (vegetable)
     { name: 'Garam', unit: 'bungkus', pricePerUnit: 2000, region: 'Bandar Lampung' },
     { name: 'Kangkung', unit: 'ikat', pricePerUnit: 2500, region: 'Bandar Lampung' },
     { name: 'Bayam', unit: 'ikat', pricePerUnit: 2500, region: 'Bandar Lampung' },
@@ -27,6 +35,8 @@ async function main() {
     { name: 'Ikan Nila', unit: 'kg', pricePerUnit: 30000, region: 'Bandar Lampung' },
     { name: 'Kacang Panjang', unit: 'ikat', pricePerUnit: 3000, region: 'Bandar Lampung' },
     { name: 'Wortel', unit: 'kg', pricePerUnit: 15000, region: 'Bandar Lampung' },
+    { name: 'Daging Sapi', unit: 'kg', pricePerUnit: 140000, region: 'Bandar Lampung' }, // WFP: Meat (beef, first quality)
+    { name: 'Udang/Seafood', unit: 'kg', pricePerUnit: 80000, region: 'Bandar Lampung' },
   ];
 
   const createdIngredients = [];
@@ -178,14 +188,96 @@ async function main() {
       cookTimeMinutes: 45,
       recipe: [
         { ingredientId: getIngId('Daging Ayam'), quantity: 0.5, unit: 'kg' },
+        { ingredientId: getIngId('Beras'), quantity: 0.4, unit: 'kg' },
         { ingredientId: getIngId('Minyak Goreng'), quantity: 0.1, unit: 'liter' },
         { ingredientId: getIngId('Bawang Putih'), quantity: 0.02, unit: 'kg' },
       ]
     }
   ];
 
-  // Generate more dummy data to reach ~150 items
-  // We will programmatically generate variations of basic meals
+  // Template resep realistis per menu (harga Bandar Lampung)
+  const recipeTemplates: Record<string, { ingredient: string; quantity: number; unit: string }[]> = {
+    'Nasi Goreng': [
+      { ingredient: 'Beras', quantity: 0.15, unit: 'kg' },
+      { ingredient: 'Telur Ayam', quantity: 0.06, unit: 'kg' },
+      { ingredient: 'Minyak Goreng', quantity: 0.03, unit: 'liter' },
+      { ingredient: 'Bawang Merah', quantity: 0.02, unit: 'kg' },
+      { ingredient: 'Bawang Putih', quantity: 0.015, unit: 'kg' },
+      { ingredient: 'Kecap Manis', quantity: 0.05, unit: 'botol' },
+      { ingredient: 'Cabai Merah', quantity: 0.015, unit: 'kg' },
+    ],
+    'Mie Goreng': [
+      { ingredient: 'Mie Instan', quantity: 1, unit: 'bungkus' },
+      { ingredient: 'Telur Ayam', quantity: 0.06, unit: 'kg' },
+      { ingredient: 'Sawi Hijau', quantity: 0.3, unit: 'ikat' },
+      { ingredient: 'Minyak Goreng', quantity: 0.02, unit: 'liter' },
+      { ingredient: 'Bawang Merah', quantity: 0.015, unit: 'kg' },
+      { ingredient: 'Kecap Manis', quantity: 0.04, unit: 'botol' },
+    ],
+    'Soto Ayam': [
+      { ingredient: 'Daging Ayam', quantity: 0.2, unit: 'kg' },
+      { ingredient: 'Beras', quantity: 0.1, unit: 'kg' },
+      { ingredient: 'Bawang Merah', quantity: 0.02, unit: 'kg' },
+      { ingredient: 'Bawang Putih', quantity: 0.015, unit: 'kg' },
+      { ingredient: 'Minyak Goreng', quantity: 0.02, unit: 'liter' },
+      { ingredient: 'Tomat', quantity: 0.05, unit: 'kg' },
+    ],
+    'Bakso': [
+      { ingredient: 'Daging Ayam', quantity: 0.15, unit: 'kg' },
+      { ingredient: 'Bawang Putih', quantity: 0.015, unit: 'kg' },
+      { ingredient: 'Garam', quantity: 0.1, unit: 'bungkus' },
+      { ingredient: 'Minyak Goreng', quantity: 0.015, unit: 'liter' },
+      { ingredient: 'Cabai Merah', quantity: 0.01, unit: 'kg' },
+    ],
+    'Sate Ayam': [
+      { ingredient: 'Daging Ayam', quantity: 0.3, unit: 'kg' },
+      { ingredient: 'Bawang Merah', quantity: 0.02, unit: 'kg' },
+      { ingredient: 'Bawang Putih', quantity: 0.015, unit: 'kg' },
+      { ingredient: 'Kecap Manis', quantity: 0.06, unit: 'botol' },
+      { ingredient: 'Minyak Goreng', quantity: 0.02, unit: 'liter' },
+      { ingredient: 'Cabai Merah', quantity: 0.015, unit: 'kg' },
+    ],
+    'Gado-Gado': [
+      { ingredient: 'Kangkung', quantity: 0.5, unit: 'ikat' },
+      { ingredient: 'Bayam', quantity: 0.5, unit: 'ikat' },
+      { ingredient: 'Tahu', quantity: 0.5, unit: 'bungkus' },
+      { ingredient: 'Tempe', quantity: 0.5, unit: 'papan' },
+      { ingredient: 'Kacang Panjang', quantity: 0.5, unit: 'ikat' },
+      { ingredient: 'Bawang Merah', quantity: 0.015, unit: 'kg' },
+    ],
+    'Ketoprak': [
+      { ingredient: 'Tahu', quantity: 0.5, unit: 'bungkus' },
+      { ingredient: 'Beras', quantity: 0.12, unit: 'kg' },
+      { ingredient: 'Bawang Merah', quantity: 0.015, unit: 'kg' },
+      { ingredient: 'Kecap Manis', quantity: 0.05, unit: 'botol' },
+      { ingredient: 'Cabai Merah', quantity: 0.01, unit: 'kg' },
+    ],
+    'Nasi Padang': [
+      { ingredient: 'Beras', quantity: 0.15, unit: 'kg' },
+      { ingredient: 'Daging Ayam', quantity: 0.2, unit: 'kg' },
+      { ingredient: 'Minyak Goreng', quantity: 0.03, unit: 'liter' },
+      { ingredient: 'Bawang Merah', quantity: 0.02, unit: 'kg' },
+      { ingredient: 'Cabai Merah', quantity: 0.02, unit: 'kg' },
+      { ingredient: 'Bawang Putih', quantity: 0.015, unit: 'kg' },
+    ],
+    'Ayam Bakar': [
+      { ingredient: 'Daging Ayam', quantity: 0.3, unit: 'kg' },
+      { ingredient: 'Kecap Manis', quantity: 0.06, unit: 'botol' },
+      { ingredient: 'Bawang Merah', quantity: 0.02, unit: 'kg' },
+      { ingredient: 'Bawang Putih', quantity: 0.015, unit: 'kg' },
+      { ingredient: 'Minyak Goreng', quantity: 0.02, unit: 'liter' },
+      { ingredient: 'Cabai Merah', quantity: 0.015, unit: 'kg' },
+    ],
+    'Ikan Bakar': [
+      { ingredient: 'Ikan Lele', quantity: 0.3, unit: 'kg' },
+      { ingredient: 'Bawang Merah', quantity: 0.02, unit: 'kg' },
+      { ingredient: 'Cabai Merah', quantity: 0.015, unit: 'kg' },
+      { ingredient: 'Minyak Goreng', quantity: 0.02, unit: 'liter' },
+      { ingredient: 'Bawang Putih', quantity: 0.01, unit: 'kg' },
+      { ingredient: 'Tomat', quantity: 0.05, unit: 'kg' },
+    ],
+  };
+
   const baseMeals = [
     { name: 'Nasi Goreng', baseCal: 500, baseProt: 10, baseCarb: 60, baseFat: 20 },
     { name: 'Mie Goreng', baseCal: 450, baseProt: 8, baseCarb: 55, baseFat: 18 },
@@ -199,39 +291,70 @@ async function main() {
     { name: 'Ikan Bakar', baseCal: 350, baseProt: 22, baseCarb: 5, baseFat: 12 },
   ];
 
-  const variants = ['Biasa', 'Spesial', 'Jumbo', 'Pedas', 'Seafood', 'Sapi', 'Ayam', 'Telur'];
+  const variants = ['Biasa', 'Spesial', 'Jumbo', 'Pedas', 'Komplit', 'Telur', 'Seafood', 'Sapi'];
   const categories = [FoodCategory.SARAPAN, FoodCategory.MAKAN_SIANG, FoodCategory.MAKAN_MALAM];
 
   let generatedCount = 0;
   for (const base of baseMeals) {
     for (const variant of variants) {
-      if (generatedCount >= 143) break; // To reach exactly 150 total (7 manual + 143 generated)
-      
-      const isMasak = Math.random() > 0.6;
+      if (generatedCount >= 80) break;
+      if (base.name.toLowerCase().includes(variant.toLowerCase())) continue;
+
+      const isMasak = Math.random() > 0.5;
       const category = categories[Math.floor(Math.random() * categories.length)];
+      const portions = isMasak ? Math.floor(Math.random() * 2) + 2 : null; // 2 or 3 portions
       
+      // Clone template to avoid mutating the original
+      let currentRecipe = (recipeTemplates[base.name] || []).map(t => ({ ...t }));
+      
+      // Scale recipe by portions
+      if (isMasak && portions) {
+        currentRecipe = currentRecipe.map(t => ({ ...t, quantity: t.quantity * portions }));
+      }
+      
+      // Adjust recipe based on variant
+      if (variant === 'Sapi') {
+        currentRecipe = currentRecipe.map(t => 
+          t.ingredient === 'Daging Ayam' || t.ingredient === 'Ikan Lele' ? { ...t, ingredient: 'Daging Sapi' } : t
+        );
+        // If no meat was replaced but it's a Sapi variant (like Nasi Goreng Sapi), add it
+        if (!currentRecipe.some(t => t.ingredient === 'Daging Sapi')) {
+          currentRecipe.push({ ingredient: 'Daging Sapi', quantity: 0.15, unit: 'kg' });
+        }
+      } else if (variant === 'Seafood') {
+        currentRecipe = currentRecipe.map(t => 
+          t.ingredient === 'Daging Ayam' || t.ingredient === 'Ikan Lele' ? { ...t, ingredient: 'Udang/Seafood' } : t
+        );
+        if (!currentRecipe.some(t => t.ingredient === 'Udang/Seafood')) {
+          currentRecipe.push({ ingredient: 'Udang/Seafood', quantity: 0.15, unit: 'kg' });
+        }
+      } else if (variant === 'Telur') {
+        if (!currentRecipe.some(t => t.ingredient === 'Telur Ayam')) {
+          currentRecipe.push({ ingredient: 'Telur Ayam', quantity: 0.06, unit: 'kg' });
+        }
+      } else if (variant === 'Jumbo') {
+        currentRecipe = currentRecipe.map(t => ({ ...t, quantity: t.quantity * 1.5 }));
+      }
+
       const food = {
         name: `${base.name} ${variant}`,
         category: category,
         type: isMasak ? FoodType.MASAK : FoodType.BELI,
-        pricePerPortion: isMasak ? null : Math.floor(Math.random() * 15000) + 10000,
-        portionsYielded: isMasak ? Math.floor(Math.random() * 3) + 1 : null,
-        calories: base.baseCal + (Math.random() * 100 - 50),
-        protein: base.baseProt + (Math.random() * 10 - 5),
-        carbs: base.baseCarb + (Math.random() * 20 - 10),
-        fat: base.baseFat + (Math.random() * 10 - 5),
+        pricePerPortion: isMasak ? null : Math.floor(Math.random() * 15000) + (variant === 'Sapi' || variant === 'Seafood' ? 20000 : 12000),
+        portionsYielded: portions,
+        calories: base.baseCal + (Math.random() * 80 - 40),
+        protein: base.baseProt + (Math.random() * 6 - 3),
+        carbs: base.baseCarb + (Math.random() * 15 - 7),
+        fat: base.baseFat + (Math.random() * 6 - 3),
         isHalal: true,
         isVegetarian: variant === 'Biasa' && (base.name === 'Gado-Gado' || base.name === 'Ketoprak'),
         allergens: variant === 'Seafood' ? ['seafood'] : (variant === 'Telur' ? ['telur'] : []),
         tags: ['generated', variant.toLowerCase()],
-        cookTimeMinutes: isMasak ? Math.floor(Math.random() * 30) + 15 : null,
-        recipe: isMasak ? [
-          { ingredientId: getIngId('Beras'), quantity: 0.1, unit: 'kg' },
-          { ingredientId: getIngId('Bawang Merah'), quantity: 0.01, unit: 'kg' },
-        ] : [],
+        cookTimeMinutes: isMasak ? Math.floor(Math.random() * 25) + 15 : null,
+        recipe: isMasak ? currentRecipe.map(t => ({ ingredientId: getIngId(t.ingredient), quantity: t.quantity, unit: t.unit })).filter(r => r.ingredientId) : [],
         places: isMasak ? [] : [createdPlaces[Math.floor(Math.random() * createdPlaces.length)].id]
       };
-      
+
       foodsData.push(food);
       generatedCount++;
     }
