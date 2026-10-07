@@ -6,26 +6,26 @@ import { getDb } from "@/lib/db";
 
 const foodSchema = z.object({
   name: z.string().min(1),
-  name_en: z.string().optional(),
-  portion_grams: z.number().nonnegative(),
+  name_en: z.string().nullish(),
+  portion_grams: z.coerce.number().nonnegative().catch(0),
   nutrition: z.object({
-    calories: z.number().nonnegative(),
-    protein_g: z.number().nonnegative(),
-    fat_g: z.number().nonnegative(),
-    carbs_g: z.number().nonnegative(),
-    fiber_g: z.number().nonnegative(),
-  }),
+    calories: z.coerce.number().nonnegative().catch(0),
+    protein_g: z.coerce.number().nonnegative().catch(0),
+    fat_g: z.coerce.number().nonnegative().catch(0),
+    carbs_g: z.coerce.number().nonnegative().catch(0),
+    fiber_g: z.coerce.number().nonnegative().catch(0),
+  }).catch({ calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 }),
 });
 
 const historySchema = z.object({
-  foods: z.array(foodSchema),
+  foods: z.array(foodSchema).catch([]),
   total_nutrition: z.object({
-    calories: z.number().nonnegative(),
-    protein_g: z.number().nonnegative(),
-    fat_g: z.number().nonnegative(),
-    carbs_g: z.number().nonnegative(),
-    fiber_g: z.number().nonnegative(),
-  }),
+    calories: z.coerce.number().nonnegative().catch(0),
+    protein_g: z.coerce.number().nonnegative().catch(0),
+    fat_g: z.coerce.number().nonnegative().catch(0),
+    carbs_g: z.coerce.number().nonnegative().catch(0),
+    fiber_g: z.coerce.number().nonnegative().catch(0),
+  }).catch({ calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 }),
 });
 
 export async function GET() {
@@ -76,8 +76,9 @@ export async function POST(request: NextRequest) {
 
   const parsed = historySchema.safeParse(body);
   if (!parsed.success) {
+    console.error("[POST /api/nutrition-history] Validation error:", parsed.error.format());
     return NextResponse.json(
-      { error: "Format data gizi tidak valid" },
+      { error: "Format data gizi tidak valid", details: parsed.error.format() },
       { status: 400 },
     );
   }
