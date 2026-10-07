@@ -53,10 +53,10 @@ export default function RecommendationsPage() {
   });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">💡 Rekomendasi Cerdas</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-900 tracking-tight">💡 Rekomendasi Cerdas</h1>
           <p className="text-sm text-gray-500 mt-1">Smart Combo — disesuaikan dengan kekurangan gizi hari ini (standar WHO).</p>
         </div>
         <button
