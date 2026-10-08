@@ -12,9 +12,8 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Analisis", href: "/analyze" },
+    { name: "Analisis & Wawasan", href: "/analyze" },
     { name: "Rekomendasi", href: "/recommendations" },
-    { name: "Budget", href: "/budget" },
     { name: "Riwayat", href: "/history" },
     { name: "Profil", href: "/profile" },
   ];

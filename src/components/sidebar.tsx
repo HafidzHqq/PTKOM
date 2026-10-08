@@ -21,7 +21,7 @@ export default function Sidebar() {
       )
     },
     { 
-      name: "Analisis", 
+      name: "Analisis & Wawasan", 
       href: "/analyze",
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,15 +36,6 @@ export default function Sidebar() {
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-        </svg>
-      )
-    },
-    { 
-      name: "Budget", 
-      href: "/budget",
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       )
     },
@@ -97,7 +88,7 @@ export default function Sidebar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-300 ${
+              className={`flex items-center gap-3 rounded px-4 py-3 text-sm font-semibold transition-all duration-300 ${
                 isActive
                   ? "bg-white/70 text-emerald-700 shadow-sm border border-white/60 backdrop-blur-md scale-[1.02]"
                   : "text-gray-600 hover:bg-white/40 hover:text-emerald-600 hover:backdrop-blur-sm border border-transparent"
@@ -114,17 +105,17 @@ export default function Sidebar() {
 
       {/* User Profile / Auth Area */}
       <div className="p-4 border-t border-white/40">
-        <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/50 border border-white/60 hover:bg-white/70 backdrop-blur-md shadow-sm transition-all duration-300 cursor-pointer">
+        <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/50 border border-white/60 hover:bg-white/70 backdrop-blur-md shadow-sm transition-all duration-300 cursor-pointer">
           <div className="flex items-center gap-3 min-w-0">
             {user?.image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.image}
                 alt={user.name || "User"}
-                className="h-10 w-10 rounded-xl border-2 border-white object-cover shrink-0 shadow-sm"
+                className="h-10 w-10 rounded border-2 border-white object-cover shrink-0 shadow-sm"
               />
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 text-sm font-bold text-emerald-700 shrink-0 border border-white shadow-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded bg-gradient-to-br from-emerald-100 to-emerald-200 text-sm font-bold text-emerald-700 shrink-0 border border-white shadow-sm">
                 {user?.name?.[0]?.toUpperCase() || "R"}
               </div>
             )}
