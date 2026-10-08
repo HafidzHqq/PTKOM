@@ -60,25 +60,25 @@ export async function GET() {
     const threshold = 70;
 
     if (proPct < threshold) {
-      deficiencies.push(`Protein rendah (${proPct.toFixed(0)}% standar WHO)`);
+      deficiencies.push(`Protein rendah (${proPct.toFixed(0)}% target harian)`);
       deficitMap["protein_g"] = target.protein_g - consumed.protein_g;
     }
     if (fiberPct < threshold) {
-      deficiencies.push(`Serat rendah (${fiberPct.toFixed(0)}% standar WHO)`);
+      deficiencies.push(`Serat rendah (${fiberPct.toFixed(0)}% target harian)`);
       deficitMap["fiber_g"] = target.fiber_g - consumed.fiber_g;
     }
     if (calPct < threshold) {
-      deficiencies.push(`Kalori rendah (${calPct.toFixed(0)}% standar WHO)`);
+      deficiencies.push(`Kalori rendah (${calPct.toFixed(0)}% target harian)`);
       deficitMap["calories"] = target.calories - consumed.calories;
     }
     if (carbPct < threshold) {
-      deficiencies.push(`Karbohidrat rendah (${carbPct.toFixed(0)}% standar WHO)`);
+      deficiencies.push(`Karbohidrat rendah (${carbPct.toFixed(0)}% target harian)`);
       deficitMap["carbs_g"] = target.carbs_g - consumed.carbs_g;
     }
     if (fatPct > 100) {
-      deficiencies.push(`Lemak berlebih (${fatPct.toFixed(0)}% standar WHO)`);
+      deficiencies.push(`Lemak berlebih (${fatPct.toFixed(0)}% target harian)`);
     } else if (fatPct < threshold) {
-      deficiencies.push(`Lemak rendah (${fatPct.toFixed(0)}% standar WHO)`);
+      deficiencies.push(`Lemak rendah (${fatPct.toFixed(0)}% target harian)`);
       deficitMap["fat_g"] = target.fat_g - consumed.fat_g;
     }
 
@@ -107,7 +107,7 @@ export async function GET() {
       if (bestProtein) {
         recommendations.push({
           food: bestProtein,
-          reason: `Tinggi protein (${bestProtein.protein_g}g) untuk memenuhi target WHO. Harga terjangkau (Rp ${bestProtein.avg_price_idr.toLocaleString("id-ID")}).`,
+          reason: `Tinggi protein (${bestProtein.protein_g}g) untuk memenuhi target harian. Harga terjangkau (Rp ${bestProtein.avg_price_idr.toLocaleString("id-ID")}).`,
         });
       }
     }
@@ -117,7 +117,7 @@ export async function GET() {
       if (bestFiber) {
         recommendations.push({
           food: bestFiber,
-          reason: `Sumber serat baik (${bestFiber.fiber_g}g) untuk pencernaan sesuai standar WHO.`,
+          reason: `Sumber serat baik (${bestFiber.fiber_g}g) untuk pencernaan sesuai standar gizi harian.`,
         });
       }
     }
@@ -144,7 +144,7 @@ export async function GET() {
     }
 
     if (deficiencies.length === 0) {
-      deficiencies.push("Asupan gizi sudah sangat baik sesuai standar WHO! Pertahankan pola makanmu.");
+      deficiencies.push("Asupan gizi sudah sangat baik sesuai target harian! Pertahankan pola makanmu.");
     }
 
     const mappedRecommendations = recommendations.map((item) => ({

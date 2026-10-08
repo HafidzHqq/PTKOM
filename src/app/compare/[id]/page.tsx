@@ -42,11 +42,11 @@ export default function ComparePage() {
   if (error || !data) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-3xl shadow-sm max-w-md w-full text-center">
+        <div className="bg-white p-8 rounded-lg shadow-sm max-w-md w-full text-center">
           <div className="text-5xl mb-4">⚖️</div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Tidak Bisa Dibandingkan</h2>
           <p className="text-gray-500 mb-6">{error}</p>
-          <button onClick={() => router.back()} className="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold">
+          <button onClick={() => router.back()} className="w-full py-3 rounded bg-emerald-600 text-white font-bold">
             Kembali
           </button>
         </div>
@@ -59,7 +59,7 @@ export default function ComparePage() {
   return (
     <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8 pb-24">
       {/* Header */}
-      <div className="bg-emerald-600 text-white pt-12 pb-24 px-6 md:px-8 rounded-[2rem] shadow-md relative overflow-hidden">
+      <div className="bg-emerald-600 text-white pt-12 pb-24 px-6 md:px-8 rounded-lg shadow-md relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="relative z-10">
           <div className="flex items-center mb-8">
@@ -81,7 +81,7 @@ export default function ComparePage() {
       {/* Content */}
       <div className="-mt-12 relative z-20 px-4 md:px-8">
         {/* Savings Card */}
-        <div className={`rounded-[2rem] p-6 md:p-8 shadow-sm border mb-8 text-center ${
+        <div className={`rounded-lg p-6 md:p-8 shadow-sm border mb-8 text-center ${
           savings.isCheaperToCook 
             ? 'bg-emerald-50 border-emerald-200' 
             : 'bg-amber-50 border-amber-200'
@@ -103,30 +103,30 @@ export default function ComparePage() {
         {/* Comparison Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Beli Card */}
-          <div className={`bg-white rounded-3xl p-6 md:p-8 shadow-sm border ${!savings.isCheaperToCook ? 'ring-2 ring-emerald-500' : 'border-gray-100'}`}>
+          <div className={`bg-white rounded-lg p-6 md:p-8 shadow-sm border ${!savings.isCheaperToCook ? 'ring-2 ring-emerald-500 shadow-md' : 'border-neutral-100'}`}>
             <div className="text-5xl mb-4 text-center">🥡</div>
-            <h4 className="font-bold text-gray-900 text-xl text-center mb-2">Beli Jadi</h4>
+            <h4 className="font-black text-neutral-900 text-xl text-center mb-2">Beli Jadi</h4>
             <div className="text-3xl font-black text-emerald-600 text-center mb-6">
               Rp {Math.round(beli.pricePerPortion || 0).toLocaleString('id-ID')}
             </div>
             <Link 
               href={`/foods/${beli.id}`}
-              className="block w-full py-3.5 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-2xl hover:bg-emerald-100 transition-colors"
+              className="block w-full py-4 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
             >
               Lihat Detail
             </Link>
           </div>
 
           {/* Masak Card */}
-          <div className={`bg-white rounded-3xl p-6 md:p-8 shadow-sm border ${savings.isCheaperToCook ? 'ring-2 ring-emerald-500' : 'border-gray-100'}`}>
+          <div className={`bg-white rounded-lg p-6 md:p-8 shadow-sm border ${savings.isCheaperToCook ? 'ring-2 ring-emerald-500 shadow-md' : 'border-neutral-100'}`}>
             <div className="text-5xl mb-4 text-center">🍳</div>
-            <h4 className="font-bold text-gray-900 text-xl text-center mb-2">Masak Sendiri</h4>
+            <h4 className="font-black text-neutral-900 text-xl text-center mb-2">Masak Sendiri</h4>
             <div className="text-3xl font-black text-emerald-600 text-center mb-6">
               Rp {Math.round(masak.pricePerPortion || 0).toLocaleString('id-ID')}
             </div>
             <Link 
               href={`/foods/${masak.id}`}
-              className="block w-full py-3.5 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-2xl hover:bg-emerald-100 transition-colors"
+              className="block w-full py-4 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
             >
               Lihat Resep
             </Link>
@@ -135,18 +135,18 @@ export default function ComparePage() {
 
         {/* Breakdown Masak */}
         {masak.cookDetails && (
-          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
-            <h3 className="font-extrabold text-gray-900 text-xl mb-6">Rincian Biaya Masak</h3>
+          <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm border border-neutral-100">
+            <h3 className="font-black text-neutral-900 text-xl mb-6">Rincian Biaya Masak</h3>
             <div className="space-y-4">
               {masak.cookDetails.breakdown.map((item: any, idx: number) => (
-                <div key={idx} className="flex justify-between items-center pb-2 border-b border-gray-50 last:border-0 last:pb-0">
-                  <span className="text-sm text-gray-600">{item.ingredient}</span>
-                  <span className="text-sm font-bold text-gray-900">Rp {Math.round(item.cost).toLocaleString('id-ID')}</span>
+                <div key={idx} className="flex justify-between items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0">
+                  <span className="text-sm font-medium text-neutral-600">{item.ingredient}</span>
+                  <span className="text-sm font-bold text-neutral-900">Rp {Math.round(item.cost).toLocaleString('id-ID')}</span>
                 </div>
               ))}
-              <div className="pt-2 flex justify-between items-center">
-                <span className="text-sm font-bold text-gray-800">Total Modal ({masak.cookDetails.portions} porsi)</span>
-                <span className="text-sm font-bold text-emerald-600">Rp {Math.round(masak.cookDetails.totalCost).toLocaleString('id-ID')}</span>
+              <div className="pt-3 border-t border-neutral-100 flex justify-between items-center">
+                <span className="text-sm font-bold text-neutral-800">Total Modal ({masak.cookDetails.portions} porsi)</span>
+                <span className="text-base font-black text-emerald-600">Rp {Math.round(masak.cookDetails.totalCost).toLocaleString('id-ID')}</span>
               </div>
             </div>
           </div>

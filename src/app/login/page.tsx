@@ -14,19 +14,19 @@ function LoginContent() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
-      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-lg">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100 p-4">
+      <div className="w-full max-w-md space-y-8 rounded-[2.5rem] bg-white p-8 md:p-10 shadow-xl shadow-emerald-100/50 border border-neutral-100">
         {/* Logo & Header */}
         <div className="space-y-3 text-center flex flex-col items-center">
           <Logo size="xl" withLink={false} />
-          <p className="text-gray-500 mt-2">
+          <p className="text-neutral-500 mt-2 font-medium">
             Analisis nutrisi makanan kamu dengan AI
           </p>
         </div>
 
         {/* Error Message */}
         {error === "auth_failed" && (
-          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700 text-center">
             ⚠️ Login gagal. Silakan coba lagi.
           </div>
         )}
@@ -34,10 +34,10 @@ function LoginContent() {
         {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
+            <div className="w-full border-t border-neutral-200" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-4 text-gray-400">
+            <span className="bg-white px-4 text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
               Masuk untuk melanjutkan
             </span>
           </div>
@@ -46,13 +46,13 @@ function LoginContent() {
         {/* Google Login Button */}
         <button
           onClick={handleGoogleLogin}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-6 py-3.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md active:scale-95"
+          className="flex w-full items-center justify-center gap-3 rounded-lg border-2 border-neutral-100 bg-white px-6 py-4 text-base font-bold text-neutral-700 shadow-sm transition-all hover:bg-neutral-50 hover:border-emerald-200 hover:shadow-md active:scale-[0.98]"
         >
           {/* Google Icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 48 48"
-            className="h-5 w-5"
+            className="h-6 w-6"
           >
             <path
               fill="#FFC107"
@@ -75,9 +75,9 @@ function LoginContent() {
         </button>
 
         {/* Footer */}
-        <p className="text-center text-xs text-gray-400">
+        <p className="text-center text-xs font-medium text-neutral-400">
           Dengan masuk, kamu menyetujui{" "}
-          <span className="cursor-pointer text-green-600 underline">
+          <span className="cursor-pointer text-emerald-600 font-bold hover:underline">
             Syarat & Ketentuan
           </span>{" "}
           kami.

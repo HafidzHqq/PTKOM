@@ -51,7 +51,7 @@ export default function FoodRecommendations({
   }, [refreshKey]);
 
   return (
-    <section className="space-y-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+    <section className="space-y-6 rounded border border-gray-100 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between border-b pb-4">
         <div>
           <h2 className="text-xl font-bold text-gray-800">
