@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface HistoryEntry {
@@ -86,64 +87,77 @@ export default function HistoryPage() {
     <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-900 tracking-tight">📅 Riwayat & Statistik</h1>
+          <h1 className="text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">📅 Riwayat & Statistik</h1>
           <p className="text-sm text-gray-500 mt-1">Pantau pola makan harian Anda selama 7 hari terakhir.</p>
         </div>
-        <button onClick={loadHistory} disabled={loading} className="rounded-xl bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-100 border border-green-100 disabled:opacity-50">
-          {loading ? "Memuat..." : "🔄 Muat Ulang"}
-        </button>
+        <div className="flex items-center gap-3">
+          <Link href="/analyze" className="rounded-lg bg-neutral-100 px-5 py-2.5 text-sm font-bold text-black hover:bg-neutral-200 transition-colors">
+            📊 Lihat Wawasan
+          </Link>
+          <button onClick={loadHistory} disabled={loading} className="rounded-lg bg-black px-5 py-2.5 text-sm font-bold text-white hover:bg-neutral-800 transition-colors disabled:opacity-50">
+            {loading ? "Memuat..." : "🔄 Refresh"}
+          </button>
+        </div>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-          <p className="text-xs text-gray-500">Total Hari Tercatat</p>
-          <p className="text-2xl font-bold text-gray-900">{days.length}</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Hari Tercatat</p>
+          <p className="text-3xl font-black text-gray-900">{days.length}</p>
         </div>
-        <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-          <p className="text-xs text-gray-500">Total Entri</p>
-          <p className="text-2xl font-bold text-gray-900">{entries.length}</p>
+        <div className="rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Entri</p>
+          <p className="text-3xl font-black text-gray-900">{entries.length}</p>
         </div>
-        <div className="rounded-xl border border-orange-100 bg-orange-50 p-4">
-          <p className="text-xs text-orange-600 font-medium">Rata-rata Kalori/Hari</p>
-          <p className="text-2xl font-bold text-orange-700">{avgCalories} <span className="text-xs font-normal">kcal</span></p>
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-6">
+          <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">Rata-rata Kalori/Hari</p>
+          <p className="text-3xl font-black text-black">{avgCalories} <span className="text-sm font-medium text-neutral-500">kcal</span></p>
         </div>
-        <div className="rounded-xl border border-green-100 bg-green-50 p-4">
-          <p className="text-xs text-green-600 font-medium">Target WHO</p>
-          <p className="text-2xl font-bold text-green-700">2250 <span className="text-xs font-normal">kcal</span></p>
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-6">
+          <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">Target Harian</p>
+          <p className="text-3xl font-black text-black">2250 <span className="text-sm font-medium text-neutral-500">kcal</span></p>
         </div>
       </div>
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-green-500 border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-black border-t-transparent"></div>
         </div>
       )}
-      {error && <p className="text-sm text-red-700 rounded-xl border border-red-200 bg-red-50 p-4">{error}</p>}
+      {error && <p className="text-sm text-black rounded-lg border border-neutral-200 bg-neutral-50 p-4 font-medium">{error}</p>}
       {!loading && !error && days.length === 0 && (
-        <p className="text-sm text-gray-500 border border-dashed rounded-xl p-8 text-center">Belum ada catatan. Analisis makanan untuk mulai mengisi riwayat.</p>
+        <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 p-12 text-center bg-gray-50/50">
+          <span className="text-5xl mb-4">🍽️</span>
+          <p className="text-base font-bold text-gray-600">Belum ada catatan</p>
+          <p className="text-sm text-gray-400 mt-2 max-w-xs leading-relaxed">Analisis makanan untuk mulai mengisi riwayat harianmu.</p>
+          <Link href="/analyze" className="mt-6 rounded-full bg-black px-6 py-3 text-sm font-bold text-white shadow-md hover:bg-neutral-800 transition-all">
+            Scan Makanan Sekarang
+          </Link>
+        </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {days.map((day) => (
-          <article key={day.dateKey} className="rounded-xl border border-gray-100 bg-white p-4 sm:p-5 shadow-sm">
-            <div className="flex flex-wrap items-baseline justify-between gap-2 border-b pb-3">
-              <h3 className="font-bold capitalize text-gray-900 text-sm sm:text-base">{day.label}</h3>
-              <span className="text-sm font-bold text-green-700 bg-green-50 px-2.5 py-1 rounded-full">{Math.round(day.calories)} kcal</span>
+          <article key={day.dateKey} className="rounded-lg border border-neutral-100 bg-white p-6 md:p-8 shadow-sm">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-gray-100 pb-4">
+              <h3 className="font-black capitalize text-gray-900 text-lg">{day.label}</h3>
+              <span className="text-sm font-black text-black bg-neutral-100 px-3 py-1.5 rounded-full">{Math.round(day.calories)} kcal</span>
             </div>
-            <div className="mt-3 grid grid-cols-4 gap-2 text-center text-[11px]">
-              <div className="rounded-lg bg-blue-50 p-2"><p className="font-bold text-blue-700">{day.protein_g.toFixed(1)}g</p><p className="text-gray-500">Protein</p></div>
-              <div className="rounded-lg bg-yellow-50 p-2"><p className="font-bold text-yellow-700">{day.fat_g.toFixed(1)}g</p><p className="text-gray-500">Lemak</p></div>
-              <div className="rounded-lg bg-purple-50 p-2"><p className="font-bold text-purple-700">{day.carbs_g.toFixed(1)}g</p><p className="text-gray-500">Karbo</p></div>
-              <div className="rounded-lg bg-green-50 p-2"><p className="font-bold text-green-700">{day.fiber_g.toFixed(1)}g</p><p className="text-gray-500">Serat</p></div>
+            <div className="mt-4 grid grid-cols-4 gap-3 text-center">
+              <div className="rounded-lg bg-neutral-50 p-3 border border-neutral-200"><p className="font-black text-black text-lg">{day.protein_g.toFixed(1)}g</p><p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Protein</p></div>
+              <div className="rounded-lg bg-neutral-50 p-3 border border-neutral-200"><p className="font-black text-black text-lg">{day.fat_g.toFixed(1)}g</p><p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Lemak</p></div>
+              <div className="rounded-lg bg-neutral-50 p-3 border border-neutral-200"><p className="font-black text-black text-lg">{day.carbs_g.toFixed(1)}g</p><p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Karbo</p></div>
+              <div className="rounded-lg bg-neutral-50 p-3 border border-neutral-200"><p className="font-black text-black text-lg">{day.fiber_g.toFixed(1)}g</p><p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-1">Serat</p></div>
             </div>
-            <ul className="mt-3 space-y-1.5 text-sm text-gray-600">
+            <ul className="mt-6 space-y-2 text-sm text-gray-600">
               {day.entries.map((entry) => (
-                <li key={entry.id} className="flex justify-between gap-4 rounded-lg bg-gray-50 px-3 py-2">
-                  <span className="truncate text-xs">
-                    {new Date(entry.logged_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} · {entry.foods.map((f) => f.name).join(", ")}
+                <li key={entry.id} className="flex justify-between items-center gap-4 rounded-lg bg-gray-50 px-4 py-3 border border-gray-100">
+                  <span className="truncate text-sm font-medium text-gray-700">
+                    <span className="text-xs font-bold text-gray-400 mr-2">{new Date(entry.logged_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
+                    {entry.foods.map((f) => f.name).join(", ")}
                   </span>
-                  <span className="shrink-0 text-xs font-semibold">{Math.round(Number(entry.calories))} kcal</span>
+                  <span className="shrink-0 text-sm font-black text-black">{Math.round(Number(entry.calories))} kcal</span>
                 </li>
               ))}
             </ul>
