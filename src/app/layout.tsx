@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
-import { AuthProvider } from "@/context/AuthContext";
-import BottomNav from "@/components/bottom-nav";
-import Sidebar from "@/components/sidebar";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import ClientLayout from "./client-layout";
 import "./globals.css";
 
+const font = Plus_Jakarta_Sans({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
-  title: "DompetKost - Analisis Nutrisi Makanan",
-  description: "Analisis nutrisi makanan kamu dengan AI",
+  title: "Studio — Footer",
+  description: "Fresh ideas, imagination, and creative collaboration.",
+  icons: {
+    icon: '/logo.svg',
+  },
 };
 
 export default function RootLayout({
@@ -15,18 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
-      <body className="bg-gray-50 pb-20 md:pb-0">
-        <AuthProvider>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <main className="flex-1 w-full min-w-0">
-              {children}
-            </main>
-          </div>
-          <BottomNav />
-        </AuthProvider>
-      </body>
+    <html lang="en">
+      <ClientLayout fontClassName={font.className}>
+        {children}
+      </ClientLayout>
     </html>
   );
 }
