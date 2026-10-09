@@ -148,7 +148,7 @@ export default function RecommendationsPage() {
         <>
           {/* Status */}
           <div className="rounded-lg bg-white p-6 md:p-8 border border-neutral-200 shadow-sm">
-            <h3 className="mb-6 text-lg font-black text-black">📊 Status Kebutuhan Gizi Hari Ini</h3>
+            <h3 className="mb-6 text-lg font-black text-black">Status Kebutuhan Gizi Hari Ini</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
               {[
                 { label: "Kalori", value: Math.max(0, data.target.calories - data.consumed.calories), unit: "kcal", consumed: data.consumed.calories, target: data.target.calories },
@@ -172,7 +172,7 @@ export default function RecommendationsPage() {
           {/* Budget Planner Form */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             <div className="lg:col-span-7 rounded-lg border border-neutral-200 bg-white p-6 md:p-8 shadow-sm">
-              <h3 className="text-lg font-black text-black mb-6">💰 Smart Budget Planner</h3>
+              <h3 className="text-lg font-black text-black mb-6">Smart Budget Planner</h3>
               <form onSubmit={handleBudgetSubmit} className="space-y-8">
                 
                 <div className="bg-neutral-50 p-1.5 rounded-lg flex border border-neutral-200">

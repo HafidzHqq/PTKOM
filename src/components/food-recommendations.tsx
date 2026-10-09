@@ -87,7 +87,7 @@ export default function FoodRecommendations({
           {/* Status Kekurangan Gizi */}
           <div className="rounded-lg bg-gray-50 p-4">
             <h3 className="mb-2 text-sm font-semibold text-gray-700">
-              📊 Status Kebutuhan Gizi Hari Ini
+              Status Kebutuhan Gizi Hari Ini
             </h3>
             <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
               <div className="rounded border bg-white p-2">
