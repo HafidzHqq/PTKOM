@@ -87,15 +87,15 @@ export default function HistoryPage() {
     <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">📅 Riwayat & Statistik</h1>
+          <h1 className="text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">Riwayat & Statistik</h1>
           <p className="text-sm text-gray-500 mt-1">Pantau pola makan harian Anda selama 7 hari terakhir.</p>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/analyze" className="rounded-lg bg-neutral-100 px-5 py-2.5 text-sm font-bold text-black hover:bg-neutral-200 transition-colors">
-            📊 Lihat Wawasan
+            Lihat Tren Gizi
           </Link>
           <button onClick={loadHistory} disabled={loading} className="rounded-lg bg-black px-5 py-2.5 text-sm font-bold text-white hover:bg-neutral-800 transition-colors disabled:opacity-50">
-            {loading ? "Memuat..." : "🔄 Refresh"}
+            {loading ? "Memuat..." : "Refresh"}
           </button>
         </div>
       </div>

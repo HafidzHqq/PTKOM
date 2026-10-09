@@ -182,7 +182,7 @@ export default function AnalyzePage() {
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-black text-black tracking-tight">
-              Analisis & Wawasan
+              Analisis & Tren Gizi
             </h1>
             <p className="text-sm md:text-base text-neutral-500 font-medium mt-1">
               Pindai makanan dan evaluasi tren gizi harianmu.
@@ -201,7 +201,7 @@ export default function AnalyzePage() {
               : "border-transparent text-neutral-500 hover:text-black"
           }`}
         >
-          📸 Analisis Makanan
+          Analisis Makanan
         </button>
         <button
           onClick={() => setActiveTab("insights")}
@@ -211,7 +211,7 @@ export default function AnalyzePage() {
               : "border-transparent text-neutral-500 hover:text-black"
           }`}
         >
-          📊 Wawasan Gizi
+          Tren Gizi
         </button>
       </div>
 
@@ -307,7 +307,7 @@ export default function AnalyzePage() {
             {result ? (
               <section className="space-y-6 rounded-lg border border-neutral-200 bg-white p-6 md:p-8 shadow-sm">
                 <h2 className="border-b border-neutral-200 pb-4 text-xl font-black text-black">
-                  📊 Hasil Analisis Nutrisi
+                  Hasil Analisis Nutrisi
                 </h2>
 
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
@@ -412,7 +412,9 @@ export default function AnalyzePage() {
             <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-6 text-sm font-medium text-black">{insightsError}</div>
           ) : totalDays === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-200 p-12 text-center bg-neutral-50/50">
-              <span className="text-5xl mb-4">📊</span>
+              <svg className="h-12 w-12 text-neutral-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
               <p className="text-base font-bold text-black">Belum ada data yang cukup</p>
               <p className="text-sm text-neutral-500 mt-2 max-w-sm leading-relaxed">
                 Mulai rekam konsumsi makanan Anda lewat kamera atau teks untuk membuka analisis gizi komprehensif.
@@ -431,7 +433,9 @@ export default function AnalyzePage() {
                 <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Rata-rata Kalori</p>
-                    <span className="text-2xl">🔥</span>
+                    <svg className="h-6 w-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                   </div>
                   <p className="mt-3 text-3xl font-black text-black">{avgCalories} <span className="text-sm font-medium text-neutral-400">kcal/hari</span></p>
                   <div className="mt-3 flex items-center gap-2">
@@ -447,7 +451,9 @@ export default function AnalyzePage() {
                 <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Rata-rata Protein</p>
-                    <span className="text-2xl">🥩</span>
+                    <svg className="h-6 w-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                    </svg>
                   </div>
                   <p className="mt-3 text-3xl font-black text-black">{avgProtein}g <span className="text-sm font-medium text-neutral-400">/hari</span></p>
                   <div className="mt-3 flex items-center gap-2">
@@ -463,7 +469,9 @@ export default function AnalyzePage() {
                 <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Rata-rata Serat</p>
-                    <span className="text-2xl">🥗</span>
+                    <svg className="h-6 w-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
                   </div>
                   <p className="mt-3 text-3xl font-black text-black">{avgFiber}g <span className="text-sm font-medium text-neutral-400">/hari</span></p>
                   <div className="mt-3 flex items-center gap-2">
@@ -528,7 +536,9 @@ export default function AnalyzePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {avgProtein < TARGET_PROTEIN && (
                     <div className="flex gap-4 rounded-lg bg-neutral-50 p-5 text-black border border-neutral-200">
-                      <span className="text-3xl">🍗</span>
+                      <svg className="h-8 w-8 text-neutral-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
                       <div>
                         <p className="font-black text-sm">Tingkatkan Asupan Protein</p>
                         <p className="text-xs mt-1.5 opacity-90 leading-relaxed font-medium text-neutral-600">
@@ -540,7 +550,9 @@ export default function AnalyzePage() {
                   
                   {avgFiber < TARGET_FIBER && (
                     <div className="flex gap-4 rounded-lg bg-neutral-50 p-5 text-black border border-neutral-200">
-                      <span className="text-3xl">🥦</span>
+                      <svg className="h-8 w-8 text-neutral-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                      </svg>
                       <div>
                         <p className="font-black text-sm">Tambahkan Serat Harian</p>
                         <p className="text-xs mt-1.5 opacity-90 leading-relaxed font-medium text-neutral-600">
