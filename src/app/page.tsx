@@ -27,10 +27,12 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white text-sm font-bold shadow-md shadow-black/20 transition-all hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-black"
             >
               <span>Buka Aplikasi</span>
-              <span className="text-neutral-400">&rarr;</span>
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
             </Link>
           </div>
         </nav>
@@ -52,15 +54,15 @@ export default function Home() {
         <div className="flex flex-wrap justify-center items-center gap-4 pt-8">
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center rounded-full bg-black px-8 py-4 text-sm sm:text-base font-bold text-white shadow-lg shadow-black/30 hover:bg-neutral-800 hover:shadow-xl transition-all hover:-translate-y-1"
+            className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-black"
           >
-            Mulai Sekarang 🚀
+            Mulai Sekarang
           </Link>
           <Link
             href="/recommendations"
-            className="inline-flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md px-8 py-4 text-sm sm:text-base font-bold text-neutral-800 shadow-sm border border-neutral-200 hover:bg-neutral-50 hover:text-black transition-all hover:-translate-y-1"
+            className="inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white px-8 py-3.5 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50"
           >
-            Simulasi Budget 💰
+            Simulasi Budget
           </Link>
         </div>
       </div>
@@ -71,8 +73,10 @@ export default function Home() {
           <p>
             &copy; {new Date().getFullYear()} DompetKost • Dibuat khusus untuk anak kost Indonesia
           </p>
-          <p className="flex items-center gap-1.5 bg-white/60 backdrop-blur-xs px-3 py-1 rounded-full border border-white/60">
-            <span>👀</span>
+          <p className="flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white/80 px-3 py-1.5 backdrop-blur-sm">
+            <svg className="h-3.5 w-3.5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+            </svg>
             <span>Arahkan kursor untuk melihat karakter berinteraksi</span>
           </p>
         </div>
