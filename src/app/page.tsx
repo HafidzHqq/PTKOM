@@ -69,15 +69,9 @@ export default function Home() {
 
       {/* Bottom Subtle Bar */}
       <footer className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6 z-10">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-neutral-500 font-medium">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-xs text-neutral-500 font-medium">
           <p>
             &copy; {new Date().getFullYear()} DompetKost • Dibuat khusus untuk anak kost Indonesia
-          </p>
-          <p className="flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white/80 px-3 py-1.5 backdrop-blur-sm">
-            <svg className="h-3.5 w-3.5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-            </svg>
-            <span>Arahkan kursor untuk melihat karakter berinteraksi</span>
           </p>
         </div>
       </footer>
