@@ -119,19 +119,6 @@ function LoginContent() {
   );
 }
 
-        {/* Footer */}
-        <p className="text-center text-xs font-medium text-neutral-400">
-          Dengan masuk, kamu menyetujui{" "}
-          <span className="cursor-pointer text-emerald-600 font-bold hover:underline">
-            Syarat & Ketentuan
-          </span>{" "}
-          kami.
-        </p>
-      </div>
-    </main>
-  );
-}
-
 export default function LoginPage() {
   return (
     <Suspense>

@@ -216,44 +216,6 @@ export async function GET() {
       advice: deficiencies.join(". "),
     });
   } catch (error) {
-        recommendations.push({
-          food: bestFruit,
-          reason: `Cemilan sehat kaya vitamin untuk melengkapi nutrisi harian.`,
-        });
-      }
-    }
-
-    if (deficiencies.length === 0) {
-      deficiencies.push("Asupan gizi sudah sangat baik sesuai target harian! Pertahankan pola makanmu.");
-    }
-
-    const mappedRecommendations = recommendations.map((item) => ({
-      food_name: item.food.name,
-      estimated_price_idr: item.food.avg_price_idr,
-      estimated_nutrition: {
-        calories: item.food.calories,
-        protein_g: item.food.protein_g,
-        fat_g: item.food.fat_g,
-        carbs_g: item.food.carbs_g,
-        fiber_g: item.food.fiber_g,
-      },
-      reason: item.reason,
-    }));
-
-    return NextResponse.json({
-      target,
-      consumed,
-      deficiency: {
-        calories: Math.max(0, target.calories - consumed.calories),
-        protein_g: Math.max(0, target.protein_g - consumed.protein_g),
-        fat_g: Math.max(0, target.fat_g - consumed.fat_g),
-        carbs_g: Math.max(0, target.carbs_g - consumed.carbs_g),
-        fiber_g: Math.max(0, target.fiber_g - consumed.fiber_g),
-      },
-      recommendations: mappedRecommendations,
-      advice: deficiencies.join(". "),
-    });
-  } catch (error) {
     console.error("[GET /api/recommendations] Error:", error);
     return NextResponse.json(
       {
