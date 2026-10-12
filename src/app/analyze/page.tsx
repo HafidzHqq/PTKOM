@@ -41,6 +41,7 @@ export default function AnalyzePage() {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [insightsLoading, setInsightsLoading] = useState(true);
   const [insightsError, setInsightsError] = useState<string | null>(null);
+  const [profileTargets, setProfileTargets] = useState({ calories: 0, protein_g: 0, fiber_g: 0 });
 
   // --- Analyze Handlers ---
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,10 +121,23 @@ export default function AnalyzePage() {
   const loadHistory = async () => {
     setInsightsLoading(true);
     try {
-      const res = await fetch("/api/nutrition-history", { cache: "no-store" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal memuat riwayat");
+      const [resHist, resProfile] = await Promise.all([
+        fetch("/api/nutrition-history", { cache: "no-store" }),
+        fetch("/api/profile", { cache: "no-store" }),
+      ]);
+      const data = await resHist.json();
+      if (!resHist.ok) throw new Error(data.error || "Gagal memuat riwayat");
       setEntries(data);
+      if (resProfile.ok) {
+        const pData = await resProfile.json();
+        if (pData.success && pData.data?.daily_calorie_target) {
+          setProfileTargets({
+            calories: pData.data.daily_calorie_target,
+            protein_g: pData.data.daily_protein_target ?? 0,
+            fiber_g: pData.data.daily_fiber_target ?? 0,
+          });
+        }
+      }
     } catch (e) {
       setInsightsError(e instanceof Error ? e.message : "Gagal memuat riwayat");
     } finally {
@@ -165,10 +179,10 @@ export default function AnalyzePage() {
   const avgProtein = totalDays > 0 ? Math.round(days.reduce((sum, d) => sum + d.protein_g, 0) / totalDays) : 0;
   const avgFiber = totalDays > 0 ? Math.round(days.reduce((sum, d) => sum + d.fiber_g, 0) / totalDays) : 0;
 
-  // Target Harian
-  const TARGET_CALORIES = 2250;
-  const TARGET_PROTEIN = 84;
-  const TARGET_FIBER = 25;
+  // Target Harian (from profile, fallback 0)
+  const TARGET_CALORIES = profileTargets.calories;
+  const TARGET_PROTEIN = profileTargets.protein_g;
+  const TARGET_FIBER = profileTargets.fiber_g;
 
   return (
     <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">

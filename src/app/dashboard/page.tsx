@@ -34,22 +34,25 @@ export default function DashboardPage() {
     carbs: 0,
     fiber: 0,
     target: {
-      calories: 2250,
-      protein_g: 84,
-      fat_g: 62,
-      carbs_g: 337,
-      fiber_g: 25,
+      calories: 0,
+      protein_g: 0,
+      fat_g: 0,
+      carbs_g: 0,
+      fiber_g: 0,
     }
   });
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [monthlyBudget, setMonthlyBudget] = useState(0);
+  const [hasProfile, setHasProfile] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [resRec, resHist] = await Promise.all([
+        const [resRec, resHist, resProfile] = await Promise.all([
           fetch("/api/recommendations"),
-          fetch("/api/nutrition-history")
+          fetch("/api/nutrition-history"),
+          fetch("/api/profile"),
         ]);
         if (resRec.ok) {
           const data = await resRec.json();
@@ -60,19 +63,24 @@ export default function DashboardPage() {
               fat: data.consumed.fat_g || 0,
               carbs: data.consumed.carbs_g || 0,
               fiber: data.consumed.fiber_g || 0,
-              target: data.target || {
-                calories: 2250,
-                protein_g: 84,
-                fat_g: 62,
-                carbs_g: 337,
-                fiber_g: 25,
-              },
+              target: data.target || { calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 },
             });
           }
         }
         if (resHist.ok) {
           const data = await resHist.json();
           setHistory(Array.isArray(data) ? data : []);
+        }
+        if (resProfile.ok) {
+          const pData = await resProfile.json();
+          if (pData.success && pData.data) {
+            if (pData.data.monthly_food_budget) {
+              setMonthlyBudget(pData.data.monthly_food_budget);
+            }
+            if (pData.data.daily_calorie_target) {
+              setHasProfile(true);
+            }
+          }
         }
       } catch (e) {
         console.error(e);
@@ -83,14 +91,13 @@ export default function DashboardPage() {
     fetchData();
   }, []);
 
-  const progress = Math.min(100, (summary.calories / summary.target.calories) * 100);
-  const budget = { remaining: 12000, total: 25000 };
+  const progress = summary.target.calories > 0 ? Math.min(100, (summary.calories / summary.target.calories) * 100) : 0;
+  const dailyBudget = monthlyBudget > 0 ? Math.round(monthlyBudget / 30) : 0;
 
   const macros = [
-    { name: "Protein", current: Math.round(summary.protein), target: summary.target.protein_g, status: summary.protein >= summary.target.protein_g ? "Tercapai" : "Kurang", statusColor: summary.protein >= summary.target.protein_g ? "text-black bg-neutral-100" : "text-neutral-500 bg-neutral-100", barColor: summary.protein >= summary.target.protein_g ? "bg-black" : "bg-neutral-400" },
-    { name: "Lemak", current: Math.round(summary.fat), target: summary.target.fat_g, status: summary.fat >= summary.target.fat_g ? "Tercapai" : "Kurang", statusColor: summary.fat >= summary.target.fat_g ? "text-black bg-neutral-100" : "text-neutral-500 bg-neutral-100", barColor: summary.fat >= summary.target.fat_g ? "bg-black" : "bg-neutral-400" },
-    { name: "Karbohidrat", current: Math.round(summary.carbs), target: summary.target.carbs_g, status: summary.carbs >= summary.target.carbs_g ? "Tercapai" : "Kurang", statusColor: summary.carbs >= summary.target.carbs_g ? "text-black bg-neutral-100" : "text-neutral-500 bg-neutral-100", barColor: summary.carbs >= summary.target.carbs_g ? "bg-black" : "bg-neutral-400" },
-    { name: "Serat", current: Math.round(summary.fiber), target: summary.target.fiber_g, status: summary.fiber >= summary.target.fiber_g ? "Tercapai" : "Sangat kurang", statusColor: summary.fiber >= summary.target.fiber_g ? "text-black bg-neutral-100" : "text-neutral-500 bg-neutral-100", barColor: summary.fiber >= summary.target.fiber_g ? "bg-black" : "bg-neutral-400" },
+    { name: "Protein", current: Math.round(summary.protein), target: summary.target.protein_g, status: summary.target.protein_g > 0 && summary.protein >= summary.target.protein_g ? "Tercapai" : "Kurang", statusColor: summary.target.protein_g > 0 && summary.protein >= summary.target.protein_g ? "text-black bg-neutral-100" : "text-neutral-500 bg-neutral-100", barColor: summary.target.protein_g > 0 && summary.protein >= summary.target.protein_g ? "bg-black" : "bg-neutral-400" },
+    { name: "Lemak", current: Math.round(summary.fat), target: summary.target.fat_g, status: summary.target.fat_g > 0 && summary.fat >= summary.target.fat_g ? "Tercapai" : "Kurang", statusColor: summary.target.fat_g > 0 && summary.fat >= summary.target.fat_g ? "text-black bg-neutral-100" : "text-neutral-500 bg-neutral-100", barColor: summary.target.fat_g > 0 && summary.fat >= summary.target.fat_g ? "bg-black" : "bg-neutral-400" },
+    { name: "Karbohidrat", current: Math.round(summary.carbs), target: summary.target.carbs_g, status: summary.target.carbs_g > 0 && summary.carbs >= summary.target.carbs_g ? "Tercapai" : "Kurang", statusColor: summary.target.carbs_g > 0 && summary.carbs >= summary.target.carbs_g ? "text-black bg-neutral-100" : "text-neutral-500 bg-neutral-100", barColor: summary.target.carbs_g > 0 && summary.carbs >= summary.target.carbs_g ? "bg-black" : "bg-neutral-400" },
   ];
 
   const today = new Date().toISOString().split("T")[0];
@@ -105,8 +112,9 @@ export default function DashboardPage() {
     const dayCalories = dayItems.reduce((sum, item) => sum + item.calories, 0);
     const dayName = new Date(date).toLocaleDateString("id-ID", { weekday: "short" });
     let status = "pending";
-    if (date < today) status = dayCalories >= (summary.target.calories * 0.8) ? "success" : "missed";
-    else if (date === today) status = dayCalories >= (summary.target.calories * 0.8) ? "success" : "pending";
+    const calTarget = summary.target.calories > 0 ? summary.target.calories : 2250;
+    if (date < today) status = dayCalories >= (calTarget * 0.8) ? "success" : "missed";
+    else if (date === today) status = dayCalories >= (calTarget * 0.8) ? "success" : "pending";
     return { day: dayName, status };
   });
   const successDays = consistency.filter(c => c.status === "success").length;
@@ -137,21 +145,23 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1.5">
           <h1 className="text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">
-            Hai, {user?.name?.split(" ")[0] || "Rina"}! 👋
+            Hai, {user?.name?.split(" ")[0] || "Teman Kost"}! 👋
           </h1>
           <p className="text-sm md:text-base text-neutral-500 font-medium">
             Semangat penuhi gizimu hari ini!
           </p>
         </div>
-        <div className="inline-flex items-center gap-3 rounded-lg bg-white border border-neutral-200 px-5 py-3 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-black">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        {dailyBudget > 0 && (
+          <div className="inline-flex items-center gap-3 rounded-lg bg-white border border-neutral-200 px-5 py-3 shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-black">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Budget Harian</p>
+              <p className="text-base font-black text-black">Rp {dailyBudget.toLocaleString("id-ID")}<span className="text-neutral-400 font-medium text-xs ml-1">/ hari</span></p>
+            </div>
           </div>
-          <div>
-            <p className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Sisa Budget Hari Ini</p>
-            <p className="text-base font-black text-black">Rp {budget.remaining.toLocaleString("id-ID")}<span className="text-neutral-400 font-medium text-xs ml-1">/ {budget.total / 1000}k</span></p>
-          </div>
-        </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
@@ -172,8 +182,15 @@ export default function DashboardPage() {
               <p className="text-xs font-bold tracking-wider text-neutral-500 uppercase mb-2">ENERGI HARIAN</p>
               <div className="flex items-baseline gap-2">
                 <span className="text-5xl md:text-6xl font-black text-black tracking-tight">{Math.round(summary.calories).toLocaleString("id-ID")}</span>
-                <span className="text-base text-neutral-500 font-medium">/ {summary.target.calories.toLocaleString("id-ID")} kkal</span>
+                <span className="text-base text-neutral-500 font-medium">
+                  {summary.target.calories > 0 ? `/ ${summary.target.calories.toLocaleString("id-ID")} kkal` : "kkal"}
+                </span>
               </div>
+              {summary.target.calories === 0 && (
+                <Link href="/profile" className="inline-block text-xs font-bold text-neutral-600 underline mt-1 hover:text-black">
+                  Atur profil untuk target kalori &gt;
+                </Link>
+              )}
             </div>
             <div className="relative flex h-24 w-24 md:h-32 md:w-32 items-center justify-center drop-shadow-sm">
               <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 36 36">

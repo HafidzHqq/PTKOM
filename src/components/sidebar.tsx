@@ -105,35 +105,48 @@ export default function Sidebar() {
 
       {/* User Profile / Auth Area */}
       <div className="p-4 border-t border-white/40">
-        <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/50 border border-white/60 hover:bg-white/70 backdrop-blur-md shadow-sm transition-all duration-300 cursor-pointer">
-          <div className="flex items-center gap-3 min-w-0">
-            {user?.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={user.image}
-                alt={user.name || "User"}
-                className="h-10 w-10 rounded border-2 border-white object-cover shrink-0 shadow-sm"
-              />
-            ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded bg-gradient-to-br from-emerald-100 to-emerald-200 text-sm font-bold text-emerald-700 shrink-0 border border-white shadow-sm">
-                {user?.name?.[0]?.toUpperCase() || "R"}
+        {user ? (
+          <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/50 border border-white/60 hover:bg-white/70 backdrop-blur-md shadow-sm transition-all duration-300">
+            <Link href="/profile" className="flex items-center gap-3 min-w-0 flex-1">
+              {user.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={user.image}
+                  alt={user.name || "User"}
+                  referrerPolicy="no-referrer"
+                  className="h-10 w-10 rounded border-2 border-white object-cover shrink-0 shadow-sm"
+                />
+              ) : (
+                <div className="flex h-10 w-10 items-center justify-center rounded bg-black text-white text-sm font-bold shrink-0 border border-neutral-200 shadow-sm">
+                  {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
+                </div>
+              )}
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-bold text-gray-800 truncate">
+                  {user.name || "Pengguna"}
+                </span>
+                <span className="text-xs font-medium text-gray-500 truncate">
+                  {user.email}
+                </span>
               </div>
-            )}
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold text-gray-800 truncate">
-                {user?.name || "Rina S."}
-              </span>
-              <span className="text-xs font-medium text-gray-500 truncate">
-                {user?.email || "Anak Kost"}
-              </span>
-            </div>
+            </Link>
+            <Link href="/profile" className="text-gray-400 hover:text-black p-1.5 shrink-0 rounded-lg hover:bg-white/50 transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
-          <Link href="/profile" className="text-gray-400 hover:text-emerald-600 p-1.5 shrink-0 rounded-lg hover:bg-white/50 transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        ) : (
+          <Link
+            href="/login"
+            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-lg bg-black text-white text-sm font-bold hover:bg-neutral-800 transition-all shadow-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
             </svg>
+            Masuk / Login
           </Link>
-        </div>
+        )}
       </div>
       </div>
     </aside>

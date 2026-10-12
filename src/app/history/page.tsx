@@ -29,15 +29,25 @@ export default function HistoryPage() {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [targetCalories, setTargetCalories] = useState(0);
 
   const loadHistory = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/nutrition-history", { cache: "no-store" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal memuat riwayat");
+      const [resHist, resProfile] = await Promise.all([
+        fetch("/api/nutrition-history", { cache: "no-store" }),
+        fetch("/api/profile", { cache: "no-store" }),
+      ]);
+      const data = await resHist.json();
+      if (!resHist.ok) throw new Error(data.error || "Gagal memuat riwayat");
       setEntries(data);
       setError(null);
+      if (resProfile.ok) {
+        const pData = await resProfile.json();
+        if (pData.success && pData.data?.daily_calorie_target) {
+          setTargetCalories(pData.data.daily_calorie_target);
+        }
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Gagal memuat riwayat");
     } finally {
@@ -116,7 +126,11 @@ export default function HistoryPage() {
         </div>
         <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-6">
           <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">Target Harian</p>
-          <p className="text-3xl font-black text-black">2250 <span className="text-sm font-medium text-neutral-500">kcal</span></p>
+          {targetCalories > 0 ? (
+            <p className="text-3xl font-black text-black">{targetCalories} <span className="text-sm font-medium text-neutral-500">kcal</span></p>
+          ) : (
+            <Link href="/profile" className="text-sm font-bold text-neutral-600 underline hover:text-black">Atur di Profil &gt;</Link>
+          )}
         </div>
       </div>
 
