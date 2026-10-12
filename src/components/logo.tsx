@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type LogoProps = {
@@ -8,28 +7,22 @@ type LogoProps = {
   className?: string;
 };
 
-const sizes = {
-  sm: { width: 32, height: 32 },
-  md: { width: 40, height: 40 },
-  lg: { width: 48, height: 48 },
-  xl: { width: 56, height: 56 },
+const heights = {
+  sm: "h-7 sm:h-8",
+  md: "h-8 sm:h-10",
+  lg: "h-11 sm:h-14 w-auto max-w-full",
+  xl: "h-14 sm:h-18 w-auto max-w-full",
 };
 
 export function LogoContent({ size = "md", className }: Omit<LogoProps, "withLink">) {
-  const s = sizes[size];
   return (
-    <span className={cn("flex items-center gap-2.5 select-none", className)}>
-      <Image
-        src="/logo.png"
+    <span className={cn("inline-flex items-center select-none", className)}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.jpeg"
         alt="DompetKost"
-        width={s.width}
-        height={s.height}
-        className="object-contain rounded-lg"
-        priority
+        className={cn(heights[size], "w-auto object-contain", className)}
       />
-      <span className="text-lg font-black tracking-tight text-black leading-none">
-        Dompet<span className="text-neutral-500">Kost</span>
-      </span>
     </span>
   );
 }

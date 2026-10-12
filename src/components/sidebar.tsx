@@ -78,8 +78,15 @@ export default function Sidebar() {
 
       <div className="relative z-10 flex flex-col h-full">
         {/* Logo Area */}
-        <div className="p-6 border-b border-white/40">
-          <Logo size="md" />
+        <div className="px-3 py-3 border-b border-white/40 flex items-center justify-center">
+          <Link href="/" className="block w-full" aria-label="DompetKost - Beranda">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.jpeg"
+              alt="DompetKost"
+              className="w-full h-auto max-h-24 object-contain hover:opacity-95 transition-opacity"
+            />
+          </Link>
         </div>
 
       {/* Navigation Links */}

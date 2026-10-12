@@ -112,17 +112,17 @@ export default function RecommendationsPage() {
   };
 
   return (
-    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
+    <div className="w-full px-4 py-5 sm:py-8 md:px-8 max-w-[1440px] mx-auto space-y-6 sm:space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-black text-white shadow-sm">
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-black text-white shadow-xs shrink-0">
+            <svg className="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-black text-black tracking-tight">Rekomendasi & Budget</h1>
-            <p className="text-sm md:text-base text-neutral-500 font-medium mt-1">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-black tracking-tight">Rekomendasi & Budget</h1>
+            <p className="text-xs sm:text-sm md:text-base text-neutral-500 font-medium mt-0.5 sm:mt-1">
               Smart Combo — disesuaikan dengan kekurangan gizi dan budgetmu.
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function RecommendationsPage() {
         <button
           onClick={fetchData}
           disabled={loading}
-          className="rounded-lg bg-black px-5 py-3 text-sm font-bold text-white hover:bg-neutral-800 transition-colors disabled:opacity-50"
+          className="self-start sm:self-auto rounded-lg bg-black px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-white hover:bg-neutral-800 transition-colors disabled:opacity-50 active:scale-95"
         >
           {loading ? "Memuat..." : "🔄 Refresh"}
         </button>

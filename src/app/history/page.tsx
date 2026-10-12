@@ -94,42 +94,42 @@ export default function HistoryPage() {
   const avgCalories = days.length > 0 ? Math.round(totalWeekCalories / Math.min(7, days.length)) : 0;
 
   return (
-    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
+    <div className="w-full px-4 py-5 sm:py-8 md:px-8 max-w-[1440px] mx-auto space-y-6 sm:space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">Riwayat & Statistik</h1>
-          <p className="text-sm text-gray-500 mt-1">Pantau pola makan harian Anda selama 7 hari terakhir.</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">Riwayat & Statistik</h1>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">Pantau pola makan harian Anda selama 7 hari terakhir.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/analyze" className="rounded-lg bg-neutral-100 px-5 py-2.5 text-sm font-bold text-black hover:bg-neutral-200 transition-colors">
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+          <Link href="/analyze" className="rounded-lg bg-neutral-100 px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-bold text-black hover:bg-neutral-200 transition-colors">
             Lihat Tren Gizi
           </Link>
-          <button onClick={loadHistory} disabled={loading} className="rounded-lg bg-black px-5 py-2.5 text-sm font-bold text-white hover:bg-neutral-800 transition-colors disabled:opacity-50">
+          <button onClick={loadHistory} disabled={loading} className="rounded-lg bg-black px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-neutral-800 transition-colors disabled:opacity-50 active:scale-95">
             {loading ? "Memuat..." : "Refresh"}
           </button>
         </div>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Hari Tercatat</p>
-          <p className="text-3xl font-black text-gray-900">{days.length}</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="rounded-xl border border-neutral-100 bg-white p-4 sm:p-6 shadow-xs">
+          <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Hari</p>
+          <p className="text-2xl sm:text-3xl font-black text-gray-900">{days.length}</p>
         </div>
-        <div className="rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Entri</p>
-          <p className="text-3xl font-black text-gray-900">{entries.length}</p>
+        <div className="rounded-xl border border-neutral-100 bg-white p-4 sm:p-6 shadow-xs">
+          <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Entri</p>
+          <p className="text-2xl sm:text-3xl font-black text-gray-900">{entries.length}</p>
         </div>
-        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-6">
-          <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">Rata-rata Kalori/Hari</p>
-          <p className="text-3xl font-black text-black">{avgCalories} <span className="text-sm font-medium text-neutral-500">kcal</span></p>
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 sm:p-6">
+          <p className="text-[10px] sm:text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">Rata-rata/Hari</p>
+          <p className="text-2xl sm:text-3xl font-black text-black">{avgCalories} <span className="text-xs sm:text-sm font-medium text-neutral-500">kcal</span></p>
         </div>
-        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-6">
-          <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">Target Harian</p>
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 sm:p-6">
+          <p className="text-[10px] sm:text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">Target Harian</p>
           {targetCalories > 0 ? (
-            <p className="text-3xl font-black text-black">{targetCalories} <span className="text-sm font-medium text-neutral-500">kcal</span></p>
+            <p className="text-2xl sm:text-3xl font-black text-black">{targetCalories} <span className="text-xs sm:text-sm font-medium text-neutral-500">kcal</span></p>
           ) : (
-            <Link href="/profile" className="text-sm font-bold text-neutral-600 underline hover:text-black">Atur di Profil &gt;</Link>
+            <Link href="/profile" className="text-xs sm:text-sm font-bold text-neutral-600 underline hover:text-black">Atur di Profil &gt;</Link>
           )}
         </div>
       </div>

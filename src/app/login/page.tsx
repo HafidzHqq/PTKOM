@@ -4,15 +4,6 @@ import { signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import Logo from "@/components/logo";
-
-"use client";
-
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
-import Link from "next/link";
-import Logo from "@/components/logo";
 import FooterBackground from "@/app/footer-background";
 
 function LoginContent() {
@@ -88,17 +79,13 @@ function LoginContent() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/50 z-10" />
         </div>
 
-        {/* Logo Pojok Kiri Atas */}
+        {/* Pojok Kiri Atas */}
         <div className="relative z-20">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <span className="flex items-center gap-2.5">
-              <span className="h-10 w-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center font-black text-xl text-white shadow-inner">
-                DK
-              </span>
-              <span className="text-xl font-black tracking-tight text-white">
-                Dompet<span className="text-neutral-400">Kost</span>
-              </span>
-            </span>
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-300 hover:text-white transition-colors">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Beranda</span>
           </Link>
         </div>
 
@@ -138,11 +125,6 @@ function LoginContent() {
 
         {/* Konten Form */}
         <div className="w-full max-w-md mx-auto my-auto py-8">
-          {/* Header Mobile Only Logo */}
-          <div className="lg:hidden mb-8 flex justify-center">
-            <Logo size="lg" />
-          </div>
-
           <div className="space-y-2 mb-8">
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-neutral-900">
               Selamat datang
@@ -266,18 +248,10 @@ function LoginContent() {
 
         {/* Footer kanan */}
         <div className="w-full max-w-md mx-auto text-center text-xs text-neutral-400">
-          &copy; {new Date().getFullYear()} DompetKost. Seluruh hak cipta dilindungi.
+          &copy; PTKOM IF ITERA 2026
         </div>
       </div>
     </main>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginContent />
-    </Suspense>
   );
 }
 

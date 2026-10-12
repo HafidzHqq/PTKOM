@@ -23,7 +23,7 @@ export default function ClientLayout({
           ? `${fontClassName} bg-[#f4f4f4] text-neutral-900 antialiased`
           : pathname === "/login"
           ? `${fontClassName} bg-slate-50 text-neutral-900 antialiased`
-          : `${fontClassName} bg-neutral-50 pb-20 md:pb-0 text-neutral-900 antialiased selection:bg-emerald-200 selection:text-emerald-900`
+          : `${fontClassName} bg-neutral-50 pb-24 md:pb-0 text-neutral-900 antialiased selection:bg-emerald-200 selection:text-emerald-900`
       }
     >
       <AuthProvider>

@@ -185,20 +185,20 @@ export default function AnalyzePage() {
   const TARGET_FIBER = profileTargets.fiber_g;
 
   return (
-    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
+    <div className="w-full px-4 py-5 sm:py-8 md:px-8 max-w-[1440px] mx-auto space-y-6 sm:space-y-8">
       {/* Header & Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-black text-white shadow-sm">
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-black text-white shadow-xs shrink-0">
+            <svg className="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-black text-black tracking-tight">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-black tracking-tight">
               Analisis & Tren Gizi
             </h1>
-            <p className="text-sm md:text-base text-neutral-500 font-medium mt-1">
+            <p className="text-xs sm:text-sm md:text-base text-neutral-500 font-medium mt-0.5 sm:mt-1">
               Pindai makanan dan evaluasi tren gizi harianmu.
             </p>
           </div>
@@ -206,10 +206,10 @@ export default function AnalyzePage() {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex border-b border-neutral-200">
+      <div className="flex border-b border-neutral-200 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setActiveTab("analyze")}
-          className={`px-6 py-3 text-sm font-bold transition-colors border-b-2 ${
+          className={`px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-colors border-b-2 whitespace-nowrap shrink-0 ${
             activeTab === "analyze"
               ? "border-black text-black"
               : "border-transparent text-neutral-500 hover:text-black"
@@ -219,7 +219,7 @@ export default function AnalyzePage() {
         </button>
         <button
           onClick={() => setActiveTab("insights")}
-          className={`px-6 py-3 text-sm font-bold transition-colors border-b-2 ${
+          className={`px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-colors border-b-2 whitespace-nowrap shrink-0 ${
             activeTab === "insights"
               ? "border-black text-black"
               : "border-transparent text-neutral-500 hover:text-black"
@@ -231,9 +231,9 @@ export default function AnalyzePage() {
 
       {/* Tab Content: Analyze */}
       {activeTab === "analyze" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
           {/* Form Input */}
-          <section className="space-y-6 rounded-lg border border-neutral-200 bg-white p-6 md:p-8 shadow-sm">
+          <section className="space-y-5 sm:space-y-6 rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 md:p-8 shadow-xs">
             <div className="space-y-2">
               <label className="block text-sm font-bold text-black">
                 Ketik Nama Makanan
@@ -320,11 +320,11 @@ export default function AnalyzePage() {
           <div>
             {result ? (
               <section className="space-y-6 rounded-lg border border-neutral-200 bg-white p-6 md:p-8 shadow-sm">
-                <h2 className="border-b border-neutral-200 pb-4 text-xl font-black text-black">
+                <h2 className="border-b border-neutral-200 pb-3 sm:pb-4 text-lg sm:text-xl font-black text-black">
                   Hasil Analisis Nutrisi
                 </h2>
 
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 text-center">
                   <div className="rounded-lg bg-neutral-50 p-3 border border-neutral-200">
                     <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Kalori</p>
                     <p className="text-xl font-black text-black">
@@ -443,8 +443,8 @@ export default function AnalyzePage() {
           ) : (
             <div className="space-y-8">
               {/* Key Metrics */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <div className="rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-xs">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Rata-rata Kalori</p>
                     <svg className="h-6 w-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

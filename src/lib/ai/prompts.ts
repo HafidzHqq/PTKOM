@@ -1,9 +1,15 @@
 export const UNIFIED_PROMPT = `
-Kamu adalah ahli gizi yang menganalisis foto makanan Indonesia.
+Kamu adalah ahli gizi yang menganalisis foto makanan Indonesia dengan sangat teliti dan detail.
 
 Dari foto yang diberikan:
-1. Identifikasi semua item makanan yang terlihat
-2. Estimasi porsi dalam gram
+1. Identifikasi SEMUA item makanan yang terlihat, termasuk:
+   - Makanan utama (nasi, mie, lauk, dll)
+   - Topping dan garnish (bawang goreng, bawang merah, daun bawang, seledri, dll)
+   - Pelengkap dan sayuran (timun, tomat, selada, kerupuk, sambal, dll)
+   - Telur (mata sapi, dadar, rebus, dll)
+   - Minuman jika terlihat
+   PENTING: Jangan gabungkan topping/garnish ke dalam makanan utama. Pisahkan setiap komponen sebagai item terpisah.
+2. Estimasi porsi dalam gram untuk setiap item
 3. Hitung kandungan gizi per item dan total (kalori, protein_g, fat_g, carbs_g, fiber_g)
 4. Berikan confidence score (0.0-1.0) untuk setiap identifikasi
 
@@ -11,27 +17,79 @@ Respond WAJIB HANYA dalam format JSON (Output in JSON format) TANPA markdown bac
 {
   "foods": [
     {
-      "name": "Nasi Putih",
-      "name_en": "White Rice",
-      "portion_grams": 200,
+      "name": "Nasi Goreng",
+      "name_en": "Fried Rice",
+      "portion_grams": 250,
       "confidence": 0.95,
       "nutrition": {
-        "calories": 260,
-        "protein_g": 4.4,
-        "fat_g": 0.4,
-        "carbs_g": 57,
-        "fiber_g": 0.6
+        "calories": 350,
+        "protein_g": 8,
+        "fat_g": 12,
+        "carbs_g": 52,
+        "fiber_g": 1.2
+      }
+    },
+    {
+      "name": "Telur Mata Sapi",
+      "name_en": "Fried Egg",
+      "portion_grams": 55,
+      "confidence": 0.9,
+      "nutrition": {
+        "calories": 90,
+        "protein_g": 6.3,
+        "fat_g": 7,
+        "carbs_g": 0.6,
+        "fiber_g": 0
+      }
+    },
+    {
+      "name": "Irisan Timun",
+      "name_en": "Cucumber Slices",
+      "portion_grams": 30,
+      "confidence": 0.85,
+      "nutrition": {
+        "calories": 5,
+        "protein_g": 0.2,
+        "fat_g": 0,
+        "carbs_g": 1.1,
+        "fiber_g": 0.3
+      }
+    },
+    {
+      "name": "Irisan Tomat",
+      "name_en": "Tomato Slices",
+      "portion_grams": 25,
+      "confidence": 0.85,
+      "nutrition": {
+        "calories": 5,
+        "protein_g": 0.2,
+        "fat_g": 0,
+        "carbs_g": 1,
+        "fiber_g": 0.3
+      }
+    },
+    {
+      "name": "Bawang Goreng",
+      "name_en": "Fried Shallots",
+      "portion_grams": 5,
+      "confidence": 0.8,
+      "nutrition": {
+        "calories": 25,
+        "protein_g": 0.3,
+        "fat_g": 1.8,
+        "carbs_g": 2,
+        "fiber_g": 0.1
       }
     }
   ],
   "total_nutrition": {
-    "calories": 260,
-    "protein_g": 4.4,
-    "fat_g": 0.4,
-    "carbs_g": 57,
-    "fiber_g": 0.6
+    "calories": 475,
+    "protein_g": 15,
+    "fat_g": 20.8,
+    "carbs_g": 56.7,
+    "fiber_g": 1.9
   },
-  "health_notes": ["Rendah protein", "Tambahkan lauk kaya protein"]
+  "health_notes": ["Tambahkan sayuran hijau untuk serat", "Protein cukup dari telur"]
 }
 `;
 

@@ -174,18 +174,18 @@ export default function ProfilePage() {
     }`;
 
   return (
-    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
+    <div className="w-full px-4 py-5 sm:py-8 md:px-8 max-w-[1440px] mx-auto space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-black text-white shadow-sm">
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-black text-white shadow-xs shrink-0">
+            <svg className="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-black text-black tracking-tight">Profil & Target Gizi</h1>
-            <p className="text-sm md:text-base text-neutral-500 font-medium mt-1">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-black tracking-tight">Profil & Target Gizi</h1>
+            <p className="text-xs sm:text-sm md:text-base text-neutral-500 font-medium mt-0.5 sm:mt-1">
               Atur profil Anda untuk mendapatkan target gizi yang lebih akurat.
             </p>
           </div>

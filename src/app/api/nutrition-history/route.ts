@@ -31,8 +31,18 @@ const historySchema = z.object({
 export async function GET() {
   const session = await getServerSession(authOptions);
 
-  // Bypass auth for now, use guest user ID 1
-  const userId = session?.user?.id || 1;
+  let userId: number;
+  if (session?.user?.id) {
+    userId = Number(session.user.id);
+  } else {
+    const guestUser = await prisma.user.findFirst({
+      where: { email: "guest@gizikost.local" },
+    });
+    if (!guestUser) {
+      return NextResponse.json([]);
+    }
+    userId = guestUser.id;
+  }
 
   try {
     const sevenDaysAgo = new Date();
@@ -76,8 +86,38 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  // Bypass auth for now, use guest user ID 1
-  const userId = session?.user?.id || 1;
+  let userId: number;
+  if (session?.user?.id) {
+    userId = Number(session.user.id);
+  } else {
+    // Cari atau buat user tamu default agar foreign key selalu valid
+    let guestUser = await prisma.user.findFirst({
+      where: { email: "guest@gizikost.local" },
+    });
+    if (!guestUser) {
+      guestUser = await prisma.user.create({
+        data: {
+          email: "guest@gizikost.local",
+          name: "Teman Kost",
+          gender: "male",
+          age: 20,
+          weightKg: 60,
+          heightCm: 170,
+          activityLevel: "light",
+          dailyCalorieTarget: 2250,
+          dailyProteinTarget: 84,
+          dailyFatTarget: 62,
+          dailyCarbTarget: 337,
+          dailyFiberTarget: 25,
+          bmr: 1540,
+          tdee: 2117.5,
+          monthlyFoodBudget: 900000,
+          provider: "credentials",
+        },
+      });
+    }
+    userId = guestUser.id;
+  }
 
   let body: unknown;
   try {

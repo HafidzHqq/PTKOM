@@ -30,8 +30,10 @@ export default function FooterBackground() {
     const video = videoRef.current!;
     let frame = 0;
     let desiredTime = 0;
+    let currentTime = 0; // untuk smooth lerp
     let pointer: { x: number; y: number } | null = null;
     let disposed = false;
+    let animating = false;
     const mobile = window.matchMedia('(max-width: 700px)');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -45,6 +47,29 @@ export default function FooterBackground() {
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(seek);
     };
+
+    // Smooth animation loop untuk mobile touch tracking
+    const smoothSeek = () => {
+      if (disposed) return;
+      // Lerp currentTime menuju desiredTime
+      const diff = desiredTime - currentTime;
+      if (Math.abs(diff) > 0.001) {
+        currentTime += diff * 0.12; // 0.12 = kecepatan smooth (semakin kecil semakin lambat)
+        if (video.readyState >= 2 && !video.seeking) {
+          video.currentTime = Math.min(currentTime, video.duration - 1 / 24);
+        }
+        requestAnimationFrame(smoothSeek);
+      } else {
+        animating = false;
+      }
+    };
+    const startSmooth = () => {
+      if (!animating) {
+        animating = true;
+        requestAnimationFrame(smoothSeek);
+      }
+    };
+
     const updateTarget = () => {
       if (!pointer) return;
       const rect = video.getBoundingClientRect();
@@ -57,21 +82,33 @@ export default function FooterBackground() {
       // Avoid unstable angles directly between the eyes.
       if (Math.hypot(dx, dy) > 8) {
         desiredTime = timeForAngle(Math.atan2(dy, dx));
-        schedule();
+        if (mobile.matches) {
+          startSmooth();
+        } else {
+          schedule();
+        }
       }
     };
     const move = (event: PointerEvent) => {
       pointer = { x: event.clientX, y: event.clientY };
       updateTarget();
     };
+    // Touch handler untuk mobile
+    const onTouch = (event: TouchEvent) => {
+      if (event.touches.length > 0) {
+        const t = event.touches[0];
+        pointer = { x: t.clientX, y: t.clientY };
+        updateTarget();
+      }
+    };
     const ready = () => {
-      // Pada perangkat mobile maupun desktop, jangan biarkan video looping 360 derajat tanpa henti
       video.loop = false;
       video.pause();
 
       if (mobile.matches) {
-        // Pada mobile, arahkan tatapan mata ke tengah konten secara tenang (netral)
+        // Mulai dari posisi netral, siap di-track sentuhan
         desiredTime = 1.0;
+        currentTime = 1.0;
         try {
           video.currentTime = 1.0;
         } catch {
@@ -89,6 +126,8 @@ export default function FooterBackground() {
     mobile.addEventListener('change', ready);
     reducedMotion.addEventListener('change', ready);
     window.addEventListener('pointermove', move, { passive: true });
+    window.addEventListener('touchmove', onTouch, { passive: true });
+    window.addEventListener('touchstart', onTouch, { passive: true });
     window.addEventListener('resize', updateTarget);
     window.addEventListener('scroll', updateTarget, { passive: true });
     if (video.readyState >= 2) ready();
@@ -101,6 +140,8 @@ export default function FooterBackground() {
       mobile.removeEventListener('change', ready);
       reducedMotion.removeEventListener('change', ready);
       window.removeEventListener('pointermove', move);
+      window.removeEventListener('touchmove', onTouch);
+      window.removeEventListener('touchstart', onTouch);
       window.removeEventListener('resize', updateTarget);
       window.removeEventListener('scroll', updateTarget);
     };

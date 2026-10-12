@@ -128,61 +128,61 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8">
+    <div className="w-full px-4 py-5 sm:py-8 md:px-8 max-w-[1440px] mx-auto space-y-6 sm:space-y-8">
       {/* Disclaimer Banner */}
-      <div className="bg-neutral-50 border border-neutral-200 rounded p-4 flex items-start gap-3">
-        <div className="text-neutral-500 mt-0.5">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3.5 sm:p-4 flex items-start gap-2.5 sm:gap-3">
+        <div className="text-neutral-500 mt-0.5 shrink-0">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         </div>
         <div>
-          <h4 className="text-sm font-bold text-neutral-900">Pernyataan & Ketentuan</h4>
-          <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
+          <h4 className="text-xs sm:text-sm font-bold text-neutral-900">Pernyataan & Ketentuan</h4>
+          <p className="text-[11px] sm:text-xs text-neutral-600 mt-0.5 sm:mt-1 leading-relaxed">
             Hasil analisis gizi dan rekomendasi makanan yang ditampilkan oleh DompetKost merupakan estimasi berbasis AI dan <strong>bukan merupakan hasil diagnosis medis atau saran ahli gizi profesional</strong>. Data ini hanya ditujukan sebagai acuan kasar untuk membantu memantau asupan harian. Konsultasikan dengan dokter atau ahli gizi untuk kebutuhan medis spesifik.
           </p>
         </div>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-1.5">
-          <h1 className="text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">
             Hai, {user?.name?.split(" ")[0] || "Teman Kost"}! 👋
           </h1>
-          <p className="text-sm md:text-base text-neutral-500 font-medium">
+          <p className="text-xs sm:text-sm md:text-base text-neutral-500 font-medium">
             Semangat penuhi gizimu hari ini!
           </p>
         </div>
         {dailyBudget > 0 && (
-          <div className="inline-flex items-center gap-3 rounded-lg bg-white border border-neutral-200 px-5 py-3 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-black">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <div className="flex items-center justify-between sm:justify-start gap-3 rounded-xl bg-white border border-neutral-200 px-4 py-2.5 sm:px-5 sm:py-3 shadow-xs hover:shadow-sm transition-shadow">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-neutral-100 flex items-center justify-center text-black shrink-0">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
             <div>
-              <p className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Budget Harian</p>
-              <p className="text-base font-black text-black">Rp {dailyBudget.toLocaleString("id-ID")}<span className="text-neutral-400 font-medium text-xs ml-1">/ hari</span></p>
+              <p className="text-[10px] sm:text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Budget Harian</p>
+              <p className="text-sm sm:text-base font-black text-black">Rp {dailyBudget.toLocaleString("id-ID")}<span className="text-neutral-400 font-medium text-xs ml-1">/ hari</span></p>
             </div>
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-        <div className="lg:col-span-7 rounded-lg border border-neutral-200 bg-white p-6 md:p-8 shadow-sm space-y-8 relative overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8">
+        <div className="lg:col-span-7 rounded-xl border border-neutral-200 bg-white p-5 sm:p-6 md:p-8 shadow-xs space-y-6 sm:space-y-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-neutral-100 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
           <div className="flex items-center justify-between relative z-10">
-            <div className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded bg-neutral-100 text-black">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <span className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-neutral-100 text-black">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
               </span>
-              <h2 className="font-extrabold text-neutral-900 text-lg md:text-xl">Progress Gizi Hari Ini</h2>
+              <h2 className="font-extrabold text-neutral-900 text-base sm:text-lg md:text-xl">Progress Gizi Hari Ini</h2>
             </div>
-            <span className="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-bold text-neutral-600">{new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "short" })}</span>
+            <span className="rounded-full bg-neutral-100 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-bold text-neutral-600">{new Date().toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "short" })}</span>
           </div>
 
-          <div className="flex items-center justify-between rounded-lg bg-neutral-50 p-6 md:p-8 border border-neutral-200 relative z-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl bg-neutral-50 p-4 sm:p-6 md:p-8 border border-neutral-200 relative z-10">
             <div>
-              <p className="text-xs font-bold tracking-wider text-neutral-500 uppercase mb-2">ENERGI HARIAN</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl md:text-6xl font-black text-black tracking-tight">{Math.round(summary.calories).toLocaleString("id-ID")}</span>
-                <span className="text-base text-neutral-500 font-medium">
+              <p className="text-[10px] sm:text-xs font-bold tracking-wider text-neutral-500 uppercase mb-1.5">ENERGI HARIAN</p>
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-4xl sm:text-5xl md:text-6xl font-black text-black tracking-tight">{Math.round(summary.calories).toLocaleString("id-ID")}</span>
+                <span className="text-sm sm:text-base text-neutral-500 font-medium">
                   {summary.target.calories > 0 ? `/ ${summary.target.calories.toLocaleString("id-ID")} kkal` : "kkal"}
                 </span>
               </div>
@@ -192,12 +192,12 @@ export default function DashboardPage() {
                 </Link>
               )}
             </div>
-            <div className="relative flex h-24 w-24 md:h-32 md:w-32 items-center justify-center drop-shadow-sm">
+            <div className="relative self-center sm:self-auto flex h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 items-center justify-center drop-shadow-xs shrink-0">
               <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
                 <path className="text-neutral-200" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                 <path className="text-black transition-all duration-1000 ease-out" strokeWidth="3" strokeDasharray={`${Math.round(progress)}, 100`} strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
               </svg>
-              <span className="absolute text-lg md:text-xl font-black text-black">{Math.round(progress)}%</span>
+              <span className="absolute text-base sm:text-lg md:text-xl font-black text-black">{Math.round(progress)}%</span>
             </div>
           </div>
 
@@ -276,13 +276,13 @@ export default function DashboardPage() {
                 {successDays} dari 7 tercapai
               </span>
             </div>
-            <div className="grid grid-cols-7 gap-2 pt-2">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 pt-2">
               {consistency.map((item, idx) => (
-                <div key={idx} className={`flex flex-col items-center justify-center py-3 rounded-lg text-center transition-colors ${item.status === "pending" ? "bg-white border border-neutral-200" : item.status === "success" ? "bg-neutral-100 border border-neutral-300" : "bg-neutral-50 border border-neutral-200"}`}>
-                  <span className={`text-[11px] font-bold mb-2 ${item.status === "success" ? "text-black" : item.status === "missed" ? "text-neutral-500" : "text-neutral-400"}`}>{item.day}</span>
-                  {item.status === "success" && (<div className="flex h-6 w-6 items-center justify-center rounded-full bg-black text-white shadow-sm shadow-black/20"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>)}
-                  {item.status === "missed" && (<div className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-300 text-white shadow-sm"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 12H4" /></svg></div>)}
-                  {item.status === "pending" && (<div className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-100 text-neutral-400"><span className="text-[10px] font-bold leading-none">-</span></div>)}
+                <div key={idx} className={`flex flex-col items-center justify-center py-2 sm:py-3 px-0.5 sm:px-1 rounded-lg text-center transition-colors ${item.status === "pending" ? "bg-white border border-neutral-200" : item.status === "success" ? "bg-neutral-100 border border-neutral-300" : "bg-neutral-50 border border-neutral-200"}`}>
+                  <span className={`text-[10px] sm:text-[11px] font-bold mb-1.5 sm:mb-2 ${item.status === "success" ? "text-black" : item.status === "missed" ? "text-neutral-500" : "text-neutral-400"}`}>{item.day}</span>
+                  {item.status === "success" && (<div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-black text-white shadow-xs"><svg className="w-3 sm:w-3.5 h-3 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>)}
+                  {item.status === "missed" && (<div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-neutral-300 text-white shadow-xs"><svg className="w-3 sm:w-3.5 h-3 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 12H4" /></svg></div>)}
+                  {item.status === "pending" && (<div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-neutral-100 text-neutral-400"><span className="text-[10px] font-bold leading-none">-</span></div>)}
                 </div>
               ))}
             </div>
