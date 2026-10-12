@@ -9,7 +9,10 @@
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.{ts,tsx,mdx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,mdx}\"",
-    "postinstall": "prisma skills sync || exit 0"
+    "postinstall": "prisma generate"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
