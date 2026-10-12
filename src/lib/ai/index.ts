@@ -49,48 +49,80 @@ export interface AnalyzeInput {
   text?: string;
 }
 
+// Support multiple Gemini API keys (comma-separated or fallback)
+function getGeminiApiKeys(): string[] {
+  const keys: string[] = [];
+  if (process.env.GEMINI_API_KEY) {
+    keys.push(...process.env.GEMINI_API_KEY.split(",").map((k) => k.trim()).filter(Boolean));
+  }
+  if (process.env.GEMINI_API_KEY_2) {
+    keys.push(process.env.GEMINI_API_KEY_2.trim());
+  }
+  return [...new Set(keys)];
+}
+
+let geminiKeyIndex = 0;
+
 const geminiAdapter = {
   analyze: async (input: AnalyzeInput): Promise<FoodAnalysisResult> => {
-    if (!process.env.GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
-    });
+    const keys = getGeminiApiKeys();
+    if (keys.length === 0) throw new Error("Missing GEMINI_API_KEY");
 
-    let content: Array<string | Part>;
-    if (input.imageBase64) {
-      content = [
-        UNIFIED_PROMPT,
-        {
-          inlineData: {
-            data: input.imageBase64,
-            mimeType: "image/jpeg",
-          },
-        },
-      ];
-    } else if (input.text) {
-      content = [TEXT_PROMPT, `Nama makanan: ${input.text}`];
-    } else {
-      throw new Error("Either imageBase64 or text must be provided");
+    let lastError: unknown = null;
+    const startIndex = geminiKeyIndex;
+
+    // Try available Gemini keys in round-robin order
+    for (let i = 0; i < keys.length; i++) {
+      const currentKey = keys[(startIndex + i) % keys.length];
+      geminiKeyIndex = (startIndex + i + 1) % keys.length;
+
+      try {
+        const genAI = new GoogleGenerativeAI(currentKey);
+        const model = genAI.getGenerativeModel({
+          model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+        });
+
+        let content: Array<string | Part>;
+        if (input.imageBase64) {
+          content = [
+            UNIFIED_PROMPT,
+            {
+              inlineData: {
+                data: input.imageBase64,
+                mimeType: "image/jpeg",
+              },
+            },
+          ];
+        } else if (input.text) {
+          content = [TEXT_PROMPT, `Nama makanan: ${input.text}`];
+        } else {
+          throw new Error("Either imageBase64 or text must be provided");
+        }
+
+        const result = await model.generateContent(content);
+        const response = await result.response;
+        const parsed = cleanJson(response.text());
+
+        parsed.metadata = {
+          provider: "Gemini",
+          model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+          usage: response.usageMetadata
+            ? {
+                promptTokens: response.usageMetadata.promptTokenCount || 0,
+                completionTokens: response.usageMetadata.candidatesTokenCount || 0,
+                totalTokens: response.usageMetadata.totalTokenCount || 0,
+              }
+            : undefined,
+        };
+
+        return parsed;
+      } catch (err) {
+        console.warn(`[Gemini] Key attempt ${i + 1} failed:`, err);
+        lastError = err;
+      }
     }
 
-    const result = await model.generateContent(content);
-    const response = await result.response;
-    const parsed = cleanJson(response.text());
-
-    parsed.metadata = {
-      provider: "Gemini",
-      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
-      usage: response.usageMetadata
-        ? {
-            promptTokens: response.usageMetadata.promptTokenCount || 0,
-            completionTokens: response.usageMetadata.candidatesTokenCount || 0,
-            totalTokens: response.usageMetadata.totalTokenCount || 0,
-          }
-        : undefined,
-    };
-
-    return parsed;
+    throw lastError || new Error("All Gemini API keys failed");
   },
 };
 

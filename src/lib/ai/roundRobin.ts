@@ -82,12 +82,15 @@ export async function analyzeFoodWithAI(imageBase64?: string, text?: string): Pr
       let resultText = "";
 
       if (provider === "gemini") {
-        const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
-        const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
-        const model = ai.getGenerativeModel({
-          model: modelName,
-          systemInstruction: SYSTEM_PROMPT,
-        });
+        const rawKeys = [
+          ...(process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.split(",") : []),
+          process.env.GEMINI_API_KEY_2 || "",
+        ]
+          .map((k) => k.trim())
+          .filter(Boolean);
+
+        const geminiKeys = [...new Set(rawKeys)];
+        const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parts: any[] = [];
@@ -103,13 +106,35 @@ export async function analyzeFoodWithAI(imageBase64?: string, text?: string): Pr
           });
         }
 
-        const response = await model.generateContent({
-          contents: [{ role: "user", parts }],
-          generationConfig: {
-            responseMimeType: "application/json",
-          },
-        });
-        resultText = response.response.text() || "";
+        let geminiSuccess = false;
+        let lastGeminiErr: unknown = null;
+
+        for (const key of geminiKeys) {
+          try {
+            const ai = new GoogleGenerativeAI(key);
+            const model = ai.getGenerativeModel({
+              model: modelName,
+              systemInstruction: SYSTEM_PROMPT,
+            });
+
+            const response = await model.generateContent({
+              contents: [{ role: "user", parts }],
+              generationConfig: {
+                responseMimeType: "application/json",
+              },
+            });
+            resultText = response.response.text() || "";
+            geminiSuccess = true;
+            break;
+          } catch (keyErr) {
+            console.warn("[Gemini roundRobin] API Key failed, trying next key if any:", keyErr);
+            lastGeminiErr = keyErr;
+          }
+        }
+
+        if (!geminiSuccess) {
+          throw lastGeminiErr || new Error("All Gemini keys failed");
+        }
       } else if (provider === "groq") {
         const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
         const model = process.env.GROQ_MODEL || "llama-3.2-11b-vision-preview";
