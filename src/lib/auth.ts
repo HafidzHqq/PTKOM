@@ -102,11 +102,11 @@ export const authOptions: NextAuthOptions = {
               },
             });
           }
-          return true;
         } catch (error) {
-          console.error("Error saving user to database:", error);
-          return false;
+          // Jangan blokir login meski DB error — user tetap bisa masuk via JWT
+          console.error("Error saving user to database (non-fatal):", error);
         }
+        return true;
       }
       return true;
     },
@@ -138,6 +138,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   session: {
     strategy: "jwt",
