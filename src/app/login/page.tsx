@@ -231,11 +231,3 @@ export default function LoginPage() {
     </Suspense>
   );
 }
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginContent />
-    </Suspense>
-  );
-}
