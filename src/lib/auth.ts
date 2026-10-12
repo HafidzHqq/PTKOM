@@ -30,7 +30,6 @@ export const authOptions: NextAuthOptions = {
           if (!guestUser) {
             guestUser = await prisma.user.create({
               data: {
-                id: 1,
                 email: "guest@gizikost.local",
                 name: guestName,
                 gender: "male",
@@ -49,6 +48,15 @@ export const authOptions: NextAuthOptions = {
                 provider: "credentials",
               },
             });
+          } else if (guestName !== "Teman Kost" && guestUser.name !== guestName) {
+            try {
+              guestUser = await prisma.user.update({
+                where: { id: guestUser.id },
+                data: { name: guestName },
+              });
+            } catch {
+              // keep existing guestUser if update fails
+            }
           }
 
           return {

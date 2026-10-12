@@ -10,6 +10,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
 
+  if (pathname === "/" || pathname === "/login") return null;
+
   const navLinks = [
     { 
       name: "Dashboard", 

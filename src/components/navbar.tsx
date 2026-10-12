@@ -18,8 +18,8 @@ export default function Navbar() {
     { name: "Profil", href: "/profile" },
   ];
 
-  // Hide navbar on landing page
-  if (pathname === "/") return null;
+  // Hide navbar on landing page and login page
+  if (pathname === "/" || pathname === "/login") return null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur-md">

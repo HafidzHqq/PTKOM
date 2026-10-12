@@ -37,7 +37,7 @@ export default function FooterBackground() {
 
     const seek = () => {
       frame = 0;
-      if (disposed || mobile.matches || video.readyState < 2 || video.seeking) return;
+      if (disposed || video.readyState < 2 || video.seeking) return;
       if (Math.abs(video.currentTime - desiredTime) > 1 / 48) {
         video.currentTime = Math.min(desiredTime, video.duration - 1 / 24);
       }
@@ -46,7 +46,7 @@ export default function FooterBackground() {
       if (!frame) frame = requestAnimationFrame(seek);
     };
     const updateTarget = () => {
-      if (mobile.matches || !pointer) return;
+      if (!pointer) return;
       const rect = video.getBoundingClientRect();
       const scale = Math.max(rect.width / 1920, rect.height / 1080);
       // Match the exact object-fit: cover positioning, including mobile crops.
@@ -65,12 +65,21 @@ export default function FooterBackground() {
       updateTarget();
     };
     const ready = () => {
-      video.loop = mobile.matches;
-      if (mobile.matches && !reducedMotion.matches) {
-        void video.play().catch(() => { /* Keep the first frame if autoplay is unavailable. */ });
+      // Pada perangkat mobile maupun desktop, jangan biarkan video looping 360 derajat tanpa henti
+      video.loop = false;
+      video.pause();
+
+      if (mobile.matches) {
+        // Pada mobile, arahkan tatapan mata ke tengah konten secara tenang (netral)
+        desiredTime = 1.0;
+        try {
+          video.currentTime = 1.0;
+        } catch {
+          // ignore seek error on unready video
+        }
       } else {
-        video.pause();
-        if (!mobile.matches) { updateTarget(); schedule(); }
+        updateTarget();
+        schedule();
       }
     };
     // Coalesce fast pointer movements while a frame is decoding. When it

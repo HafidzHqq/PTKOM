@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 export default function BottomNav() {
   const pathname = usePathname();
 
-  // Hide bottom nav on landing page
-  if (pathname === "/") return null;
+  // Hide bottom nav on landing page and login page
+  if (pathname === "/" || pathname === "/login") return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t border-neutral-100 pb-safe md:hidden shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.05)]">

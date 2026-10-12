@@ -14,21 +14,24 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isLanding = pathname === "/";
+  const isAuthOrLanding = pathname === "/" || pathname === "/login";
 
   return (
     <body
       className={
         isLanding
           ? `${fontClassName} bg-[#f4f4f4] text-neutral-900 antialiased`
+          : pathname === "/login"
+          ? `${fontClassName} bg-slate-50 text-neutral-900 antialiased`
           : `${fontClassName} bg-neutral-50 pb-20 md:pb-0 text-neutral-900 antialiased selection:bg-emerald-200 selection:text-emerald-900`
       }
     >
       <AuthProvider>
         <div className="flex min-h-screen">
-          <Sidebar />
+          {!isAuthOrLanding && <Sidebar />}
           <main className="flex-1 w-full min-w-0">{children}</main>
         </div>
-        <BottomNav />
+        {!isAuthOrLanding && <BottomNav />}
       </AuthProvider>
     </body>
   );
