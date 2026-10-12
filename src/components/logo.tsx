@@ -9,24 +9,27 @@ type LogoProps = {
 };
 
 const sizes = {
-  sm: { width: 110, height: 28 },
-  md: { width: 150, height: 38 },
-  lg: { width: 190, height: 48 },
-  xl: { width: 240, height: 60 },
+  sm: { width: 32, height: 32 },
+  md: { width: 40, height: 40 },
+  lg: { width: 48, height: 48 },
+  xl: { width: 56, height: 56 },
 };
 
 export function LogoContent({ size = "md", className }: Omit<LogoProps, "withLink">) {
   const s = sizes[size];
   return (
-    <span className={cn("flex items-center select-none", className)}>
+    <span className={cn("flex items-center gap-2.5 select-none", className)}>
       <Image
-        src="/logo.jpeg"
+        src="/logo.png"
         alt="DompetKost"
         width={s.width}
         height={s.height}
-        className="object-contain mix-blend-multiply"
+        className="object-contain rounded-lg"
         priority
       />
+      <span className="text-lg font-black tracking-tight text-black leading-none">
+        Dompet<span className="text-neutral-500">Kost</span>
+      </span>
     </span>
   );
 }
