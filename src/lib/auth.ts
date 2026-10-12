@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { getDb } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,38 +11,35 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === "google") {
+      if (account?.provider === "google" && user.email) {
         try {
-          const db = await getDb();
-          // Check if user exists
-          const existingUser = await db.get(
-            "SELECT id FROM users WHERE email = ?",
-            [user.email],
-          );
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email },
+          });
 
           if (!existingUser) {
-            // Insert new user
-            await db.run(
-              "INSERT INTO users (email, name, image, provider, provider_id) VALUES (?, ?, ?, ?, ?)",
-              [
-                user.email,
-                user.name,
-                user.image,
-                account.provider,
-                account.providerAccountId,
-              ],
-            );
+            await prisma.user.create({
+              data: {
+                email: user.email,
+                name: user.name ?? null,
+                image: user.image ?? null,
+                provider: account.provider,
+                providerId: account.providerAccountId,
+              },
+            });
           } else {
-            // Update existing user's name and image if they changed
-            await db.run(
-              "UPDATE users SET name = ?, image = ? WHERE email = ?",
-              [user.name, user.image, user.email],
-            );
+            await prisma.user.update({
+              where: { email: user.email },
+              data: {
+                name: user.name ?? existingUser.name,
+                image: user.image ?? existingUser.image,
+              },
+            });
           }
           return true;
         } catch (error) {
           console.error("Error saving user to database:", error);
-          return false; // Deny sign in if database error
+          return false;
         }
       }
       return true;
@@ -50,13 +47,10 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user && token.email) {
         try {
-          const db = await getDb();
-          const existingUser = await db.get(
-            "SELECT id FROM users WHERE email = ?",
-            [token.email],
-          );
+          const existingUser = await prisma.user.findUnique({
+            where: { email: token.email },
+          });
           if (existingUser) {
-            // Add user ID to session
             session.user.id = existingUser.id;
           }
         } catch (error) {

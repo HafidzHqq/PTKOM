@@ -29,4 +29,15 @@ OPENROUTER_MODEL=google/gemini-2.5-flash
 ```
 
 ## Database
-For local development, the application uses SQLite by default. The database file \`local.db\` will be automatically created in the \`frontend\` directory when you run the application. No database configuration is required in \`.env.local\`.
+Aplikasi menggunakan database MySQL / MariaDB via Prisma ORM.
+
+Pastikan koneksi database sudah diset di `.env`:
+```env
+DATABASE_URL="mysql://gizikost:gizikost123@localhost:3306/gizikost_db"
+```
+
+Untuk inisialisasi dan seeding database:
+```bash
+npx prisma db push
+npx prisma db seed
+```

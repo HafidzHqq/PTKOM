@@ -21,6 +21,69 @@ enum FoodCategory {
   MINUMAN
 }
 
+model User {
+  id                  Int                @id @default(autoincrement())
+  email               String?            @unique
+  name                String?
+  image               String?            @db.Text
+  provider            String?
+  providerId          String?            @map("provider_id")
+  gender              String?            // "male" | "female"
+  age                 Int?
+  weightKg            Float?             @map("weight_kg")
+  heightCm            Float?             @map("height_cm")
+  activityLevel       String?            @map("activity_level") // "sedentary" | "light" | "moderate" | "active"
+  dailyCalorieTarget  Int?               @map("daily_calorie_target")
+  dailyProteinTarget  Int?               @map("daily_protein_target")
+  dailyFatTarget      Int?               @map("daily_fat_target")
+  dailyCarbTarget     Int?               @map("daily_carb_target")
+  dailyFiberTarget    Int?               @map("daily_fiber_target")
+  bmr                 Float?
+  tdee                Float?
+  monthlyFoodBudget   Int?               @map("monthly_food_budget")
+  profileUpdatedAt    DateTime?          @map("profile_updated_at")
+  createdAt           DateTime           @default(now()) @map("created_at")
+
+  nutritionHistories  NutritionHistory[]
+
+  @@map("users")
+}
+
+model NutritionHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  foods     String   @db.Text
+  calories  Float    @default(0)
+  proteinG  Float    @default(0) @map("protein_g")
+  fatG      Float    @default(0) @map("fat_g")
+  carbsG    Float    @default(0) @map("carbs_g")
+  fiberG    Float    @default(0) @map("fiber_g")
+  loggedAt  DateTime @default(now()) @map("logged_at")
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, loggedAt])
+  @@map("nutrition_history")
+}
+
+model LocalFood {
+  id                Int      @id @default(autoincrement())
+  name              String
+  category          String   // 'lauk', 'sayur', 'pokok', 'buah', 'paket'
+  avgPriceIdr       Int      @map("avg_price_idr")
+  calories          Float
+  proteinG          Float    @map("protein_g")
+  fatG              Float    @map("fat_g")
+  carbsG            Float    @map("carbs_g")
+  fiberG            Float    @map("fiber_g")
+  availability      String?  // 'warteg', 'kantin', 'angkringan', 'minimarket'
+  isBudgetFriendly  Boolean  @default(true) @map("is_budget_friendly")
+
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@map("local_foods")
+}
+
 model Food {
   id                String         @id @default(cuid())
   name              String

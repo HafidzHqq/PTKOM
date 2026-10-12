@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { getDb } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 const foodSchema = z.object({
   name: z.string().min(1),
@@ -35,20 +35,32 @@ export async function GET() {
   const userId = session?.user?.id || 1;
 
   try {
-    const db = await getDb();
-    const rows = await db.all(
-      `SELECT id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at 
-       FROM nutrition_history 
-       WHERE user_id = ? AND logged_at >= datetime('now', '-7 days')
-       ORDER BY logged_at DESC 
-       LIMIT 100`,
-      [userId],
-    );
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // Parse JSON string back to object for foods
+    const rows = await prisma.nutritionHistory.findMany({
+      where: {
+        userId,
+        loggedAt: {
+          gte: sevenDaysAgo,
+        },
+      },
+      orderBy: {
+        loggedAt: "desc",
+      },
+      take: 100,
+    });
+
     const data = rows.map((row) => ({
-      ...row,
+      id: row.id,
+      user_id: row.userId,
       foods: typeof row.foods === "string" ? JSON.parse(row.foods) : row.foods,
+      calories: row.calories,
+      protein_g: row.proteinG,
+      fat_g: row.fatG,
+      carbs_g: row.carbsG,
+      fiber_g: row.fiberG,
+      logged_at: row.loggedAt.toISOString(),
     }));
 
     return NextResponse.json(data);
@@ -86,34 +98,28 @@ export async function POST(request: NextRequest) {
   const { data: nutrition } = parsed;
 
   try {
-    const db = await getDb();
-    const result = await db.run(
-      `INSERT INTO nutrition_history 
-       (user_id, foods, calories, protein_g, fat_g, carbs_g, fiber_g) 
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
+    const row = await prisma.nutritionHistory.create({
+      data: {
         userId,
-        JSON.stringify(nutrition.foods),
-        nutrition.total_nutrition.calories,
-        nutrition.total_nutrition.protein_g,
-        nutrition.total_nutrition.fat_g,
-        nutrition.total_nutrition.carbs_g,
-        nutrition.total_nutrition.fiber_g,
-      ],
-    );
-
-    const insertId = result.lastID;
-
-    const row = await db.get(
-      `SELECT id, foods, calories, protein_g, fat_g, carbs_g, fiber_g, logged_at 
-       FROM nutrition_history 
-       WHERE id = ?`,
-      [insertId],
-    );
+        foods: JSON.stringify(nutrition.foods),
+        calories: nutrition.total_nutrition.calories,
+        proteinG: nutrition.total_nutrition.protein_g,
+        fatG: nutrition.total_nutrition.fat_g,
+        carbsG: nutrition.total_nutrition.carbs_g,
+        fiberG: nutrition.total_nutrition.fiber_g,
+      },
+    });
 
     const data = {
-      ...row,
+      id: row.id,
+      user_id: row.userId,
       foods: typeof row.foods === "string" ? JSON.parse(row.foods) : row.foods,
+      calories: row.calories,
+      protein_g: row.proteinG,
+      fat_g: row.fatG,
+      carbs_g: row.carbsG,
+      fiber_g: row.fiberG,
+      logged_at: row.loggedAt.toISOString(),
     };
 
     return NextResponse.json(data, { status: 201 });

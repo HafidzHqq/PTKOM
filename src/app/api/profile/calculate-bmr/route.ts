@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 const bmrRequestSchema = z.object({
   gender: z.enum(["male", "female"]),
-  age: z.number().min(1).max(120),
-  weight_kg: z.number().min(20).max(300),
-  height_cm: z.number().min(100).max(250),
+  age: z.number().int().min(1, "Umur minimal 1").max(120, "Umur maksimal 120"),
+  weight_kg: z.number().min(20, "Berat minimal 20 kg").max(300, "Berat maksimal 300 kg"),
+  height_cm: z.number().min(100, "Tinggi minimal 100 cm").max(250, "Tinggi maksimal 250 cm"),
   activity_level: z.enum(["sedentary", "light", "moderate", "active"]),
+  save_to_profile: z.boolean().optional().default(true),
 });
 
 const AKG_REFERENCE = {
@@ -66,16 +70,70 @@ export async function POST(req: NextRequest) {
       daily_fiber_target: fiberTarget,
     };
 
+    if (data.save_to_profile) {
+      try {
+        const session = await getServerSession(authOptions);
+        const userId = session?.user?.id ?? 1;
+        await prisma.user.upsert({
+          where: { id: userId },
+          update: {
+            gender: data.gender,
+            age: data.age,
+            weightKg: data.weight_kg,
+            heightCm: data.height_cm,
+            activityLevel: data.activity_level,
+            dailyCalorieTarget: result.daily_calorie_target,
+            dailyProteinTarget: result.daily_protein_target,
+            dailyFatTarget: result.daily_fat_target,
+            dailyCarbTarget: result.daily_carb_target,
+            dailyFiberTarget: result.daily_fiber_target,
+            bmr: result.bmr,
+            tdee: result.tdee,
+            profileUpdatedAt: new Date(),
+          },
+          create: {
+            id: userId,
+            name: "Teman Kost",
+            gender: data.gender,
+            age: data.age,
+            weightKg: data.weight_kg,
+            heightCm: data.height_cm,
+            activityLevel: data.activity_level,
+            dailyCalorieTarget: result.daily_calorie_target,
+            dailyProteinTarget: result.daily_protein_target,
+            dailyFatTarget: result.daily_fat_target,
+            dailyCarbTarget: result.daily_carb_target,
+            dailyFiberTarget: result.daily_fiber_target,
+            bmr: result.bmr,
+            tdee: result.tdee,
+            profileUpdatedAt: new Date(),
+          },
+        });
+      } catch (dbErr) {
+        console.error("[POST /api/profile/calculate-bmr] DB Save Error:", dbErr);
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      message: "Kalkulasi BMR berhasil",
+      message: "Kalkulasi BMR berhasil disimpan",
       data: result,
     });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error("[POST /api/profile/calculate-bmr] Error:", error);
+    if (error?.name === "ZodError") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Data input tidak valid",
+          errors: error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
     return NextResponse.json(
       { success: false, message: "Gagal mengkalkulasi BMR" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

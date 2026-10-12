@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { getDb } from "@/lib/db";
-import { LOCAL_FOODS } from "@/lib/data/localFoods";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -11,41 +10,84 @@ export async function GET() {
   const userId = session?.user?.id || 1;
 
   try {
-    const db = await getDb();
+    // Get today's start and end date
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
 
-    // Get today's nutrition history
-    const rows = await db.all(
-      `SELECT calories, protein_g, fat_g, carbs_g, fiber_g 
-       FROM nutrition_history 
-       WHERE user_id = ? AND date(logged_at) = date('now', 'localtime')`,
-      [userId],
-    );
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Get today's nutrition history from MySQL
+    const rows = await prisma.nutritionHistory.findMany({
+      where: {
+        userId,
+        loggedAt: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+      select: {
+        calories: true,
+        proteinG: true,
+        fatG: true,
+        carbsG: true,
+        fiberG: true,
+      },
+    });
 
     // Calculate total consumed today
     const consumed = rows.reduce(
       (acc, row) => ({
         calories: acc.calories + (row.calories || 0),
-        protein_g: acc.protein_g + (row.protein_g || 0),
-        fat_g: acc.fat_g + (row.fat_g || 0),
-        carbs_g: acc.carbs_g + (row.carbs_g || 0),
-        fiber_g: acc.fiber_g + (row.fiber_g || 0),
+        protein_g: acc.protein_g + (row.proteinG || 0),
+        fat_g: acc.fat_g + (row.fatG || 0),
+        carbs_g: acc.carbs_g + (row.carbsG || 0),
+        fiber_g: acc.fiber_g + (row.fiberG || 0),
       }),
       { calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 },
     );
 
-    // WHO Guidelines (Average Adult)
-    // Calories: ~2250 kcal
-    // Protein: 15% of calories (84g)
-    // Fat: 25% of calories (62g)
-    // Carbs: 60% of calories (337g)
-    // Fiber: 25g
-    const target = {
+    // WHO Guidelines (Average Adult) as fallback
+    let target = {
       calories: 2250,
       protein_g: 84,
       fat_g: 62,
       carbs_g: 337,
       fiber_g: 25,
     };
+
+    // Use saved profile targets if available from MySQL
+    try {
+      const profile = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+      if (profile?.dailyCalorieTarget) {
+        target = {
+          calories: profile.dailyCalorieTarget,
+          protein_g: profile.dailyProteinTarget ?? target.protein_g,
+          fat_g: profile.dailyFatTarget ?? target.fat_g,
+          carbs_g: profile.dailyCarbTarget ?? target.carbs_g,
+          fiber_g: profile.dailyFiberTarget ?? target.fiber_g,
+        };
+      }
+    } catch (e) {
+      console.error("[GET /api/recommendations] profile target fallback", e);
+    }
+
+    // Load local foods from MySQL
+    const localFoodsFromDb = await prisma.localFood.findMany();
+    const localFoods = localFoodsFromDb.map((f) => ({
+      name: f.name,
+      category: f.category,
+      avg_price_idr: f.avgPriceIdr,
+      calories: f.calories,
+      protein_g: f.proteinG,
+      fat_g: f.fatG,
+      carbs_g: f.carbsG,
+      fiber_g: f.fiberG,
+      availability: f.availability,
+      is_budget_friendly: f.isBudgetFriendly,
+    }));
 
     // Calculate deficiencies
     const deficiencies: string[] = [];
@@ -83,12 +125,12 @@ export async function GET() {
     }
 
     // Smart Combo Recommendation Algorithm
-    const recommendations: { food: (typeof LOCAL_FOODS)[number]; reason: string }[] = [];
+    const recommendations: { food: (typeof localFoods)[number]; reason: string }[] = [];
     const maxBudget = 15000; // Max budget for recommendations
 
     // Helper to find best food by category and nutrient
     const findBestFood = (category: string, nutrient: string, minNutrient: number) => {
-      const candidates = LOCAL_FOODS.filter(
+      const candidates = localFoods.filter(
         (f) => f.category === category && f.avg_price_idr <= maxBudget
       );
       
@@ -136,6 +178,44 @@ export async function GET() {
     if (recommendations.length < 3) {
       const bestFruit = findBestFood("buah", "fiber_g", 1);
       if (bestFruit && !recommendations.find(r => r.food.name === bestFruit.name)) {
+        recommendations.push({
+          food: bestFruit,
+          reason: `Cemilan sehat kaya vitamin untuk melengkapi nutrisi harian.`,
+        });
+      }
+    }
+
+    if (deficiencies.length === 0) {
+      deficiencies.push("Asupan gizi sudah sangat baik sesuai target harian! Pertahankan pola makanmu.");
+    }
+
+    const mappedRecommendations = recommendations.map((item) => ({
+      food_name: item.food.name,
+      estimated_price_idr: item.food.avg_price_idr,
+      estimated_nutrition: {
+        calories: item.food.calories,
+        protein_g: item.food.protein_g,
+        fat_g: item.food.fat_g,
+        carbs_g: item.food.carbs_g,
+        fiber_g: item.food.fiber_g,
+      },
+      reason: item.reason,
+    }));
+
+    return NextResponse.json({
+      target,
+      consumed,
+      deficiency: {
+        calories: Math.max(0, target.calories - consumed.calories),
+        protein_g: Math.max(0, target.protein_g - consumed.protein_g),
+        fat_g: Math.max(0, target.fat_g - consumed.fat_g),
+        carbs_g: Math.max(0, target.carbs_g - consumed.carbs_g),
+        fiber_g: Math.max(0, target.fiber_g - consumed.fiber_g),
+      },
+      recommendations: mappedRecommendations,
+      advice: deficiencies.join(". "),
+    });
+  } catch (error) {
         recommendations.push({
           food: bestFruit,
           reason: `Cemilan sehat kaya vitamin untuk melengkapi nutrisi harian.`,

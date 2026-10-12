@@ -1,9 +1,55 @@
 import { PrismaClient, FoodType, FoodCategory } from '@prisma/client';
+import { LOCAL_FOODS } from '../src/lib/data/localFoods';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Mulai seeding data untuk Bandar Lampung...');
+  console.log('Mulai seeding data untuk Bandar Lampung & Local Foods...');
+
+  // 0. Seed Default Guest User (ID: 1)
+  const guestUser = await prisma.user.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      email: 'guest@gizikost.local',
+      name: 'Teman Kost',
+      gender: 'male',
+      age: 20,
+      weightKg: 60,
+      heightCm: 170,
+      activityLevel: 'light',
+      dailyCalorieTarget: 2250,
+      dailyProteinTarget: 84,
+      dailyFatTarget: 62,
+      dailyCarbTarget: 337,
+      dailyFiberTarget: 25,
+      bmr: 1540,
+      tdee: 2117.5,
+      monthlyFoodBudget: 900000,
+    },
+  });
+  console.log('✅ Guest User siap:', guestUser.name);
+
+  // 0.5 Seed Local Foods (Warteg, Burjo, Angkringan)
+  await prisma.localFood.deleteMany();
+  for (const item of LOCAL_FOODS) {
+    await prisma.localFood.create({
+      data: {
+        name: item.name,
+        category: item.category,
+        avgPriceIdr: item.avg_price_idr,
+        calories: item.calories,
+        proteinG: item.protein_g,
+        fatG: item.fat_g,
+        carbsG: item.carbs_g,
+        fiberG: item.fiber_g,
+        availability: item.availability,
+        isBudgetFriendly: item.is_budget_friendly ?? true,
+      },
+    });
+  }
+  console.log(`✅ Berhasil insert ${LOCAL_FOODS.length} menu makanan lokal (LocalFood) ke MySQL.`);
 
   // Clear existing data
   await prisma.recipeItem.deleteMany();
