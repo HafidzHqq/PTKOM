@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     if (data.save_to_profile) {
       try {
         const session = await getServerSession(authOptions);
-        const userId = session?.user?.id ?? 1;
+        const userId = Number(session?.user?.id ?? 1);
         await prisma.user.upsert({
           where: { id: userId },
           update: {

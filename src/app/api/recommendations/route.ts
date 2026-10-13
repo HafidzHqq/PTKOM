@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  const userId = session?.user?.id || 1;
+  const userId = session?.user?.id ? Number(session.user.id) : 1;
 
   try {
     // Get today's start and end date

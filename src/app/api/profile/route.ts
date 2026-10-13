@@ -47,7 +47,7 @@ function formatUser(u: any) {
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  const userId = session?.user?.id ?? 1;
+  const userId = Number(session?.user?.id ?? 1);
 
   try {
     const user = await prisma.user.findUnique({
@@ -67,7 +67,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  const userId = session?.user?.id ?? 1;
+  const userId = Number(session?.user?.id ?? 1);
 
   let body: unknown;
   try {
