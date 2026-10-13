@@ -31,11 +31,25 @@ const historySchema = z.object({
 export async function GET() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.id) {
-    return NextResponse.json([]);
+  let userId = Number(session?.user?.id);
+  if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
+    if (session?.user?.email) {
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: session.user.email },
+          select: { id: true },
+        });
+        if (dbUser) userId = dbUser.id;
+      } catch (e) {
+        console.error("[GET /api/nutrition-history] dbUser lookup error:", e);
+      }
+    }
   }
 
-  const userId = Number(session.user.id);
+  // Jika guest atau belum ada di session, fallback aman ke ID 1
+  if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
+    userId = 1;
+  }
 
   try {
     const sevenDaysAgo = new Date();
@@ -69,27 +83,32 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (error) {
     console.error("[GET /api/nutrition-history] Error:", error);
-    return NextResponse.json(
-      { error: "Gagal memuat riwayat gizi" },
-      { status: 500 },
-    );
+    // Kembalikan array kosong agar halaman riwayat dan dashboard tidak crash / error merah
+    return NextResponse.json([]);
   }
 }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.id) {
-    return NextResponse.json(
-      {
-        saved: false,
-        message: "Pengguna belum login. Riwayat analisis tidak disimpan.",
-      },
-      { status: 200 },
-    );
+  let userId = Number(session?.user?.id);
+  if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
+    if (session?.user?.email) {
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: session.user.email },
+          select: { id: true },
+        });
+        if (dbUser) userId = dbUser.id;
+      } catch (e) {
+        console.error("[POST /api/nutrition-history] dbUser lookup error:", e);
+      }
+    }
   }
 
-  const userId = Number(session.user.id);
+  if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
+    userId = 1;
+  }
 
   let body: unknown;
   try {

@@ -73,7 +73,24 @@ export async function POST(req: NextRequest) {
     if (data.save_to_profile) {
       try {
         const session = await getServerSession(authOptions);
-        const userId = Number(session?.user?.id ?? 1);
+        let userId = Number(session?.user?.id);
+        if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
+          if (session?.user?.email) {
+            try {
+              const dbUser = await prisma.user.findUnique({
+                where: { email: session.user.email },
+                select: { id: true },
+              });
+              if (dbUser) userId = dbUser.id;
+            } catch (e) {
+              console.error("[POST /api/profile/calculate-bmr] dbUser lookup error:", e);
+            }
+          }
+        }
+        if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
+          userId = 1;
+        }
+
         await prisma.user.upsert({
           where: { id: userId },
           update: {
@@ -92,8 +109,8 @@ export async function POST(req: NextRequest) {
             profileUpdatedAt: new Date(),
           },
           create: {
-            id: userId,
-            name: "Teman Kost",
+            email: session?.user?.email || "guest@gizikost.local",
+            name: session?.user?.name || "Teman Kost",
             gender: data.gender,
             age: data.age,
             weightKg: data.weight_kg,

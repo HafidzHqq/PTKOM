@@ -5,6 +5,8 @@ import Logo from '@/components/logo';
 export default function Home() {
   return (
     <main className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden selection:bg-neutral-900 selection:text-white">
+      <link rel="preload" href="/footer-scrub.mp4" as="video" type="video/mp4" />
+      <link rel="preload" href="/footer-poster.webp" as="image" type="image/webp" />
       <FooterBackground />
 
       {/* Full-width Navbar */}

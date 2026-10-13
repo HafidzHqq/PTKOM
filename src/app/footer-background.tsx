@@ -41,7 +41,12 @@ export default function FooterBackground() {
       frame = 0;
       if (disposed || video.readyState < 2 || video.seeking) return;
       if (Math.abs(video.currentTime - desiredTime) > 1 / 48) {
-        video.currentTime = Math.min(desiredTime, video.duration - 1 / 24);
+        const targetTime = Math.min(desiredTime, video.duration - 1 / 24);
+        if ('fastSeek' in video) {
+          (video as HTMLVideoElement & { fastSeek: (time: number) => void }).fastSeek(targetTime);
+        } else {
+          video.currentTime = targetTime;
+        }
       }
     };
     const schedule = () => {
@@ -115,14 +120,24 @@ export default function FooterBackground() {
           // ignore seek error on unready video
         }
       } else {
-        updateTarget();
-        schedule();
+        if (!pointer) {
+          desiredTime = 1.0;
+          try {
+            video.currentTime = 1.0;
+          } catch {
+            // ignore seek error
+          }
+        } else {
+          updateTarget();
+          schedule();
+        }
       }
     };
     // Coalesce fast pointer movements while a frame is decoding. When it
     // finishes, seek immediately to the latest requested gaze direction.
     video.addEventListener('seeked', schedule);
     video.addEventListener('loadeddata', ready);
+    video.addEventListener('canplay', ready);
     mobile.addEventListener('change', ready);
     reducedMotion.addEventListener('change', ready);
     window.addEventListener('pointermove', move, { passive: true });
@@ -137,6 +152,7 @@ export default function FooterBackground() {
       cancelAnimationFrame(frame);
       video.removeEventListener('seeked', schedule);
       video.removeEventListener('loadeddata', ready);
+      video.removeEventListener('canplay', ready);
       mobile.removeEventListener('change', ready);
       reducedMotion.removeEventListener('change', ready);
       window.removeEventListener('pointermove', move);
@@ -149,7 +165,14 @@ export default function FooterBackground() {
 
   return (
     <div className="footer-background" aria-hidden="true">
-      <video ref={videoRef} muted playsInline preload="auto" src="/footer-scrub.mp4" />
+      <video
+        ref={videoRef}
+        muted
+        playsInline
+        preload="auto"
+        poster="/footer-poster.webp"
+        src="/footer-scrub.mp4"
+      />
     </div>
   );
 }

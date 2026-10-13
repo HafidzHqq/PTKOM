@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import FooterBackground from "@/app/footer-background";
@@ -11,19 +11,18 @@ function LoginContent() {
   const errorParam = searchParams.get("error");
   const [guestLoading, setGuestLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [guestName, setGuestName] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const getErrorMessage = (err: string | null) => {
     if (!err) return null;
     if (err === "OAuthSignin" || err === "OAuthCallback" || err === "OAuthCreateAccount") {
-      return "Google OAuth belum dikonfigurasi untuk domain ini. Gunakan Masuk Cepat (Akun Tamu).";
+      return "Google OAuth belum dikonfigurasi untuk domain ini. Gunakan opsi Akun Guest.";
     }
     if (err === "AccessDenied") {
-      return "Akses masuk ditolak atau database sedang offline. Silakan coba Masuk Cepat.";
+      return "Akses masuk ditolak atau database sedang offline. Silakan coba Akun Guest.";
     }
     if (err === "CredentialsSignin") {
-      return "Gagal masuk via akun tamu. Silakan coba lagi.";
+      return "Gagal masuk via akun guest. Silakan coba lagi.";
     }
     if (err === "SessionRequired") {
       return "Silakan masuk terlebih dahulu untuk mengakses fitur ini.";
@@ -40,27 +39,27 @@ function LoginContent() {
       await signIn("google", { callbackUrl: "/dashboard" });
     } catch (err: unknown) {
       console.error("Google sign in error:", err);
-      setErrorMessage("Koneksi ke Google terhambat. Silakan coba Masuk Cepat (Akun Tamu).");
+      setErrorMessage("Koneksi ke Google terhambat. Silakan coba opsi Akun Guest.");
       setGoogleLoading(false);
     }
   };
 
-  const handleGuestLogin = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleGuestLogin = async () => {
     try {
       setErrorMessage(null);
       setGuestLoading(true);
       const res = await signIn("guest-login", {
-        name: guestName.trim() || "Teman Kost",
+        name: "Teman Kost",
         redirect: false,
         callbackUrl: "/dashboard",
       });
 
       if (res?.error) {
-        setErrorMessage("Gagal masuk dengan akun tamu. Silakan coba lagi.");
+        setErrorMessage("Gagal masuk dengan akun guest. Silakan coba lagi.");
         setGuestLoading(false);
       } else {
-        window.location.href = res?.url || "/dashboard";
+        // Langsung arahkan ke dashboard aplikasi
+        window.location.href = "/dashboard";
       }
     } catch (err: unknown) {
       console.error("Guest login error:", err);
@@ -130,7 +129,7 @@ function LoginContent() {
               Selamat datang
             </h1>
             <p className="text-sm text-neutral-500 font-normal">
-              Silakan masukkan kredensial atau masuk instan untuk melanjutkan.
+              Silakan pilih untuk masuk sebagai akun guest atau login dengan Google.
             </p>
           </div>
 
@@ -144,28 +143,14 @@ function LoginContent() {
             </div>
           )}
 
-          {/* Form Akun Tamu (Instan & Cepat) */}
-          <form onSubmit={handleGuestLogin} className="space-y-4">
-            <div>
-              <label htmlFor="guestName" className="block text-xs font-semibold text-neutral-700 mb-2">
-                Nama Pengguna (Opsional)
-              </label>
-              <input
-                id="guestName"
-                type="text"
-                placeholder="Misal: Hafidz atau Teman Kost"
-                value={guestName}
-                onChange={(e) => setGuestName(e.target.value)}
-                disabled={guestLoading || googleLoading}
-                className="w-full rounded-xl bg-neutral-100/80 border border-neutral-200/80 px-4 py-3.5 text-sm font-medium text-neutral-800 placeholder-neutral-400 outline-none transition focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/10"
-              />
-            </div>
-
-            {/* Tombol Masuk Utama (Persis tombol biru/ungu di referensi gambar) */}
+          {/* Pilihan Metode Masuk: Akun Guest & Login Google */}
+          <div className="space-y-4">
+            {/* Opsi 1: Akun Guest */}
             <button
-              type="submit"
+              type="button"
+              onClick={handleGuestLogin}
               disabled={guestLoading || googleLoading}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#5d5fef] hover:bg-[#4b4ddc] text-white py-3.5 px-4 text-sm font-bold shadow-lg shadow-indigo-500/20 active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-[#5d5fef] hover:bg-[#4b4ddc] text-white py-3.5 px-4 text-sm font-bold shadow-lg shadow-indigo-500/20 active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
             >
               {guestLoading ? (
                 <>
@@ -173,75 +158,68 @@ function LoginContent() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-70" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                   </svg>
-                  <span>Memproses...</span>
+                  <span>Memproses Akun Guest...</span>
                 </>
               ) : (
-                <span>Masuk</span>
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span>Masuk sebagai Akun Guest</span>
+                </>
               )}
             </button>
-          </form>
 
-          {/* Divider "atau" */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-200" />
+            {/* Divider "atau" */}
+            <div className="relative my-2">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-neutral-200" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-white px-4 text-neutral-400 font-medium lowercase">
+                  atau
+                </span>
+              </div>
             </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-4 text-neutral-400 font-medium lowercase">
-                atau
-              </span>
-            </div>
-          </div>
 
-          {/* Tombol Google (Persis seperti di gambar) */}
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={guestLoading || googleLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 py-3.5 px-4 text-sm font-bold shadow-sm active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
-          >
-            {googleLoading ? (
-              <>
-                <svg className="h-4 w-4 animate-spin text-neutral-500" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-70" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-                <span>Menghubungkan Google...</span>
-              </>
-            ) : (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-5 w-5 shrink-0">
-                  <path
-                    fill="#FFC107"
-                    d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
-                  />
-                  <path
-                    fill="#FF3D00"
-                    d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"
-                  />
-                  <path
-                    fill="#4CAF50"
-                    d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
-                  />
-                  <path
-                    fill="#1976D2"
-                    d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
-                  />
-                </svg>
-                <span>Masuk dengan Google</span>
-              </>
-            )}
-          </button>
-
-          {/* Subtext info */}
-          <div className="mt-8 text-center text-xs text-neutral-400">
-            <span>Tidak punya akun? </span>
+            {/* Opsi 2: Login dengan Google */}
             <button
               type="button"
-              onClick={() => handleGuestLogin()}
-              className="text-[#5d5fef] font-semibold hover:underline cursor-pointer"
+              onClick={handleGoogleLogin}
+              disabled={guestLoading || googleLoading}
+              className="w-full flex items-center justify-center gap-3 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 py-3.5 px-4 text-sm font-bold shadow-sm active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
             >
-              Masuk langsung sebagai Tamu
+              {googleLoading ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin text-neutral-500" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-70" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  <span>Menghubungkan Google...</span>
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-5 w-5 shrink-0">
+                    <path
+                      fill="#FFC107"
+                      d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
+                    />
+                    <path
+                      fill="#FF3D00"
+                      d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"
+                    />
+                    <path
+                      fill="#4CAF50"
+                      d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
+                    />
+                    <path
+                      fill="#1976D2"
+                      d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
+                    />
+                  </svg>
+                  <span>Login dengan Google</span>
+                </>
+              )}
             </button>
           </div>
         </div>

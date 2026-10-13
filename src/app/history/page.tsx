@@ -40,13 +40,17 @@ export default function HistoryPage() {
       ]);
       const data = await resHist.json();
       if (!resHist.ok) throw new Error(data.error || "Gagal memuat riwayat");
-      setEntries(data);
+      setEntries(Array.isArray(data) ? data : []);
       setError(null);
       if (resProfile.ok) {
         const pData = await resProfile.json();
         if (pData.success && pData.data?.daily_calorie_target) {
           setTargetCalories(pData.data.daily_calorie_target);
+        } else {
+          setTargetCalories(2250);
         }
+      } else {
+        setTargetCalories(2250);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Gagal memuat riwayat");
