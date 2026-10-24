@@ -85,7 +85,7 @@ async function main() {
     { name: 'Udang/Seafood', unit: 'kg', pricePerUnit: 80000, region: 'Bandar Lampung' },
   ];
 
-  const createdIngredients = [];
+  const createdIngredients: any[] = [];
   for (const ing of ingredientsData) {
     const created = await prisma.ingredient.create({ data: ing });
     createdIngredients.push(created);
@@ -104,7 +104,7 @@ async function main() {
     { name: 'Pecel Lele Mas Budi', priceRange: 'Rp 12.000 - Rp 20.000', location: 'Way Halim', source: 'kaki lima' },
   ];
 
-  const createdPlaces = [];
+  const createdPlaces: any[] = [];
   for (const place of placesData) {
     const created = await prisma.place.create({ data: place });
     createdPlaces.push(created);
@@ -112,7 +112,7 @@ async function main() {
   console.log(`✅ Berhasil insert ${createdPlaces.length} tempat makan.`);
 
   // 3. Seed Foods (Makanan Beli & Masak)
-  const foodsData = [
+  const foodsData: any[] = [
     // --- MAKANAN BELI JADI ---
     {
       name: 'Nasi Telur Dadar Warteg',
@@ -414,14 +414,14 @@ async function main() {
       data: {
         ...foodData,
         recipeItems: recipe && recipe.length > 0 ? {
-          create: recipe.map(r => ({
+          create: recipe.map((r: any) => ({
             ingredientId: r.ingredientId,
             quantity: r.quantity,
             unit: r.unit
           }))
         } : undefined,
         places: places && places.length > 0 ? {
-          create: places.map(placeId => ({
+          create: places.map((placeId: any) => ({
             placeId: placeId
           }))
         } : undefined

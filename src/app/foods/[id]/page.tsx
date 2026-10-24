@@ -49,7 +49,7 @@ export default function FoodDetailPage() {
   const isMasak = food.type === "MASAK";
 
   return (
-    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8 pb-24">
+    <div className="w-full px-4 py-8 md:px-8 lg:px-10 xl:px-12 space-y-8 pb-24">
       {/* Header Image Area */}
       <div className="h-64 bg-emerald-100 relative rounded-lg overflow-hidden">
         <button 
@@ -61,8 +61,10 @@ export default function FoodDetailPage() {
           </svg>
         </button>
         {/* Placeholder for image */}
-        <div className="w-full h-full flex items-center justify-center text-6xl">
-          {isMasak ? "🍳" : "🥡"}
+        <div className="w-full h-full flex items-center justify-center text-neutral-400">
+          <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
         </div>
       </div>
 
@@ -86,24 +88,24 @@ export default function FoodDetailPage() {
           {/* Nutrition Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="bg-neutral-50 p-5 rounded-lg border border-neutral-100">
-              <span className="block text-2xl mb-2">🔥</span>
-              <span className="block font-black text-neutral-900 text-2xl">{Math.round(food.calories)}</span>
-              <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider mt-1">Kkal</span>
+              <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider">Energi</span>
+              <span className="block font-black text-neutral-900 text-2xl mt-1">{Math.round(food.calories)}</span>
+              <span className="block text-xs font-semibold text-neutral-400 mt-0.5">kkal</span>
             </div>
             <div className="bg-neutral-50 p-5 rounded-lg border border-neutral-100">
-              <span className="block text-2xl mb-2">🥩</span>
-              <span className="block font-black text-neutral-900 text-2xl">{Math.round(food.protein)}g</span>
-              <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider mt-1">Protein</span>
+              <span className="block text-xs font-bold text-amber-600 uppercase tracking-wider">Protein</span>
+              <span className="block font-black text-neutral-900 text-2xl mt-1">{Math.round(food.protein)}g</span>
+              <span className="block text-xs font-semibold text-neutral-400 mt-0.5">protein</span>
             </div>
             <div className="bg-neutral-50 p-5 rounded-lg border border-neutral-100">
-              <span className="block text-2xl mb-2">🍚</span>
-              <span className="block font-black text-neutral-900 text-2xl">{Math.round(food.carbs)}g</span>
-              <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider mt-1">Karbo</span>
+              <span className="block text-xs font-bold text-sky-600 uppercase tracking-wider">Karbohidrat</span>
+              <span className="block font-black text-neutral-900 text-2xl mt-1">{Math.round(food.carbs)}g</span>
+              <span className="block text-xs font-semibold text-neutral-400 mt-0.5">karbo</span>
             </div>
             <div className="bg-neutral-50 p-5 rounded-lg border border-neutral-100">
-              <span className="block text-2xl mb-2">🥑</span>
-              <span className="block font-black text-neutral-900 text-2xl">{Math.round(food.fat)}g</span>
-              <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider mt-1">Lemak</span>
+              <span className="block text-xs font-bold text-rose-600 uppercase tracking-wider">Lemak</span>
+              <span className="block font-black text-neutral-900 text-2xl mt-1">{Math.round(food.fat)}g</span>
+              <span className="block text-xs font-semibold text-neutral-400 mt-0.5">lemak</span>
             </div>
           </div>
         </div>
@@ -160,7 +162,12 @@ export default function FoodDetailPage() {
             <div className="space-y-3">
               {food.places.map((fp: any, idx: number) => (
                 <div key={idx} className="flex items-start p-3 bg-gray-50 rounded-lg">
-                  <div className="text-2xl mr-3">📍</div>
+                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center mr-3 shrink-0 text-emerald-700">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
                   <div>
                     <p className="font-bold text-gray-800">{fp.place.name}</p>
                     <p className="text-xs text-gray-500">{fp.place.location} • {fp.place.source}</p>

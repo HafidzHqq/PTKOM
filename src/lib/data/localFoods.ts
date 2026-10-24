@@ -1,28 +1,9 @@
-export const LOCAL_FOODS = [
-  {
-    "name": "Nasi Putih",
-    "category": "pokok",
-    "avg_price_idr": 3000,
-    "calories": 260,
-    "protein_g": 4.4,
-    "fat_g": 0.4,
-    "carbs_g": 57,
-    "fiber_g": 0.6,
-    "availability": "warteg",
-    "is_budget_friendly": true
-  },
-  {
-    "name": "Nasi Uduk Polos",
-    "category": "pokok",
-    "avg_price_idr": 5000,
-    "calories": 290,
-    "protein_g": 4.5,
-    "fat_g": 7.5,
-    "carbs_g": 51,
-    "fiber_g": 0.8,
-    "availability": "angkringan",
-    "is_budget_friendly": true
-  },
+import { CULINARY_CATALOG } from './culinaryCatalog';
+export { CULINARY_CATALOG };
+export const LOCAL_FOODS = CULINARY_CATALOG;
+export default LOCAL_FOODS;
+
+export const LOCAL_FOODS_LEGACY = [
   {
     "name": "Nasi Kucing",
     "category": "pokok",

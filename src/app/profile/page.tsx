@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const [heightInput, setHeightInput] = useState("170");
   const [activity, setActivity] = useState<"sedentary" | "light" | "moderate" | "active">("sedentary");
   const [budgetInput, setBudgetInput] = useState("");
+  const [selectedCity, setSelectedCity] = useState("Bandar Lampung");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [bmrResult, setBmrResult] = useState<BmrResult | null>(null);
@@ -33,6 +34,10 @@ export default function ProfilePage() {
 
   // Load saved profile on mount
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedCity = localStorage.getItem("dompetkost_city");
+      if (savedCity) setSelectedCity(savedCity);
+    }
     let cancelled = false;
     async function load() {
       try {
@@ -114,6 +119,9 @@ export default function ProfilePage() {
     }
     setLoading(true);
     setToast(null);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("dompetkost_city", selectedCity);
+    }
     try {
       // Save budget separately if provided
       if (budgetInput.trim() !== "" && Number(budgetInput) > 0) {
@@ -174,19 +182,19 @@ export default function ProfilePage() {
     }`;
 
   return (
-    <div className="w-full px-4 py-5 sm:py-8 md:px-8 max-w-[1440px] mx-auto space-y-6 sm:space-y-8">
+    <div className="w-full px-4 py-5 sm:py-8 md:px-8 lg:px-10 xl:px-12 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-black text-white shadow-xs shrink-0">
+          <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-orange-700 text-white shadow-xs shrink-0">
             <svg className="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-black tracking-tight">Profil & Target Gizi</h1>
-            <p className="text-xs sm:text-sm md:text-base text-neutral-500 font-medium mt-0.5 sm:mt-1">
-              Atur profil Anda untuk mendapatkan target gizi yang lebih akurat.
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-neutral-900 tracking-tight">Profil &amp; Porsi</h1>
+            <p className="text-xs sm:text-sm md:text-base text-neutral-600 font-medium mt-0.5 sm:mt-1">
+              Atur profil dan preferensi porsi untuk panduan kuliner &amp; gizi yang pas di badan dan dompet.
             </p>
           </div>
         </div>
@@ -194,12 +202,20 @@ export default function ProfilePage() {
 
       {/* Toast */}
       {toast && (
-        <div className={`rounded-lg border px-5 py-3.5 text-sm font-bold flex items-center gap-2 ${
+        <div className={`rounded-xl border px-5 py-3.5 text-sm font-bold flex items-center gap-2 ${
           toast.type === "success"
-            ? "bg-neutral-50 border-neutral-200 text-black"
+            ? "bg-amber-50 border-amber-300 text-amber-950"
             : "bg-red-50 border-red-200 text-red-700"
         }`}>
-          <span>{toast.type === "success" ? "✓" : "⚠️"}</span>
+          {toast.type === "success" ? (
+            <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          )}
           {toast.msg}
         </div>
       )}
@@ -207,7 +223,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
         {/* Profile Card */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm flex flex-col items-center text-center space-y-6">
+          <div className="rounded-2xl border border-neutral-200/90 bg-white/95 backdrop-blur-md p-8 shadow-xs flex flex-col items-center text-center space-y-6">
             {user?.image && !imgError ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -215,16 +231,23 @@ export default function ProfilePage() {
                 alt={user.name || "Avatar"}
                 referrerPolicy="no-referrer"
                 onError={() => setImgError(true)}
-                className="h-28 w-28 rounded-full border-4 border-neutral-100 shadow-sm object-cover"
+                className="h-28 w-28 rounded-full border-4 border-amber-200 shadow-sm object-cover"
               />
             ) : (
-              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-neutral-100 text-4xl font-black text-black shadow-sm border-4 border-neutral-50">
+              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-amber-100 text-4xl font-black text-amber-900 shadow-sm border-4 border-amber-200">
                 {initial}
               </div>
             )}
             <div>
-              <h2 className="text-xl font-black text-black">{user?.name || "Tamu (Guest)"}</h2>
-              <p className="text-sm font-medium text-neutral-500 mt-1 break-all">{user?.email || "guest@dompetkost.local"}</p>
+              <h2 className="text-xl font-black text-neutral-900">{user?.name || "Anak Kost Penjelajah"}</h2>
+              <p className="text-sm font-medium text-neutral-600 mt-1 break-all">{user?.email || "kost@dompetkost.local"}</p>
+              <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-xs font-bold text-amber-950">
+                <svg className="w-3.5 h-3.5 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>{selectedCity}</span>
+              </div>
             </div>
             <div className="w-full pt-4 border-t border-neutral-100">
               <LogoutButton />
@@ -233,47 +256,45 @@ export default function ProfilePage() {
 
           {/* Saved Target Summary */}
           {bmrResult && (
-            <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm space-y-4">
+            <div className="rounded-2xl border border-neutral-200/90 bg-white/95 backdrop-blur-md p-6 shadow-xs space-y-4">
               <div className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded bg-neutral-100 text-black">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-orange-700 border border-amber-200">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </span>
-                <h3 className="text-sm font-black text-black uppercase tracking-wider">Target Tersimpan</h3>
+                <h3 className="text-sm font-black text-neutral-900 uppercase tracking-wider">Keseimbangan Porsi Tersimpan</h3>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-neutral-500">Kalori</span>
-                  <span className="text-sm font-black text-black">{bmrResult.daily_calorie_target} kcal</span>
+                  <span className="text-sm font-bold text-neutral-600">Energi Target</span>
+                  <span className="text-sm font-black text-neutral-900">{bmrResult.daily_calorie_target} kkal</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-neutral-500">Protein</span>
-                  <span className="text-sm font-black text-black">{bmrResult.daily_protein_target}g</span>
+                  <span className="text-sm font-bold text-neutral-600">Protein</span>
+                  <span className="text-sm font-black text-neutral-900">{bmrResult.daily_protein_target}g</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-neutral-500">Lemak</span>
-                  <span className="text-sm font-black text-black">{bmrResult.daily_fat_target}g</span>
+                  <span className="text-sm font-bold text-neutral-600">Lemak</span>
+                  <span className="text-sm font-black text-neutral-900">{bmrResult.daily_fat_target}g</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-neutral-500">Karbohidrat</span>
-                  <span className="text-sm font-black text-black">{bmrResult.daily_carb_target}g</span>
+                  <span className="text-sm font-bold text-neutral-600">Karbohidrat</span>
+                  <span className="text-sm font-black text-neutral-900">{bmrResult.daily_carb_target}g</span>
                 </div>
               </div>
               <div className="pt-3 border-t border-neutral-100">
-                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">BMR: {bmrResult.bmr} kcal • TDEE: {bmrResult.tdee} kcal</p>
+                <p className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">BMR: {bmrResult.bmr} kkal • Kebutuhan Harian (TDEE): {bmrResult.tdee} kkal</p>
               </div>
             </div>
           )}
         </div>
 
         {/* BMR Calculator */}
-        <div className="lg:col-span-8 rounded-lg border border-neutral-200 bg-white p-6 md:p-8 shadow-sm space-y-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-neutral-100 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
-
+        <div className="lg:col-span-8 rounded-2xl border border-neutral-200/90 bg-white/95 backdrop-blur-md p-6 md:p-8 shadow-xs space-y-8 relative overflow-hidden">
           <div className="flex items-center gap-3 border-b border-neutral-200 pb-4 relative z-10">
-            <span className="flex h-8 w-8 items-center justify-center rounded bg-neutral-100 text-black">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-orange-700 border border-amber-200">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
             </span>
-            <h3 className="font-extrabold text-black text-lg md:text-xl">Kalkulator BMR & TDEE</h3>
+            <h3 className="font-extrabold text-neutral-900 text-lg md:text-xl">Kalkulator Keseimbangan Energi &amp; Porsi</h3>
           </div>
 
           {loadingProfile ? (
@@ -293,7 +314,7 @@ export default function ProfilePage() {
                         gender === "male" ? "bg-white text-black shadow-sm border border-neutral-200" : "text-neutral-500 hover:text-black"
                       }`}
                     >
-                      ♂ Laki-laki
+                      Laki-laki
                     </button>
                     <button
                       type="button"
@@ -302,7 +323,7 @@ export default function ProfilePage() {
                         gender === "female" ? "bg-white text-black shadow-sm border border-neutral-200" : "text-neutral-500 hover:text-black"
                       }`}
                     >
-                      ♀ Perempuan
+                      Perempuan
                     </button>
                   </div>
                 </div>
@@ -349,7 +370,37 @@ export default function ProfilePage() {
                   {errors.height && <p className="text-xs font-bold text-red-500">{errors.height}</p>}
                 </div>
                 <div className="sm:col-span-2 space-y-2">
-                  <label className="block text-sm font-bold text-black">Budget Makanan Bulanan (Rp) <span className="text-neutral-400 font-medium">— opsional</span></label>
+                  <label className="block text-sm font-bold text-neutral-900">
+                    Kota / Wilayah Kost <span className="text-amber-800 font-medium">— untuk penyesuaian harga kuliner</span>
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {[
+                      { city: "Bandar Lampung", multiplier: "Standar (1.0x)" },
+                      { city: "Jakarta", multiplier: "Metropolitan (+25%)" },
+                      { city: "Bandung", multiplier: "Priangan (+5%)" },
+                      { city: "Yogyakarta", multiplier: "Pelajar (-15%)" },
+                      { city: "Surabaya", multiplier: "Jawa Timur (+5%)" },
+                      { city: "Malang", multiplier: "Kampus Dingin (-10%)" },
+                    ].map((item) => (
+                      <button
+                        key={item.city}
+                        type="button"
+                        onClick={() => setSelectedCity(item.city)}
+                        className={`rounded-xl border-2 p-3 text-left transition-all ${
+                          selectedCity === item.city
+                            ? "border-orange-700 bg-amber-50/90 text-neutral-900 shadow-xs"
+                            : "border-neutral-200 bg-neutral-50/80 text-neutral-600 hover:border-amber-300"
+                        }`}
+                      >
+                        <p className="text-xs sm:text-sm font-black text-neutral-900">{item.city}</p>
+                        <p className={`text-[10px] font-semibold mt-0.5 ${selectedCity === item.city ? "text-orange-700" : "text-neutral-500"}`}>{item.multiplier}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2 space-y-2">
+                  <label className="block text-sm font-bold text-neutral-900">Budget Makanan Bulanan (Rp) <span className="text-neutral-500 font-medium">— opsional</span></label>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -359,30 +410,30 @@ export default function ProfilePage() {
                     className={inputClass("budget")}
                   />
                   {budgetInput && Number(budgetInput) > 0 && (
-                    <p className="text-xs font-medium text-neutral-500">≈ Rp {Math.round(Number(budgetInput) / 30).toLocaleString("id-ID")} / hari</p>
+                    <p className="text-xs font-semibold text-amber-900">≈ Rp {Math.round(Number(budgetInput) / 30).toLocaleString("id-ID")} / hari</p>
                   )}
                 </div>
                 <div className="sm:col-span-2 space-y-2">
-                  <label className="block text-sm font-bold text-black">Tingkat Aktivitas</label>
+                  <label className="block text-sm font-bold text-neutral-900">Tingkat Aktivitas Kuliah &amp; Harian</label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {([
-                      { value: "sedentary", label: "Jarang", desc: "Tidak olahraga" },
-                      { value: "light", label: "Ringan", desc: "1-3 hari/minggu" },
-                      { value: "moderate", label: "Sedang", desc: "3-5 hari/minggu" },
-                      { value: "active", label: "Berat", desc: "6-7 hari/minggu" },
+                      { value: "sedentary", label: "Santai", desc: "Rebahan / nugas di kamar" },
+                      { value: "light", label: "Ringan", desc: "Jalan santai ke kampus" },
+                      { value: "moderate", label: "Sedang", desc: "Aktif jalan & olahraga 3-5x" },
+                      { value: "active", label: "Tinggi", desc: "Organisasi padat & rutin gym" },
                     ] as const).map((opt) => (
                       <button
                         key={opt.value}
                         type="button"
                         onClick={() => setActivity(opt.value)}
-                        className={`rounded-lg border-2 p-3 text-center transition-all ${
+                        className={`rounded-xl border-2 p-3 text-center transition-all ${
                           activity === opt.value
-                            ? "border-black bg-black text-white"
-                            : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300"
+                            ? "border-orange-700 bg-orange-700 text-white shadow-xs"
+                            : "border-neutral-200 bg-neutral-50/80 text-neutral-700 hover:border-amber-300"
                         }`}
                       >
                         <p className="text-sm font-black">{opt.label}</p>
-                        <p className={`text-[10px] font-bold mt-0.5 ${activity === opt.value ? "text-neutral-300" : "text-neutral-400"}`}>{opt.desc}</p>
+                        <p className={`text-[10px] font-semibold mt-0.5 ${activity === opt.value ? "text-amber-100" : "text-neutral-500"}`}>{opt.desc}</p>
                       </button>
                     ))}
                   </div>
@@ -392,15 +443,15 @@ export default function ProfilePage() {
               <button
                 onClick={calculateBMR}
                 disabled={loading}
-                className="w-full rounded-lg bg-black p-5 text-lg font-bold text-white shadow-lg hover:bg-neutral-800 hover:shadow-xl active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
+                className="w-full rounded-xl bg-orange-700 p-4 sm:p-5 text-base sm:text-lg font-extrabold text-white shadow-md shadow-orange-700/20 hover:bg-orange-800 hover:shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
-                    Menghitung...
+                    Menghitung Porsi Pas...
                   </span>
                 ) : (
-                  "Simpan"
+                  "Simpan Profil &amp; Porsi"
                 )}
               </button>
             </div>
@@ -408,26 +459,37 @@ export default function ProfilePage() {
 
           {/* Results */}
           {bmrResult && (
-            <div className="rounded-lg bg-neutral-50 p-6 md:p-8 border border-neutral-200 relative z-10">
-              <h4 className="font-black text-black mb-6 text-center text-lg">Target Harian Anda</h4>
+            <div className="rounded-2xl bg-amber-50/70 p-6 md:p-8 border border-amber-200/80 relative z-10 space-y-4">
+              <h4 className="font-black text-neutral-900 text-center text-lg">Keseimbangan Energi Harian Anda</h4>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                 {[
-                  { label: "Kalori (TDEE)", value: bmrResult.daily_calorie_target, unit: "kcal", color: "text-black" },
-                  { label: "Protein", value: bmrResult.daily_protein_target, unit: "g", color: "text-black" },
-                  { label: "Lemak", value: bmrResult.daily_fat_target, unit: "g", color: "text-black" },
-                  { label: "Karbohidrat", value: bmrResult.daily_carb_target, unit: "g", color: "text-black" },
+                  { label: "Energi (TDEE)", value: bmrResult.daily_calorie_target, unit: "kkal", color: "text-orange-700" },
+                  { label: "Protein", value: bmrResult.daily_protein_target, unit: "g", color: "text-amber-900" },
+                  { label: "Lemak", value: bmrResult.daily_fat_target, unit: "g", color: "text-neutral-800" },
+                  { label: "Karbohidrat", value: bmrResult.daily_carb_target, unit: "g", color: "text-neutral-800" },
                 ].map((item) => (
-                  <div key={item.label} className="bg-white p-4 rounded-lg border border-neutral-200 shadow-sm">
-                    <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">{item.label}</p>
+                  <div key={item.label} className="bg-white p-4 rounded-xl border border-neutral-200/90 shadow-xs">
+                    <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">{item.label}</p>
                     <p className={`font-black text-xl ${item.color}`}>
-                      {item.value} <span className="text-xs font-medium text-neutral-400">{item.unit}</span>
+                      {item.value} <span className="text-xs font-medium text-neutral-500">{item.unit}</span>
                     </p>
                   </div>
                 ))}
               </div>
-              <p className="text-xs font-bold text-center text-neutral-400 mt-6 bg-neutral-100 py-2.5 rounded uppercase tracking-wider">
-                BMR: {bmrResult.bmr} kcal • TDEE: {bmrResult.tdee} kcal
+              <p className="text-xs font-bold text-center text-amber-950 bg-amber-100/80 py-2.5 rounded-xl uppercase tracking-wider border border-amber-200">
+                BMR: {bmrResult.bmr} kkal • Kebutuhan Harian (TDEE): {bmrResult.tdee} kkal
               </p>
+              <div className="rounded-xl border border-amber-300 bg-amber-100/60 p-3 text-center">
+                <p className="text-xs font-semibold text-amber-950 flex items-center justify-center gap-1.5">
+                  <svg className="w-4 h-4 text-amber-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <span>Ini estimasi umum, bukan saran medis. Punya kondisi kesehatan khusus? Tanyakan ke ahli gizi atau dokter.</span>
+                </p>
+                <p className="text-[11px] text-neutral-600 mt-1">
+                  Formula Mifflin-St Jeor &amp; AKG Kemenkes sebagai acuan edukasi porsi seimbang anak kost.
+                </p>
+              </div>
             </div>
           )}
         </div>

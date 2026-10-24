@@ -42,11 +42,15 @@ export default function ComparePage() {
   if (error || !data) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-lg shadow-sm max-w-md w-full text-center">
-          <div className="text-5xl mb-4">⚖️</div>
+        <div className="bg-white p-8 rounded-2xl shadow-sm max-w-md w-full text-center border border-neutral-200">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-neutral-100 flex items-center justify-center text-neutral-600">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+            </svg>
+          </div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Tidak Bisa Dibandingkan</h2>
           <p className="text-gray-500 mb-6">{error}</p>
-          <button onClick={() => router.back()} className="w-full py-3 rounded bg-emerald-600 text-white font-bold">
+          <button onClick={() => router.back()} className="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold">
             Kembali
           </button>
         </div>
@@ -57,7 +61,7 @@ export default function ComparePage() {
   const { beli, masak, savings } = data.comparison;
 
   return (
-    <div className="w-full px-4 py-8 md:px-8 max-w-[1440px] mx-auto space-y-8 pb-24">
+    <div className="w-full px-4 py-8 md:px-8 lg:px-10 xl:px-12 space-y-8 pb-24">
       {/* Header */}
       <div className="bg-emerald-600 text-white pt-12 pb-24 px-6 md:px-8 rounded-lg shadow-md relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
@@ -103,30 +107,38 @@ export default function ComparePage() {
         {/* Comparison Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Beli Card */}
-          <div className={`bg-white rounded-lg p-6 md:p-8 shadow-sm border ${!savings.isCheaperToCook ? 'ring-2 ring-emerald-500 shadow-md' : 'border-neutral-100'}`}>
-            <div className="text-5xl mb-4 text-center">🥡</div>
+          <div className={`bg-white rounded-2xl p-6 md:p-8 shadow-sm border ${!savings.isCheaperToCook ? 'ring-2 ring-emerald-500 shadow-md' : 'border-neutral-200'}`}>
+            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
             <h4 className="font-black text-neutral-900 text-xl text-center mb-2">Beli Jadi</h4>
             <div className="text-3xl font-black text-emerald-600 text-center mb-6">
               Rp {Math.round(beli.pricePerPortion || 0).toLocaleString('id-ID')}
             </div>
             <Link 
               href={`/foods/${beli.id}`}
-              className="block w-full py-4 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
+              className="block w-full py-4 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-colors"
             >
               Lihat Detail
             </Link>
           </div>
 
           {/* Masak Card */}
-          <div className={`bg-white rounded-lg p-6 md:p-8 shadow-sm border ${savings.isCheaperToCook ? 'ring-2 ring-emerald-500 shadow-md' : 'border-neutral-100'}`}>
-            <div className="text-5xl mb-4 text-center">🍳</div>
+          <div className={`bg-white rounded-2xl p-6 md:p-8 shadow-sm border ${savings.isCheaperToCook ? 'ring-2 ring-emerald-500 shadow-md' : 'border-neutral-200'}`}>
+            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
             <h4 className="font-black text-neutral-900 text-xl text-center mb-2">Masak Sendiri</h4>
             <div className="text-3xl font-black text-emerald-600 text-center mb-6">
               Rp {Math.round(masak.pricePerPortion || 0).toLocaleString('id-ID')}
             </div>
             <Link 
               href={`/foods/${masak.id}`}
-              className="block w-full py-4 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
+              className="block w-full py-4 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-colors"
             >
               Lihat Resep
             </Link>

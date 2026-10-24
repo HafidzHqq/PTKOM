@@ -42,10 +42,11 @@ export default function FooterBackground() {
       if (disposed || video.readyState < 2 || video.seeking) return;
       if (Math.abs(video.currentTime - desiredTime) > 1 / 48) {
         const targetTime = Math.min(desiredTime, video.duration - 1 / 24);
-        if ('fastSeek' in video) {
-          (video as HTMLVideoElement & { fastSeek: (time: number) => void }).fastSeek(targetTime);
+        const vid = video as HTMLVideoElement & { fastSeek?: (time: number) => void };
+        if (typeof vid.fastSeek === 'function') {
+          vid.fastSeek(targetTime);
         } else {
-          video.currentTime = targetTime;
+          vid.currentTime = targetTime;
         }
       }
     };

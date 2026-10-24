@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @font-face {
@@ -17,9 +18,48 @@
 }
 
 :root {
-  --background: #f4f4f4;
-  --foreground: #080909;
-  --accent: #666666;
+  --background: #fffbf5;
+  --foreground: #2b1d14;
+  --accent: #c2410c;
+
+  /* Indonesian Culinary Design Tokens */
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --orange-700: #c2410c;
+  --terracotta-600: #b8512f;
+  --cream-50: #fffbf5;
+  --cocoa-900: #2b1d14;
+  --chili-600: #dc2626;
+  --leaf-600: #16a34a;
+}
+
+@theme {
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-orange-700: #c2410c;
+  --color-terracotta-600: #b8512f;
+  --color-cream-50: #fffbf5;
+  --color-cocoa-900: #2b1d14;
+  --color-chili-600: #dc2626;
+  --color-leaf-600: #16a34a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1c1410;
+    --foreground: #f5ebe0;
+    --accent: #ea580c;
+    --cream-50: #1c1410;
+    --cocoa-900: #f5ebe0;
+  }
+}
+
+.dark {
+  --background: #1c1410;
+  --foreground: #f5ebe0;
+  --accent: #ea580c;
+  --cream-50: #1c1410;
+  --cocoa-900: #f5ebe0;
 }
 
 .footer-background {

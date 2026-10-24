@@ -47,6 +47,31 @@ function formatUser(u: any) {
 
 export async function GET() {
   const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return NextResponse.json({
+      success: true,
+      data: {
+        id: null,
+        email: null,
+        name: "Teman Kost",
+        gender: "male",
+        age: 20,
+        weight_kg: 60,
+        height_cm: 170,
+        activity_level: "light",
+        daily_calorie_target: 2250,
+        daily_protein_target: 84,
+        daily_fat_target: 62,
+        daily_carb_target: 337,
+        daily_fiber_target: 25,
+        bmr: 1540,
+        tdee: 2117.5,
+        monthly_food_budget: 200000,
+        profile_updated_at: null,
+      },
+    });
+  }
   
   let userId = Number(session?.user?.id);
   if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
@@ -63,14 +88,12 @@ export async function GET() {
     }
   }
 
-  if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
-    userId = 1;
-  }
-
   try {
-    let user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
+    let user = userId
+      ? await prisma.user.findUnique({
+          where: { id: userId },
+        })
+      : null;
 
     if (!user && session?.user?.email) {
       user = await prisma.user.findUnique({
@@ -79,17 +102,11 @@ export async function GET() {
     }
 
     if (!user) {
-      user = await prisma.user.findUnique({
-        where: { id: 1 },
-      });
-    }
-
-    if (!user) {
       return NextResponse.json({
         success: true,
         data: {
-          id: 1,
-          email: session?.user?.email || "guest@gizikost.local",
+          id: null,
+          email: session?.user?.email || null,
           name: session?.user?.name || "Teman Kost",
           gender: "male",
           age: 20,
@@ -103,7 +120,7 @@ export async function GET() {
           daily_fiber_target: 25,
           bmr: 1540,
           tdee: 2117.5,
-          monthly_food_budget: 900000,
+          monthly_food_budget: 200000,
           profile_updated_at: null,
         },
       });

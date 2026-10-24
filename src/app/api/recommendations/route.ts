@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const session = await getServerSession(authOptions);
 
-  let userId = Number(session?.user?.id);
+  let userId: number | null = Number(session?.user?.id);
   if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
     if (session?.user?.email) {
       try {
@@ -18,14 +18,14 @@ export async function GET() {
           select: { id: true },
         });
         if (dbUser) userId = dbUser.id;
+        else userId = null;
       } catch (e) {
         console.error("[GET /api/recommendations] dbUser lookup error:", e);
+        userId = null;
       }
+    } else {
+      userId = null;
     }
-  }
-
-  if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
-    userId = 1;
   }
 
   try {
@@ -36,28 +36,30 @@ export async function GET() {
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
 
-    // Get today's nutrition history from MySQL
+    // Get today's nutrition history from MySQL (only if authenticated)
     let rows: { calories: number | null; proteinG: number | null; fatG: number | null; carbsG: number | null; fiberG: number | null }[] = [];
-    try {
-      rows = await prisma.nutritionHistory.findMany({
-        where: {
-          userId,
-          loggedAt: {
-            gte: startOfDay,
-            lte: endOfDay,
+    if (userId) {
+      try {
+        rows = await prisma.nutritionHistory.findMany({
+          where: {
+            userId,
+            loggedAt: {
+              gte: startOfDay,
+              lte: endOfDay,
+            },
           },
-        },
-        select: {
-          calories: true,
-          proteinG: true,
-          fatG: true,
-          carbsG: true,
-          fiberG: true,
-        },
-      });
-    } catch (e) {
-      console.error("[GET /api/recommendations] error fetching rows:", e);
-      rows = [];
+          select: {
+            calories: true,
+            proteinG: true,
+            fatG: true,
+            carbsG: true,
+            fiberG: true,
+          },
+        });
+      } catch (e) {
+        console.error("[GET /api/recommendations] error fetching rows:", e);
+        rows = [];
+      }
     }
 
     // Calculate total consumed today
@@ -81,22 +83,24 @@ export async function GET() {
       fiber_g: 25,
     };
 
-    // Use saved profile targets if available from MySQL
-    try {
-      const profile = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-      if (profile?.dailyCalorieTarget) {
-        target = {
-          calories: profile.dailyCalorieTarget,
-          protein_g: profile.dailyProteinTarget ?? target.protein_g,
-          fat_g: profile.dailyFatTarget ?? target.fat_g,
-          carbs_g: profile.dailyCarbTarget ?? target.carbs_g,
-          fiber_g: profile.dailyFiberTarget ?? target.fiber_g,
-        };
+    // Use saved profile targets if available from MySQL (only if authenticated)
+    if (userId) {
+      try {
+        const profile = await prisma.user.findUnique({
+          where: { id: userId },
+        });
+        if (profile?.dailyCalorieTarget) {
+          target = {
+            calories: profile.dailyCalorieTarget,
+            protein_g: profile.dailyProteinTarget ?? target.protein_g,
+            fat_g: profile.dailyFatTarget ?? target.fat_g,
+            carbs_g: profile.dailyCarbTarget ?? target.carbs_g,
+            fiber_g: profile.dailyFiberTarget ?? target.fiber_g,
+          };
+        }
+      } catch (e) {
+        console.error("[GET /api/recommendations] profile target fallback", e);
       }
-    } catch (e) {
-      console.error("[GET /api/recommendations] profile target fallback", e);
     }
 
     // Load local foods from MySQL with fallback to static dataset
@@ -227,6 +231,8 @@ export async function GET() {
 
     const mappedRecommendations = recommendations.map((item) => ({
       food_name: item.food.name,
+      category: item.food.category || "PILIHAN KOST",
+      venue: item.food.availability || "Warteg",
       estimated_price_idr: item.food.avg_price_idr,
       estimated_nutrition: {
         calories: item.food.calories,

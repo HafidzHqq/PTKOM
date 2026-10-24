@@ -6,8 +6,9 @@ import "./globals.css";
 const font = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "DompetKost — Asisten Gizi Anak Kost",
-  description: "Hitung nutrisi makanan harian dan dapatkan rekomendasi makanan sehat ramah kantong anak kost.",
+  title: "DompetKost — Kulineran Enak, Dompet Aman, Badan Nyaman",
+  description:
+    "Teman setia anak kost untuk eksplorasi resep hemat, lezat, dan seimbang dengan verifikasi AI serta kalkulasi nutrisi otomatis.",
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",

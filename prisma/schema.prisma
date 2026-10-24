@@ -45,8 +45,60 @@ model User {
   createdAt           DateTime           @default(now()) @map("created_at")
 
   nutritionHistories  NutritionHistory[]
+  recipes             Recipe[]
+  savedRecipes        SavedRecipe[]
 
   @@map("users")
+}
+
+model Recipe {
+  id              Int           @id @default(autoincrement())
+  userId          Int?          @map("user_id")
+  title           String
+  description     String?       @db.Text
+  category        String        @default("Lauk Hemat")
+  cookTimeMinutes Int           @default(20) @map("cook_time_minutes")
+  portions        Int           @default(1)
+  estimatedCost   Int           @default(15000) @map("estimated_cost")
+  imageUrl        String?       @db.LongText @map("image_url")
+  
+  ingredients     String        @db.Text
+  steps           String        @db.Text
+  
+  // Gizi hasil kalkulasi AI
+  calories        Float         @default(0)
+  proteinG        Float         @default(0) @map("protein_g")
+  fatG            Float         @default(0) @map("fat_g")
+  carbsG          Float         @default(0) @map("carbs_g")
+  fiberG          Float         @default(0) @map("fiber_g")
+  
+  // Verifikasi AI
+  isAiVerified    Boolean       @default(false) @map("is_ai_verified")
+  aiFeedback      String?       @db.Text @map("ai_feedback")
+  
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  savedBy         SavedRecipe[]
+
+  @@index([userId])
+  @@map("recipes")
+}
+
+model SavedRecipe {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  recipeId  Int      @map("recipe_id")
+  savedAt   DateTime @default(now()) @map("saved_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
+  @@index([userId])
+  @@index([recipeId])
+  @@map("saved_recipes")
 }
 
 model NutritionHistory {

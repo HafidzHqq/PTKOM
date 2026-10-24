@@ -26,9 +26,10 @@ const historySchema = z.object({
     carbs_g: z.coerce.number().nonnegative().catch(0),
     fiber_g: z.coerce.number().nonnegative().catch(0),
   }).catch({ calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 }),
+  logged_at: z.string().optional(),
 });
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
   let userId = Number(session?.user?.id);
@@ -46,26 +47,36 @@ export async function GET() {
     }
   }
 
-  // Jika guest atau belum ada di session, fallback aman ke ID 1
+  // Jika tidak login / belum terotentikasi, jangan kembalikan catatan user lain
   if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
-    userId = 1;
+    return NextResponse.json([]);
   }
 
   try {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const searchParams = request.nextUrl.searchParams;
+    const daysParam = searchParams.get("days");
+    const limitParam = searchParams.get("limit");
+
+    const where: { userId: number; loggedAt?: { gte: Date } } = { userId };
+
+    if (daysParam) {
+      const days = parseInt(daysParam, 10);
+      if (!isNaN(days) && days > 0) {
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - days);
+        where.loggedAt = { gte: cutoff };
+      }
+    }
+
+    const takeLimit = limitParam ? parseInt(limitParam, 10) : 200;
+    const take = !isNaN(takeLimit) && takeLimit > 0 ? takeLimit : 200;
 
     const rows = await prisma.nutritionHistory.findMany({
-      where: {
-        userId,
-        loggedAt: {
-          gte: sevenDaysAgo,
-        },
-      },
+      where,
       orderBy: {
         loggedAt: "desc",
       },
-      take: 100,
+      take,
     });
 
     const data = rows.map((row) => ({
@@ -106,8 +117,12 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Jika tidak login, jangan simpan diari ke database
   if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
-    userId = 1;
+    return NextResponse.json(
+      { error: "Silakan login terlebih dahulu untuk menyimpan catatan diari." },
+      { status: 401 }
+    );
   }
 
   let body: unknown;
@@ -129,6 +144,8 @@ export async function POST(request: NextRequest) {
   const { data: nutrition } = parsed;
 
   try {
+    const loggedAtDate = nutrition.logged_at ? new Date(nutrition.logged_at) : new Date();
+
     const row = await prisma.nutritionHistory.create({
       data: {
         userId,
@@ -138,6 +155,7 @@ export async function POST(request: NextRequest) {
         fatG: nutrition.total_nutrition.fat_g,
         carbsG: nutrition.total_nutrition.carbs_g,
         fiberG: nutrition.total_nutrition.fiber_g,
+        loggedAt: isNaN(loggedAtDate.getTime()) ? new Date() : loggedAtDate,
       },
     });
 
@@ -162,3 +180,73 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  let userId = Number(session?.user?.id);
+  if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
+    if (session?.user?.email) {
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: session.user.email },
+          select: { id: true },
+        });
+        if (dbUser) userId = dbUser.id;
+      } catch (e) {
+        console.error("[DELETE /api/nutrition-history] dbUser lookup error:", e);
+      }
+    }
+  }
+
+  // Jika tidak login, tolak penghapusan diari
+  if (!userId || isNaN(userId) || userId <= 0 || userId > 2147483647) {
+    return NextResponse.json(
+      { error: "Silakan login terlebih dahulu." },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const idParam = searchParams.get("id");
+
+    if (idParam) {
+      const entryId = parseInt(idParam, 10);
+      if (!isNaN(entryId)) {
+        const deleted = await prisma.nutritionHistory.deleteMany({
+          where: { id: entryId, userId },
+        });
+
+        if (deleted.count === 0) {
+          return NextResponse.json(
+            { error: "Catatan tidak ditemukan atau bukan milik Anda" },
+            { status: 404 }
+          );
+        }
+
+        return NextResponse.json({
+          success: true,
+          message: "Catatan kuliner berhasil dihapus.",
+          id: entryId,
+        });
+      }
+    }
+
+    await prisma.nutritionHistory.deleteMany({
+      where: { userId },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Semua riwayat kuliner berhasil dikosongkan.",
+    });
+  } catch (error) {
+    console.error("[DELETE /api/nutrition-history] Error:", error);
+    return NextResponse.json(
+      { error: "Gagal mengosongkan riwayat kuliner" },
+      { status: 500 },
+    );
+  }
+}
+

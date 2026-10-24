@@ -4,17 +4,30 @@ import OpenAI from "openai"; // For OpenRouter and Mistral if using openai compa
 import { UNIFIED_PROMPT, TEXT_PROMPT } from "./prompts";
 
 export interface FoodAnalysisResult {
+  culinary_review?: string;
+  culinary_tips?: string | string[];
+  flavor_tags?: string[];
   foods: {
     name: string;
-    name_en: string;
-    portion_grams: number;
-    confidence: number;
+    name_en?: string;
+    portion_grams?: number;
+    portion_estimate?: string;
+    confidence?: number;
     nutrition: {
+      kcal?: number;
       calories: number;
+      protein?: number;
       protein_g: number;
+      fat?: number;
       fat_g: number;
+      carbs?: number;
       carbs_g: number;
+      fiber?: number;
       fiber_g: number;
+    };
+    price_estimate?: {
+      min: number;
+      max: number;
     };
   }[];
   total_nutrition: {
@@ -25,6 +38,10 @@ export interface FoodAnalysisResult {
     fiber_g: number;
   };
   health_notes: string[];
+  confidence?: number;
+  low_confidence?: boolean;
+  alternatives?: string[];
+  disclaimer_key?: string;
   metadata?: {
     provider: string;
     model: string;

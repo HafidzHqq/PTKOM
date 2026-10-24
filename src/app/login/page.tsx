@@ -150,12 +150,12 @@ function LoginContent() {
               type="button"
               onClick={handleGuestLogin}
               disabled={guestLoading || googleLoading}
-              className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-[#5d5fef] hover:bg-[#4b4ddc] text-white py-3.5 px-4 text-sm font-bold shadow-lg shadow-indigo-500/20 active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2.5 rounded-full bg-[#5d5fef] hover:bg-[#4b4ddc] text-white py-3.5 px-6 text-sm font-bold shadow-lg shadow-indigo-500/20 active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
             >
               {guestLoading ? (
                 <>
                   <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" />
                     <path className="opacity-70" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                   </svg>
                   <span>Memproses Akun Guest...</span>
@@ -187,7 +187,7 @@ function LoginContent() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={guestLoading || googleLoading}
-              className="w-full flex items-center justify-center gap-3 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 py-3.5 px-4 text-sm font-bold shadow-sm active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
+              className="w-full flex items-center justify-center gap-3 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 py-3.5 px-6 text-sm font-bold shadow-sm active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
             >
               {googleLoading ? (
                 <>
