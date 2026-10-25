@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { GeneratedRecipe } from "@/lib/ai/askRecipe";
@@ -19,15 +19,43 @@ const COMMON_INGREDIENTS = [
   "Telur",
   "Tahu",
   "Tempe",
+  "Bawang Merah",
+  "Bawang Putih",
+  "Cabai",
+  "Nasi Dingin",
   "Mie Instan",
-  "Bawang Merah & Putih",
-  "Cabai Rawit",
-  "Kecap Manis",
-  "Nasi Putih",
-  "Sayur Bayam",
-  "Sarden Kaleng",
+  "Kangkung",
   "Wortel",
-  "Sosis",
+  "Kecap",
+  "Kornet",
+];
+
+const COOKING_TOOLS = [
+  { id: "Rice Cooker", label: "Rice Cooker", desc: "Kukus & rebus serbaguna" },
+  { id: "Wajan / Teflon", label: "Wajan / Teflon", desc: "Goreng, tumis & oseng" },
+  { id: "Panci Rebus", label: "Panci Rebus", desc: "Sup, rebusan & kuah" },
+  { id: "Air Panas Saja", label: "Air Panas Saja", desc: "Tanpa kompor / no cook" },
+];
+
+const BUDGET_OPTIONS = [
+  { value: 0, label: "Rp 0 (Bahan ada saja)", short: "Rp 0" },
+  { value: 10000, label: "≤ Rp 10.000", short: "≤10rb" },
+  { value: 15000, label: "≤ Rp 15.000", short: "≤15rb" },
+  { value: 25000, label: "≤ Rp 25.000", short: "≤25rb" },
+];
+
+const DIETARY_GOALS = [
+  { id: "Tinggi Protein", label: "Tinggi Protein", emoji: "💪" },
+  { id: "Super Hemat", label: "Super Hemat", emoji: "🪙" },
+  { id: "Cepat (< 15 menit)", label: "Cepat <15 mnt", emoji: "⚡" },
+  { id: "Rendah Lemak", label: "Rendah Lemak", emoji: "🥗" },
+];
+
+const CHAT_PROMPTS = [
+  "Resep olahan nasi dingin + telur selain nasi goreng biasa",
+  "Ide makan malam modal tempe & kecap < 10 menit",
+  "Cara bikin kuah ramen enak pakai bumbu kost sederhana",
+  "Gimana cara masak ayam suwir awet 3 hari di kost?",
 ];
 
 const PROMPT_SUGGESTIONS = [
@@ -53,6 +81,17 @@ const PROMPT_SUGGESTIONS = [
   },
 ];
 
+const INITIAL_MESSAGE: ChatMessage = {
+  id: "welcome-1",
+  role: "assistant",
+  text: "Halo Sobat Kost! Mau masak apa hari ini? Masukkan bahan yang kamu punya di sebelah kiri atau ketik pertanyaan langsung di bawah. Aku siap carikan resep sehat, lezat, dan tetap ramah kantong kost!",
+  suggestions: [
+    "Punya telur dan kecap, bisa buat apa?",
+    "Resep rice cooker praktis 1 panci",
+    "Menu hemat berprotein tinggi di bawah 15rb",
+  ],
+};
+
 export default function AskRecipePage() {
   const { user } = useAuth();
 
@@ -66,7 +105,7 @@ export default function AskRecipePage() {
   const [dietaryGoal, setDietaryGoal] = useState("Tinggi Protein & Hemat");
 
   // Chat State
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -77,6 +116,7 @@ export default function AskRecipePage() {
   const [copiedTitle, setCopiedTitle] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -93,24 +133,19 @@ export default function AskRecipePage() {
     }
   }, [messages, isLoading]);
 
-  // Initial greeting if empty
+  // Update greeting with user's name when authenticated
   useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([
-        {
-          id: "welcome-1",
-          role: "assistant",
-          text: `Halo ${user?.name ? user.name.split(" ")[0] : "Sobat Kost"}! Aku **Chef Kost AI**, asisten memasak pintarmu.
-          
-Punya bahan sisa apa saja di kamar kost? Atau mau masak hemat dengan rice cooker? 
-Pilih tab **"Racik dari Bahan di Kost"** atau langsung ketik apa yang ingin kamu masak di bawah!`,
-          suggestions: [
-            "Punya telur dan kecap, bisa buat apa?",
-            "Resep rice cooker praktis 1 panci",
-            "Menu hemat berprotein tinggi di bawah 15rb",
-          ],
-        },
-      ]);
+    if (user?.name) {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === "welcome-1"
+            ? {
+                ...m,
+                text: `Halo ${user.name.split(" ")[0]}! Mau masak apa hari ini? Masukkan bahan yang kamu punya di sebelah kiri atau ketik pertanyaan langsung di bawah. Aku siap carikan resep sehat, lezat, dan tetap ramah kantong kost!`,
+              }
+            : m
+        )
+      );
     }
   }, [user]);
 
@@ -338,658 +373,681 @@ _Dibuat dengan Chef AI DompetKost_`;
     setTimeout(() => setCopiedTitle(null), 3000);
   };
 
+  const selectedBudgetLabel =
+    BUDGET_OPTIONS.find((b) => b.value === budgetLimit)?.label ||
+    (budgetLimit === 0 ? "Bahan Kost Aja" : `Maks. Rp ${budgetLimit.toLocaleString("id-ID")}`);
+
   return (
-    <div className="min-h-screen bg-neutral-50/70 pb-24 md:pb-16">
+    <div className="w-full min-h-screen bg-stone-100 flex flex-col items-center">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-4 z-50 rounded-2xl bg-neutral-900 px-5 py-3 text-xs sm:text-sm font-semibold text-white shadow-xl animate-bounce">
+        <div className="fixed top-20 right-6 z-50 rounded-2xl bg-stone-900 px-5 py-3 text-xs sm:text-sm font-semibold text-white shadow-xl animate-bounce">
           {toastMessage}
         </div>
       )}
 
-      {/* Header Banner */}
-      <section className="border-b border-neutral-200/70 bg-white pt-6 pb-6 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 w-full">
-        <div className="w-full">
-          {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 text-xs text-neutral-500 mb-3">
-            <Link href="/dashboard" className="hover:text-neutral-900 transition">
-              Beranda
-            </Link>
-            <span>/</span>
-            <Link href="/recipes" className="hover:text-neutral-900 transition">
-              Daftar Resep
-            </Link>
-            <span>/</span>
-            <span className="font-semibold text-orange-600">Tanya Chef AI</span>
-          </nav>
+      {/* 1440px Container */}
+      <div className="w-full max-w-[1440px] px-6 sm:px-12 lg:px-20 pt-10 sm:pt-14 pb-20 flex flex-col justify-start items-start gap-8">
+        {/* Page Header (PageHeader Figma) */}
+        <div className="self-stretch flex flex-col justify-start items-start gap-5">
+          <div className="self-stretch flex justify-between items-center">
+            {/* Breadcrumbs */}
+            <div className="inline-flex justify-start items-center gap-2">
+              <span className="text-stone-500 text-xs font-semibold font-['Inter'] uppercase tracking-wider">
+                DOMPETKOST
+              </span>
+              <span className="text-stone-400 text-xs font-semibold font-['Inter']">/</span>
+              <span className="text-orange-700 text-xs font-semibold font-['Inter'] uppercase tracking-wider">
+                CHEF AI
+              </span>
+            </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-200/60 px-3 py-1 text-xs font-bold text-orange-800 mb-2">
-                <svg className="w-3.5 h-3.5 text-orange-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                <span>Asisten Koki & Ahli Gizi Anak Kost</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight flex items-center gap-2">
-                <span>Tanya Resep ke Chef AI</span>
+            {/* Back Button */}
+            <Link
+              href="/recipes"
+              className="px-4 py-2 bg-white rounded-full outline outline-1 outline-stone-200 inline-flex justify-center items-center gap-2 hover:bg-stone-50 hover:outline-stone-300 transition"
+            >
+              <svg className="w-3.5 h-3.5 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span className="text-stone-700 text-xs font-bold font-['Inter']">
+                Kembali ke Katalog Resep
+              </span>
+            </Link>
+          </div>
+
+          <div className="inline-flex justify-start items-center gap-3.5">
+            <div className="w-1.5 self-stretch bg-orange-700 rounded-full" />
+            <div className="inline-flex flex-col justify-start items-start gap-1">
+              <h1 className="text-stone-800 text-4xl sm:text-5xl lg:text-6xl font-normal font-['Instrument_Serif'] leading-tight">
+                Tanya Resep ke Chef AI
               </h1>
-              <p className="mt-1 text-xs sm:text-sm text-neutral-600 max-w-2xl">
+              <p className="self-stretch text-stone-500 text-xs sm:text-sm font-normal font-['Inter'] leading-tight">
                 Bingung mau masak apa dengan bahan seadanya di kamar kost? Minta Chef AI racikkan resep lezat, pas di kantong, dan terhitung nilai gizinya!
               </p>
             </div>
-
-            <Link
-              href="/recipes"
-              className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full border border-neutral-200 bg-white px-4 py-2 text-xs sm:text-sm font-bold text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 transition shadow-2xs"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              <span>Kembali ke Katalog Resep</span>
-            </Link>
-          </div>
-
-          {/* Mode Switcher Tabs */}
-          <div className="mt-6 flex items-center gap-2 p-1.5 bg-neutral-100 rounded-full w-full sm:w-fit border border-neutral-200/60 shadow-2xs">
-            <button
-              onClick={() => setMode("pantry")}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition cursor-pointer ${
-                mode === "pantry"
-                  ? "bg-white text-orange-700 shadow-2xs"
-                  : "text-neutral-600 hover:text-neutral-900"
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              <span>Racik dari Bahan di Kost</span>
-            </button>
-            <button
-              onClick={() => setMode("chat")}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition cursor-pointer ${
-                mode === "chat"
-                  ? "bg-white text-orange-700 shadow-2xs"
-                  : "text-neutral-600 hover:text-neutral-900"
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              <span>Tanya Bebas / Konsultasi</span>
-            </button>
           </div>
         </div>
-      </section>
 
-      {/* Main Container */}
-      <main className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 mt-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Page Modes (PageModes Figma) */}
+        <div className="inline-flex justify-start items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setMode("pantry")}
+            className={`px-5 py-2.5 rounded-full inline-flex justify-center items-center gap-2 transition cursor-pointer ${
+              mode === "pantry"
+                ? "bg-orange-700 text-white font-bold"
+                : "bg-white text-stone-600 font-semibold outline outline-1 outline-stone-200 hover:bg-stone-50"
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <span className="text-xs font-['Inter']">Racik dari Bahan di Kost</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMode("chat")}
+            className={`px-5 py-2.5 rounded-full inline-flex justify-center items-center gap-2 transition cursor-pointer ${
+              mode === "chat"
+                ? "bg-orange-700 text-white font-bold"
+                : "bg-white text-stone-600 font-semibold outline outline-1 outline-stone-200 hover:bg-stone-50"
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span className="text-xs font-['Inter']">Tanya Bebas / Konsultasi</span>
+          </button>
+        </div>
+
+        {/* Main Grid (MainGrid Figma): Left Column (540px) & Right Column (flex-1) */}
+        <div className="self-stretch flex flex-col lg:flex-row justify-start items-start gap-7">
           {/* Left Column: Input Panel (Pantry or Prompt Suggestions) */}
-          <div className="lg:col-span-5 flex flex-col gap-5">
+          <div className="w-full lg:w-[540px] shrink-0">
             {mode === "pantry" ? (
-              <div className="bg-white rounded-3xl border border-neutral-200/80 p-5 sm:p-6 shadow-sm flex flex-col gap-5 sticky top-24">
-                <div className="border-b border-neutral-100 pb-3">
-                  <h2 className="text-base font-bold text-neutral-900 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              <div className="w-full p-6 sm:p-8 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6">
+                <div className="self-stretch flex justify-between items-center">
+                  <div className="inline-flex justify-start items-center gap-2.5">
+                    <svg className="w-5 h-5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
-                    <span>Bahan & Kondisi Memasak</span>
-                  </h2>
-                  <p className="text-xs text-neutral-500 mt-0.5">
-                    Masukkan bahan yang kamu punya, Chef AI akan meracik resep yang cocok.
-                  </p>
+                    <h2 className="text-stone-800 text-2xl font-normal font-['Instrument_Serif']">
+                      Bahan & Kondisi Memasak
+                    </h2>
+                  </div>
+                  <div className="px-3 py-1 bg-amber-50 rounded-full inline-flex justify-start items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-amber-600 rounded-full" />
+                    <span className="text-amber-800 text-xs font-bold font-['Inter']">Mode Racik</span>
+                  </div>
                 </div>
 
-                {/* Ingredients Input */}
-                <div>
-                  <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                    Bahan-Bahan yang Kamu Punya:
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={ingredientsInput}
-                    onChange={(e) => setIngredientsInput(e.target.value)}
-                    placeholder="Contoh: 2 butir telur, tahu putih, sedikit daun bawang, kecap..."
-                    className="w-full rounded-2xl border border-neutral-200 bg-neutral-50/50 p-3 text-xs sm:text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition resize-none"
-                  />
+                <div className="self-stretch flex flex-col justify-start items-start gap-5">
+                  {/* Bahan yang ada di kost */}
+                  <div className="self-stretch flex flex-col justify-start items-start gap-2">
+                    <div className="self-stretch flex justify-between items-center">
+                      <label className="text-stone-800 text-xs font-bold font-['Inter']">
+                        Bahan yang Ada di Kost:
+                      </label>
+                      <span className="text-stone-400 text-xs font-normal font-['Inter']">
+                        Contoh: Telur, nasi putih, bawang, kecap
+                      </span>
+                    </div>
 
-                  {/* Quick Click Badges */}
-                  <div className="mt-2.5">
-                    <p className="text-[11px] font-semibold text-neutral-400 mb-1.5">
-                      Klik cepat untuk menambahkan:
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
-                      {COMMON_INGREDIENTS.map((item) => (
-                        <button
-                          key={item}
-                          type="button"
-                          onClick={() => handleAddIngredient(item)}
-                          className="rounded-lg bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-700 hover:bg-orange-100 hover:text-orange-700 transition cursor-pointer"
-                        >
-                          + {item}
-                        </button>
-                      ))}
+                    <div className="self-stretch h-28 p-3.5 bg-stone-50 rounded-2xl outline outline-1 outline-stone-200 flex justify-start items-start focus-within:outline-orange-700 transition">
+                      <textarea
+                        rows={3}
+                        value={ingredientsInput}
+                        onChange={(e) => setIngredientsInput(e.target.value)}
+                        placeholder="Telur 2 butir, nasi sisa semalam, bawang merah 3 siung, kecap manis, cabai rawit..."
+                        className="w-full h-full bg-transparent resize-none text-stone-700 text-xs font-normal font-['Inter'] leading-relaxed placeholder:text-stone-400 focus:outline-none"
+                      />
+                    </div>
+
+                    {/* Quick Chips */}
+                    <div className="self-stretch flex flex-wrap justify-start items-center gap-1.5 pt-1">
+                      {COMMON_INGREDIENTS.map((item) => {
+                        const isAdded = ingredientsInput.toLowerCase().includes(item.toLowerCase());
+                        return (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => handleAddIngredient(item)}
+                            className={`px-2.5 py-1 rounded-full text-xs font-['Inter'] inline-flex justify-center items-center gap-1 transition cursor-pointer ${
+                              isAdded
+                                ? "bg-orange-50 text-orange-700 font-bold outline outline-1 outline-orange-200"
+                                : "bg-stone-50 text-stone-600 font-normal outline outline-1 outline-stone-200 hover:bg-stone-100"
+                            }`}
+                          >
+                            <span>{isAdded ? "✓" : "+"}</span>
+                            <span>{item}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
-                </div>
 
-                {/* Cooking Equipment */}
-                <div>
-                  <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                    Alat Masak Tersedia:
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { label: "Rice Cooker" },
-                      { label: "Wajan / Teflon" },
-                      { label: "Panci Rebus" },
-                      { label: "Air Panas Saja" },
-                    ].map((tool) => (
-                      <button
-                        key={tool.label}
-                        type="button"
-                        onClick={() => setCookingTool(tool.label)}
-                        className={`flex items-center justify-center p-2.5 rounded-xl border text-xs font-bold transition text-center cursor-pointer ${
-                          cookingTool === tool.label
-                            ? "border-orange-500 bg-orange-50/70 text-orange-800"
-                            : "border-neutral-200 hover:border-neutral-300 text-neutral-700"
-                        }`}
-                      >
-                        <span>{tool.label}</span>
-                      </button>
-                    ))}
+                  {/* Alat Masak yang Tersedia */}
+                  <div className="self-stretch flex flex-col justify-start items-start gap-2">
+                    <label className="text-stone-800 text-xs font-bold font-['Inter']">
+                      Alat Masak yang Tersedia:
+                    </label>
+                    <div className="self-stretch grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {COOKING_TOOLS.map((tool) => {
+                        const isSelected = cookingTool === tool.label;
+                        return (
+                          <button
+                            key={tool.id}
+                            type="button"
+                            onClick={() => setCookingTool(tool.label)}
+                            className={`px-2.5 py-2 rounded-xl text-xs font-['Inter'] flex items-center justify-center transition cursor-pointer text-center ${
+                              isSelected
+                                ? "bg-orange-50 text-orange-700 font-bold outline outline-1 outline-orange-200"
+                                : "bg-stone-50 text-stone-600 font-normal outline outline-1 outline-stone-200 hover:bg-stone-100"
+                            }`}
+                          >
+                            {tool.label}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
 
-                {/* Budget Range */}
-                <div>
-                  <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="font-bold text-neutral-700">Budget Belanja Tambahan:</span>
-                    <span className="font-black text-orange-600">
-                      {budgetLimit === 0 ? "Bahan Ada (Rp 0)" : `≤ Rp ${budgetLimit.toLocaleString("id-ID")}`}
-                    </span>
+                  {/* Budget Tambahan */}
+                  <div className="self-stretch flex flex-col justify-start items-start gap-2">
+                    <div className="self-stretch flex justify-between items-center">
+                      <label className="text-stone-800 text-xs font-bold font-['Inter']">
+                        Budget Tambahan:
+                      </label>
+                      <span className="text-orange-700 text-xs font-bold font-['Inter']">
+                        {selectedBudgetLabel}
+                      </span>
+                    </div>
+                    <div className="self-stretch grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {BUDGET_OPTIONS.map((item) => {
+                        const isSelected = budgetLimit === item.value;
+                        return (
+                          <button
+                            key={item.value}
+                            type="button"
+                            onClick={() => setBudgetLimit(item.value)}
+                            className={`px-2.5 py-2 rounded-xl text-xs font-['Inter'] flex items-center justify-center transition cursor-pointer text-center ${
+                              isSelected
+                                ? "bg-orange-50 text-orange-700 font-bold outline outline-1 outline-orange-200"
+                                : "bg-stone-50 text-stone-600 font-normal outline outline-1 outline-stone-200 hover:bg-stone-100"
+                            }`}
+                          >
+                            {item.label}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {[
-                      { val: 0, label: "Rp 0" },
-                      { val: 10000, label: "< 10rb" },
-                      { val: 15000, label: "< 15rb" },
-                      { val: 25000, label: "< 25rb" },
-                    ].map((b) => (
-                      <button
-                        key={b.val}
-                        type="button"
-                        onClick={() => setBudgetLimit(b.val)}
-                        className={`py-2 rounded-xl border text-[11px] font-bold transition cursor-pointer ${
-                          budgetLimit === b.val
-                            ? "border-orange-500 bg-orange-600 text-white"
-                            : "border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100"
-                        }`}
-                      >
-                        {b.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Dietary Goal */}
-                <div>
-                  <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                    Target & Preferensi:
-                  </label>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {[
-                      { label: "Tinggi Protein" },
-                      { label: "Super Hemat" },
-                      { label: "Cepat < 15 mnt" },
-                      { label: "Rendah Lemak" },
-                    ].map((goal) => (
-                      <button
-                        key={goal.label}
-                        type="button"
-                        onClick={() => setDietaryGoal(goal.label)}
-                        className={`flex items-center justify-center p-2 rounded-xl border text-[11px] font-bold transition cursor-pointer text-center ${
-                          dietaryGoal === goal.label
-                            ? "border-amber-500 bg-amber-50 text-amber-900"
-                            : "border-neutral-200 hover:border-neutral-300 text-neutral-600"
-                        }`}
-                      >
-                        <span>{goal.label}</span>
-                      </button>
-                    ))}
+                  {/* Target & Preferensi */}
+                  <div className="self-stretch flex flex-col justify-start items-start gap-2">
+                    <label className="text-stone-800 text-xs font-bold font-['Inter']">
+                      Target & Preferensi:
+                    </label>
+                    <div className="self-stretch grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {DIETARY_GOALS.map((goal) => {
+                        const isSelected = dietaryGoal === goal.label;
+                        return (
+                          <button
+                            key={goal.label}
+                            type="button"
+                            onClick={() => setDietaryGoal(goal.label)}
+                            className={`px-2 py-2 rounded-xl text-xs font-['Inter'] flex items-center justify-center transition cursor-pointer text-center ${
+                              isSelected
+                                ? "bg-orange-50 text-orange-700 font-bold outline outline-1 outline-orange-200"
+                                : "bg-stone-50 text-stone-600 font-normal outline outline-1 outline-stone-200 hover:bg-stone-100"
+                            }`}
+                          >
+                            {goal.label}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
 
-                {/* Submit Button */}
-                <button
-                  type="button"
-                  disabled={isLoading}
-                  onClick={() => handleAsk()}
-                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 py-3.5 px-4 text-sm font-bold text-white shadow-md hover:from-orange-600 hover:to-amber-700 active:scale-[0.99] transition disabled:opacity-50 cursor-pointer"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Chef AI Sedang Meracik...</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                      <span>Racik Resep Sekarang</span>
-                    </>
-                  )}
-                </button>
+                  {/* Submit Action Button */}
+                  <button
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() => handleAsk()}
+                    className="self-stretch p-3.5 bg-orange-700 rounded-full inline-flex justify-center items-center gap-2 hover:bg-[#B34718] active:scale-[0.99] transition disabled:opacity-50 cursor-pointer shadow-xs"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span className="text-white text-xs font-bold font-['Inter']">
+                          Chef AI Sedang Meracik...
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span className="text-white text-xs font-bold font-['Inter']">
+                          Racik Resep Sekarang
+                        </span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             ) : (
-              /* Chat Mode: Suggestions & Quick Questions */
-              <div className="bg-white rounded-3xl border border-neutral-200/80 p-5 sm:p-6 shadow-sm flex flex-col gap-4 sticky top-24">
-                <div className="border-b border-neutral-100 pb-3">
-                  <h2 className="text-base font-bold text-neutral-900 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              /* Mode Chat: Inspirasi Tanya Chef AI */
+              <div className="w-full p-6 sm:p-8 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6">
+                <div className="self-stretch flex justify-between items-center border-b border-stone-100 pb-3">
+                  <div className="inline-flex justify-start items-center gap-2.5">
+                    <svg className="w-5 h-5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    <span>Inspirasi Tanya Chef AI</span>
-                  </h2>
-                  <p className="text-xs text-neutral-500 mt-0.5">
-                    Klik salah satu ide cepat di bawah untuk langsung menanyakan ke Chef AI:
-                  </p>
+                    <h2 className="text-stone-800 text-2xl font-normal font-['Instrument_Serif']">
+                      Inspirasi Tanya Chef AI
+                    </h2>
+                  </div>
+                  <div className="px-3 py-1 bg-orange-50 rounded-full inline-flex justify-start items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-orange-600 rounded-full" />
+                    <span className="text-orange-800 text-xs font-bold font-['Inter']">Mode Chat</span>
+                  </div>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
+                <p className="text-xs text-stone-500 font-['Inter']">
+                  Klik salah satu topik di bawah untuk langsung menanyakan ke Chef AI:
+                </p>
+
+                <div className="self-stretch flex flex-col gap-2.5">
                   {PROMPT_SUGGESTIONS.map((item) => (
                     <button
                       key={item.title}
                       type="button"
                       disabled={isLoading}
                       onClick={() => handleAsk(item.prompt)}
-                      className="group flex items-start gap-3 rounded-2xl border border-neutral-200/90 bg-neutral-50/50 p-3 text-left transition hover:border-orange-300 hover:bg-orange-50/50 cursor-pointer disabled:opacity-50"
+                      className="group self-stretch p-3.5 bg-stone-50 rounded-2xl outline outline-1 outline-stone-200 hover:outline-orange-300 hover:bg-orange-50/50 transition cursor-pointer text-left disabled:opacity-50"
                     >
-                      <div className="flex-1">
-                        <h4 className="text-xs font-bold text-neutral-900 group-hover:text-orange-700 transition">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-stone-800 group-hover:text-orange-700 font-['Inter'] transition">
                           {item.title}
-                        </h4>
-                        <p className="text-[11px] text-neutral-500 line-clamp-2 mt-0.5">
-                          {item.prompt}
-                        </p>
+                        </span>
+                        <svg className="w-3.5 h-3.5 text-stone-400 group-hover:text-orange-700 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
+                        </svg>
                       </div>
+                      <p className="text-[11px] text-stone-500 line-clamp-2 mt-1 font-['Inter'] leading-relaxed">
+                        {item.prompt}
+                      </p>
                     </button>
                   ))}
                 </div>
 
-                <div className="rounded-2xl bg-amber-50/70 border border-amber-200/60 p-3.5 mt-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
-                    <svg className="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>Tips Bertanya</span>
+                <div className="self-stretch p-3.5 bg-amber-50 rounded-2xl outline outline-1 outline-amber-200 inline-flex justify-start items-start gap-2.5">
+                  <svg className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="flex-1 flex flex-col gap-0.5">
+                    <span className="text-amber-900 text-xs font-bold font-['Inter']">
+                      Tips Bertanya:
+                    </span>
+                    <p className="text-amber-800 text-xs font-normal font-['Inter'] leading-relaxed">
+                      Kamu bisa tanya apa saja: takaran bumbu, cara rebus telur agar mudah dikupas, tips simpan tempe tahan 1 minggu, atau variasi saus hemat.
+                    </p>
                   </div>
-                  <p className="text-[11px] text-amber-800 mt-1 leading-relaxed">
-                    Kamu bisa tanya apa saja: takaran bumbu, cara rebus telur agar mudah dikupas, tips simpan tempe tahan 1 minggu, atau variasi saus hemat.
-                  </p>
                 </div>
               </div>
             )}
           </div>
 
           {/* Right Column: Interactive Chat & Generated Recipe Stream */}
-          <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-4 sm:p-6 flex flex-col min-h-[580px]">
-              {/* Conversation Area */}
-              <div className="flex-1 overflow-y-auto space-y-6 pr-1">
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex flex-col ${
-                      msg.role === "user" ? "items-end" : "items-start"
-                    }`}
-                  >
-                    {/* Role Tag & Avatar */}
-                    <div className="flex items-center gap-2 mb-1.5 px-1">
-                      {msg.role === "assistant" ? (
-                        <>
-                          <div className="h-6 w-6 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                            <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
+          <div data-layer="PercakapanDenganChefAi" className="Percakapandenganchefai flex-1 p-6 sm:p-8 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-between items-start gap-6 min-h-[640px]">
+            {/* Chef Header */}
+            <div data-layer="ChefHeader" className="Chefheader self-stretch pb-4 border-b border-stone-200 inline-flex justify-between items-center">
+              <div data-layer="ChefAvatarRow" className="Chefavatarrow inline-flex justify-start items-center gap-3">
+                <div data-layer="ChefAvatar" className="Chefavatar w-10 h-10 p-2.5 bg-orange-700 rounded-full flex justify-center items-center gap-2.5 shadow-xs">
+                  <div className="w-5 h-5 relative overflow-hidden flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                  </div>
+                </div>
+                <div data-layer="ChefInfo" className="Chefinfo flex flex-col justify-start items-start">
+                  <div data-layer="Chef Kost AI" className="ChefKostAi justify-start text-stone-800 text-base font-bold font-['Inter']">Chef Kost AI</div>
+                  <div data-layer="Asisten Koki & Ahli Gizi Anak Kost" className="AsistenKokiAhliGiziAnakKost justify-start text-stone-500 text-xs font-normal font-['Inter']">Asisten Koki & Ahli Gizi Anak Kost</div>
+                </div>
+              </div>
+              <div data-layer="StatusBadge" className="Statusbadge px-3 py-1 bg-emerald-50 rounded-full inline-flex justify-start items-center gap-1.5">
+                <div data-layer="Dot" className="Dot w-1.5 h-1.5 bg-emerald-600 rounded-full" />
+                <div data-layer="Aktif" className="Aktif justify-start text-emerald-800 text-xs font-bold font-['Inter']">Aktif</div>
+              </div>
+            </div>
+
+            {/* Chat Body */}
+            <div data-layer="ChatBody" className="Chatbody self-stretch flex flex-col justify-start items-start gap-4 flex-1 overflow-y-auto pr-1">
+              {/* Message List */}
+              {messages.map((msg) => (
+                <div key={msg.id} className="self-stretch">
+                  {msg.role === "user" ? (
+                    <div data-layer="UserMessage" className="Usermessage self-stretch flex flex-col justify-start items-end gap-1 my-2">
+                      <div data-layer="UserBubble" className="Userbubble max-w-[560px] p-4 bg-orange-700 rounded-2xl inline-flex justify-start items-start gap-2.5 shadow-xs">
+                        <div className="justify-start text-white text-xs font-normal font-['Inter'] leading-relaxed">
+                          {msg.text}
+                        </div>
+                      </div>
+                      <div className="justify-start text-stone-400 text-[10px] font-normal font-['Inter'] px-1">
+                        {user?.name ? user.name : "Kamu"}
+                      </div>
+                    </div>
+                  ) : (
+                    <div data-layer="ChefMessage" className="Chefmessage self-stretch flex flex-col justify-start items-start gap-3 my-2">
+                      <div data-layer="ChefBubble" className="Chefbubble max-w-[560px] p-4 bg-stone-50 rounded-2xl inline-flex justify-start items-start gap-2.5">
+                        <div className="justify-start text-stone-700 text-xs font-normal font-['Inter'] leading-relaxed whitespace-pre-line">
+                          {msg.text}
+                        </div>
+                      </div>
+
+                      {/* Starter chips on initial welcome */}
+                      {msg.id === "welcome-1" && (
+                        <div data-layer="StarterChips" className="Starterchips self-stretch flex flex-col justify-start items-start gap-2 mt-1">
+                          <div data-layer="Mulai Dari Ide Sederhana:" className="MulaiDariIdeSederhana justify-start text-stone-400 text-[10px] font-bold font-['Inter'] uppercase tracking-wider">
+                            Mulai dari ide sederhana:
                           </div>
-                          <span className="text-xs font-bold text-neutral-800">
-                            Chef Kost AI
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-xs font-semibold text-neutral-500">
-                            Kamu
-                          </span>
-                          <div className="h-6 w-6 rounded-full bg-neutral-800 text-white flex items-center justify-center text-xs font-bold">
-                            {user?.name ? user.name[0].toUpperCase() : "U"}
+                          <div data-layer="ChipsRow" className="Chipsrow self-stretch flex flex-wrap justify-start items-center gap-2">
+                            {PROMPT_SUGGESTIONS.map((item) => (
+                              <button
+                                key={item.title}
+                                type="button"
+                                disabled={isLoading}
+                                onClick={() => handleAsk(item.prompt)}
+                                className="px-3 py-1.5 bg-stone-50 rounded-full outline outline-1 outline-stone-200 inline-flex justify-center items-center gap-1.5 cursor-pointer hover:bg-orange-50 hover:outline-orange-300 transition disabled:opacity-50"
+                              >
+                                <span className="justify-start text-stone-600 text-xs font-normal font-['Inter']">{item.title}</span>
+                                <svg className="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
+                                </svg>
+                              </button>
+                            ))}
                           </div>
-                        </>
+                        </div>
                       )}
-                    </div>
 
-                    {/* Chat Bubble */}
-                    <div
-                      className={`rounded-2xl px-4 py-3 text-xs sm:text-sm leading-relaxed max-w-[90%] sm:max-w-[85%] ${
-                        msg.role === "user"
-                          ? "bg-neutral-900 text-white rounded-tr-xs"
-                          : "bg-neutral-100 text-neutral-800 rounded-tl-xs whitespace-pre-line"
-                      }`}
-                    >
-                      {msg.text}
-                    </div>
-
-                    {/* Generated Recipe Card (if present) */}
-                    {msg.recipe && (
-                      <div className="w-full mt-4 rounded-3xl border border-orange-200 bg-gradient-to-b from-orange-50/40 via-white to-white p-4 sm:p-6 shadow-md">
-                        {/* Header Badge */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-orange-100 pb-3">
-                          <div className="flex items-center gap-1.5">
-                            <span className="rounded-lg bg-orange-600 px-2.5 py-1 text-[11px] font-extrabold text-white">
-                              {msg.recipe.category}
-                            </span>
-                            <span className="rounded-lg bg-amber-100 px-2 py-1 text-[11px] font-bold text-amber-900 flex items-center gap-1">
-                              <span>{msg.recipe.cookingTool}</span>
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-3 text-xs font-bold text-neutral-600">
-                            <span className="flex items-center gap-1">
-                              <span>{msg.recipe.cookTimeMinutes} mnt</span>
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <span>{msg.recipe.portions} porsi</span>
-                            </span>
-                            <span className="text-orange-700 font-extrabold bg-orange-100/80 px-2.5 py-0.5 rounded-lg">
-                              ± Rp {msg.recipe.estimatedCost.toLocaleString("id-ID")}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Title & Description */}
-                        <div className="mt-3">
-                          <h3 className="text-lg sm:text-xl font-black text-neutral-900">
-                            {msg.recipe.title}
-                          </h3>
-                          <p className="mt-1 text-xs text-neutral-600 leading-relaxed">
-                            {msg.recipe.description}
-                          </p>
-                        </div>
-
-                        {/* Health Tags */}
-                        {msg.recipe.healthTags && msg.recipe.healthTags.length > 0 && (
-                          <div className="mt-2.5 flex flex-wrap gap-1.5">
-                            {msg.recipe.healthTags.map((tag) => (
-                              <span
-                                key={tag}
-                                className="rounded-md bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 text-[10px] font-bold text-emerald-800"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Nutrition Grid */}
-                        <div className="mt-4 rounded-2xl bg-neutral-900 text-white p-3 sm:p-4">
-                          <div className="flex items-center justify-between text-xs font-bold mb-2">
-                            <span className="text-neutral-300">Estimasi Kandungan Gizi AI:</span>
-                            <span className="text-orange-400 font-black">
-                              {msg.recipe.nutrition.calories} kkal
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-4 gap-2 text-center text-[11px]">
-                            <div className="bg-neutral-800/80 rounded-xl p-2 border border-neutral-700/50">
-                              <span className="block text-neutral-400 text-[10px]">Protein</span>
-                              <span className="font-bold text-amber-400 text-xs sm:text-sm">
-                                {msg.recipe.nutrition.protein_g}g
-                              </span>
-                            </div>
-                            <div className="bg-neutral-800/80 rounded-xl p-2 border border-neutral-700/50">
-                              <span className="block text-neutral-400 text-[10px]">Lemak</span>
-                              <span className="font-bold text-rose-400 text-xs sm:text-sm">
-                                {msg.recipe.nutrition.fat_g}g
-                              </span>
-                            </div>
-                            <div className="bg-neutral-800/80 rounded-xl p-2 border border-neutral-700/50">
-                              <span className="block text-neutral-400 text-[10px]">Karbo</span>
-                              <span className="font-bold text-sky-400 text-xs sm:text-sm">
-                                {msg.recipe.nutrition.carbs_g}g
-                              </span>
-                            </div>
-                            <div className="bg-neutral-800/80 rounded-xl p-2 border border-neutral-700/50">
-                              <span className="block text-neutral-400 text-[10px]">Serat</span>
-                              <span className="font-bold text-emerald-400 text-xs sm:text-sm">
-                                {msg.recipe.nutrition.fiber_g}g
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Ingredients */}
-                        <div className="mt-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
-                              Bahan-Bahan & Perkiraan Harga:
-                            </h4>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const list = msg.recipe?.ingredients.join("\n") || "";
-                                navigator.clipboard.writeText(list);
-                                showToast("Daftar bahan disalin ke clipboard!");
-                              }}
-                              className="text-[11px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 cursor-pointer"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                              </svg>
-                              <span>Salin Bahan</span>
-                            </button>
-                          </div>
-                          <ul className="space-y-1.5 bg-neutral-50/70 rounded-2xl p-3 border border-neutral-200/60 text-xs text-neutral-800">
-                            {msg.recipe.ingredients.map((ing, i) => (
-                              <li key={i} className="flex items-start gap-2">
-                                <span className="text-orange-500 font-bold">•</span>
-                                <span className="flex-1">{ing}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        {/* Steps */}
-                        <div className="mt-4">
-                          <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900 mb-2">
-                            Langkah Memasak:
-                          </h4>
-                          <ol className="space-y-2">
-                            {msg.recipe.steps.map((step, i) => (
-                              <li
-                                key={i}
-                                className="flex items-start gap-2.5 text-xs text-neutral-700 leading-relaxed"
-                              >
-                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-100 text-[10px] font-black text-orange-800">
-                                  {i + 1}
-                                </span>
-                                <span className="pt-0.5">{step}</span>
-                              </li>
-                            ))}
-                          </ol>
-                        </div>
-
-                        {/* Chef Tips */}
-                        {msg.recipe.chefTips && (
-                          <div className="mt-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 p-3 flex items-start gap-2.5">
-                            <svg className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                            </svg>
-                            <div>
-                              <span className="block text-[11px] font-bold text-amber-900">
-                                Tips Hemat Chef AI:
-                              </span>
-                              <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
-                                {msg.recipe.chefTips}
+                      {/* Generated Recipe Card */}
+                      {msg.recipe && (
+                        <div data-layer="RecipeCard" className="Recipecard self-stretch p-5 sm:p-6 bg-white rounded-2xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-4 shadow-xs">
+                          {/* Recipe Header */}
+                          <div data-layer="RecipeHeader" className="Recipeheader self-stretch flex flex-col sm:flex-row justify-between items-start gap-3 border-b border-stone-100 pb-3">
+                            <div data-layer="TitleCol" className="Titlecol flex flex-col justify-start items-start gap-1">
+                              <h3 className="justify-start text-stone-800 text-2xl font-normal font-['Instrument_Serif']">
+                                {msg.recipe.title}
+                              </h3>
+                              <p className="justify-start text-stone-500 text-xs font-normal font-['Inter'] leading-relaxed">
+                                {msg.recipe.description}
                               </p>
                             </div>
-                          </div>
-                        )}
-
-                        {/* Action Buttons: Simpan ke Katalog, Catat ke Diari, Salin */}
-                        <div className="mt-5 pt-4 border-t border-neutral-100 flex flex-wrap items-center gap-2">
-                          {/* Simpan ke Resep */}
-                          {msg.isSaved ? (
-                            <Link
-                              href="/recipes"
-                              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-100 px-3.5 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-200 transition"
-                            >
-                              <svg className="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                              </svg>
-                              <span>Tersimpan di Katalog Resep</span>
-                            </Link>
-                          ) : (
-                            <button
-                              type="button"
-                              disabled={savingRecipeTitle === msg.recipe.title}
-                              onClick={() => handleSaveToCatalog(msg.recipe!, msg.id)}
-                              className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-orange-700 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
-                            >
-                              {savingRecipeTitle === msg.recipe.title ? (
-                                <div className="h-3 w-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                              ) : (
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                            <div data-layer="RecipeMeta" className="Recipemeta inline-flex flex-wrap justify-start items-center gap-3 shrink-0">
+                              <div className="inline-flex justify-start items-center gap-1">
+                                <svg className="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                              )}
-                              <span>Simpan ke Resep Saya</span>
-                            </button>
+                                <span className="justify-start text-stone-600 text-xs font-normal font-['Inter']">
+                                  {msg.recipe.cookTimeMinutes} Menit
+                                </span>
+                              </div>
+                              <div className="inline-flex justify-start items-center gap-1">
+                                <svg className="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                <span className="justify-start text-stone-600 text-xs font-normal font-['Inter']">
+                                  {msg.recipe.portions} Porsi
+                                </span>
+                              </div>
+                              <div className="inline-flex justify-start items-center gap-1">
+                                <svg className="w-3.5 h-3.5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                                </svg>
+                                <span className="justify-start text-orange-700 text-xs font-bold font-['Inter']">
+                                  {msg.recipe.nutrition.calories} Kkal
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Macros Box */}
+                          <div data-layer="MacrosBox" className="Macrosbox self-stretch p-3.5 bg-stone-50 rounded-xl inline-flex justify-between items-center">
+                            <div className="flex-1 flex flex-col justify-start items-center gap-0.5">
+                              <span className="text-stone-500 text-[10px] font-normal font-['Inter']">Protein</span>
+                              <span className="text-stone-800 text-xs font-bold font-['Inter']">{msg.recipe.nutrition.protein_g}g</span>
+                            </div>
+                            <div className="w-px h-6 bg-stone-200" />
+                            <div className="flex-1 flex flex-col justify-start items-center gap-0.5">
+                              <span className="text-stone-500 text-[10px] font-normal font-['Inter']">Lemak</span>
+                              <span className="text-stone-800 text-xs font-bold font-['Inter']">{msg.recipe.nutrition.fat_g}g</span>
+                            </div>
+                            <div className="w-px h-6 bg-stone-200" />
+                            <div className="flex-1 flex flex-col justify-start items-center gap-0.5">
+                              <span className="text-stone-500 text-[10px] font-normal font-['Inter']">Karbo</span>
+                              <span className="text-stone-800 text-xs font-bold font-['Inter']">{msg.recipe.nutrition.carbs_g}g</span>
+                            </div>
+                            <div className="w-px h-6 bg-stone-200" />
+                            <div className="flex-1 flex flex-col justify-start items-center gap-0.5">
+                              <span className="text-stone-500 text-[10px] font-normal font-['Inter']">Serat</span>
+                              <span className="text-stone-800 text-xs font-bold font-['Inter']">{msg.recipe.nutrition.fiber_g}g</span>
+                            </div>
+                          </div>
+
+                          {/* Ingredients */}
+                          <div data-layer="IngredientsBox" className="Ingredientsbox self-stretch flex flex-col justify-start items-start gap-2">
+                            <div className="self-stretch flex justify-between items-center">
+                              <h4 className="text-stone-800 text-xs font-bold font-['Inter']">Bahan-Bahan:</h4>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const list = msg.recipe?.ingredients.join("\n") || "";
+                                  navigator.clipboard.writeText(list);
+                                  showToast("Daftar bahan disalin!");
+                                }}
+                                className="text-[11px] font-medium text-orange-700 hover:underline cursor-pointer"
+                              >
+                                Salin Bahan
+                              </button>
+                            </div>
+                            <div data-layer="IngredientsList" className="Ingredientslist self-stretch flex flex-col justify-start items-start gap-1.5 bg-stone-50 p-3 rounded-xl">
+                              {msg.recipe.ingredients.map((ing, i) => (
+                                <div key={i} className="inline-flex justify-start items-center gap-2">
+                                  <div className="w-1.5 h-1.5 bg-orange-700 rounded-full shrink-0" />
+                                  <span className="text-stone-600 text-xs font-normal font-['Inter']">{ing}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Steps */}
+                          <div data-layer="StepsBox" className="Stepsbox self-stretch flex flex-col justify-start items-start gap-2">
+                            <h4 className="text-stone-800 text-xs font-bold font-['Inter']">Langkah Memasak:</h4>
+                            <div data-layer="StepsList" className="Stepslist self-stretch flex flex-col justify-start items-start gap-2.5">
+                              {msg.recipe.steps.map((step, i) => (
+                                <div key={i} className="inline-flex justify-start items-start gap-2.5">
+                                  <div className="w-5 h-5 bg-orange-50 rounded-full flex justify-center items-center shrink-0 mt-0.5">
+                                    <span className="text-orange-700 text-xs font-bold font-['Inter']">{i + 1}</span>
+                                  </div>
+                                  <p className="flex-1 text-stone-600 text-xs font-normal font-['Inter'] leading-relaxed">
+                                    {step}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Chef Tips */}
+                          {msg.recipe.chefTips && (
+                            <div data-layer="ChefTips" className="Cheftips self-stretch p-3.5 bg-amber-50 rounded-xl inline-flex justify-start items-start gap-2.5">
+                              <svg className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                              </svg>
+                              <div className="flex flex-col justify-start items-start gap-0.5">
+                                <span className="text-amber-900 text-xs font-bold font-['Inter']">Tips Chef:</span>
+                                <p className="text-amber-800 text-xs font-normal font-['Inter'] leading-relaxed">
+                                  {msg.recipe.chefTips}
+                                </p>
+                              </div>
+                            </div>
                           )}
 
-                          {/* Catat ke Diari */}
-                          <button
-                            type="button"
-                            disabled={loggingRecipeTitle === msg.recipe.title}
-                            onClick={() => handleLogToDiary(msg.recipe!)}
-                            className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-300 bg-white px-3.5 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
-                          >
-                            {loggingRecipeTitle === msg.recipe.title ? (
-                              <div className="h-3 w-3 border-2 border-neutral-600 border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                          {/* Recipe Actions */}
+                          <div data-layer="RecipeActions" className="Recipeactions self-stretch flex flex-wrap justify-between items-center gap-2 pt-2 border-t border-stone-100">
+                            <div className="inline-flex flex-wrap items-center gap-2">
+                              {msg.isSaved ? (
+                                <Link
+                                  href="/recipes"
+                                  className="px-3 py-1.5 bg-emerald-100 rounded-full inline-flex justify-center items-center gap-1.5 text-emerald-800 text-xs font-bold font-['Inter'] hover:bg-emerald-200 transition"
+                                >
+                                  <svg className="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>Tersimpan di Katalog</span>
+                                </Link>
+                              ) : (
+                                <button
+                                  type="button"
+                                  disabled={savingRecipeTitle === msg.recipe.title}
+                                  onClick={() => handleSaveToCatalog(msg.recipe!, msg.id)}
+                                  className="px-3.5 py-1.5 bg-orange-700 rounded-full inline-flex justify-center items-center gap-1.5 cursor-pointer hover:bg-[#B34718] transition text-white text-xs font-bold font-['Inter'] disabled:opacity-50"
+                                >
+                                  {savingRecipeTitle === msg.recipe.title ? (
+                                    <div className="h-3 w-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                  ) : (
+                                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                  )}
+                                  <span>Simpan ke Resep Saya</span>
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                disabled={loggingRecipeTitle === msg.recipe.title}
+                                onClick={() => handleLogToDiary(msg.recipe!)}
+                                className="px-3.5 py-1.5 bg-stone-100 rounded-full inline-flex justify-center items-center gap-1.5 cursor-pointer hover:bg-stone-200 transition text-stone-700 text-xs font-medium font-['Inter'] disabled:opacity-50"
+                              >
+                                {loggingRecipeTitle === msg.recipe.title ? (
+                                  <div className="h-3 w-3 border-2 border-stone-600 border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <svg className="w-3.5 h-3.5 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                  </svg>
+                                )}
+                                <span>Catat ke Diari Gizi</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleCopyRecipe(msg.recipe!)}
+                                className="px-3 py-1.5 bg-stone-100 rounded-full inline-flex justify-center items-center gap-1.5 cursor-pointer hover:bg-stone-200 transition text-stone-700 text-xs font-medium font-['Inter']"
+                              >
+                                <svg className="w-3.5 h-3.5 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                                <span>{copiedTitle === msg.recipe.title ? "Tersalin!" : "Salin Teks"}</span>
+                              </button>
+                            </div>
+
+                            <button
+                              type="button"
+                              disabled={isLoading}
+                              onClick={() =>
+                                handleAsk(
+                                  `Buatkan alternatif atau variasi menu lain yang berbeda dari "${msg.recipe?.title}" dengan bahan serupa.`
+                                )
+                              }
+                              className="inline-flex items-center gap-1 text-orange-700 text-xs font-bold font-['Inter'] hover:underline cursor-pointer"
+                            >
+                              <span>Minta Variasi Lain</span>
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                               </svg>
-                            )}
-                            <span>Catat ke Diari Gizi</span>
-                          </button>
-
-                          {/* Salin Seluruh Resep */}
-                          <button
-                            type="button"
-                            onClick={() => handleCopyRecipe(msg.recipe!)}
-                            className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-medium text-neutral-600 hover:bg-neutral-100 transition cursor-pointer"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                            <span>{copiedTitle === msg.recipe.title ? "Tersalin!" : "Salin Resep"}</span>
-                          </button>
-
-                          {/* Variasi Lain */}
-                          <button
-                            type="button"
-                            disabled={isLoading}
-                            onClick={() =>
-                              handleAsk(
-                                `Buatkan alternatif atau variasi menu lain yang berbeda dari "${msg.recipe?.title}" dengan bahan serupa.`
-                              )
-                            }
-                            className="inline-flex items-center gap-1.5 rounded-xl text-xs font-bold text-orange-600 hover:text-orange-700 py-2 px-2 hover:bg-orange-50 transition cursor-pointer"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <span>Minta Variasi Lain</span>
-                          </button>
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Follow-up Suggestion Chips */}
-                    {msg.suggestions && msg.suggestions.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-1.5 self-start">
-                        {msg.suggestions.map((sug, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            disabled={isLoading}
-                            onClick={() => handleAsk(sug)}
-                            className="rounded-full border border-orange-200/80 bg-orange-50/60 px-3.5 py-1.5 text-[11px] font-semibold text-orange-800 hover:bg-orange-100 hover:border-orange-300 transition cursor-pointer disabled:opacity-50"
-                          >
-                            &ldquo;{sug}&rdquo;
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {/* Loading indicator */}
-                {isLoading && (
-                  <div className="flex items-start gap-2">
-                    <div className="h-6 w-6 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                      <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
+                      {/* Suggestions Chips for follow-up turns */}
+                      {msg.id !== "welcome-1" && msg.suggestions && msg.suggestions.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                          {msg.suggestions.map((sug, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              disabled={isLoading}
+                              onClick={() => handleAsk(sug)}
+                              className="px-3 py-1.5 bg-stone-50 rounded-full outline outline-1 outline-stone-200 text-stone-600 text-xs font-normal font-['Inter'] hover:bg-orange-50 hover:outline-orange-300 transition cursor-pointer disabled:opacity-50"
+                            >
+                              &ldquo;{sug}&rdquo;
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="rounded-2xl rounded-tl-xs bg-neutral-100 px-4 py-3 text-xs text-neutral-600 flex items-center gap-2">
-                      <div className="flex gap-1">
-                        <span className="h-1.5 w-1.5 bg-orange-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                        <span className="h-1.5 w-1.5 bg-orange-600 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                        <span className="h-1.5 w-1.5 bg-orange-600 rounded-full animate-bounce"></span>
-                      </div>
-                      <span>Chef AI sedang meracik resep & menghitung nilai gizinya...</span>
-                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* Loading Indicator */}
+              {isLoading && (
+                <div className="self-stretch flex items-start gap-2.5 my-2">
+                  <div className="w-8 h-8 rounded-full bg-orange-700 flex items-center justify-center text-white shrink-0">
+                    <div className="h-3.5 w-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   </div>
-                )}
+                  <div className="p-3.5 bg-stone-50 rounded-2xl outline outline-1 outline-stone-200 text-stone-600 text-xs font-['Inter'] flex items-center gap-2">
+                    <div className="flex gap-1">
+                      <span className="h-1.5 w-1.5 bg-orange-700 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                      <span className="h-1.5 w-1.5 bg-orange-700 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                      <span className="h-1.5 w-1.5 bg-orange-700 rounded-full animate-bounce"></span>
+                    </div>
+                    <span>Chef AI sedang meracik resep & menghitung nilai gizinya...</span>
+                  </div>
+                </div>
+              )}
 
-                <div ref={messagesEndRef} />
-              </div>
+              <div ref={messagesEndRef} />
+            </div>
 
-              {/* Chat Input Bar */}
-              <div className="mt-4 pt-4 border-t border-neutral-100">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleAsk();
-                  }}
-                  className="flex items-center gap-2"
+            {/* Chat Input Bar */}
+            <div data-layer="ChatInputBar" className="Chatinputbar self-stretch p-2 bg-stone-50 rounded-full outline outline-1 outline-stone-200 inline-flex justify-between items-center mt-2">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAsk();
+                }}
+                className="w-full flex items-center justify-between pl-4 pr-1 gap-2"
+              >
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Tanya apa saja ke Chef AI (misal: 'Cara bikin telur ceplok krispi tapi minim minyak')..."
+                  disabled={isLoading}
+                  className="flex-1 bg-transparent text-stone-700 text-xs font-normal font-['Inter'] placeholder:text-stone-400 focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading || !inputValue.trim()}
+                  className="w-8 h-8 p-1.5 bg-orange-700 rounded-full flex justify-center items-center hover:bg-[#B34718] active:scale-95 transition disabled:opacity-40 cursor-pointer shrink-0"
                 >
-                  <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Tanya resep, tips masak, atau bahan pengganti..."
-                    disabled={isLoading}
-                    className="flex-1 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-xs sm:text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition disabled:opacity-50"
-                  />
-                  <button
-                    type="submit"
-                    disabled={isLoading || !inputValue.trim()}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-white hover:bg-orange-700 active:scale-95 transition disabled:opacity-40 cursor-pointer shadow-sm"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-4 h-4 relative overflow-hidden flex items-center justify-center">
+                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
-                  </button>
-                </form>
-              </div>
+                  </div>
+                </button>
+              </form>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
