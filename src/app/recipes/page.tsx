@@ -320,6 +320,13 @@ export default function RecipesPage() {
               },
             },
           ],
+          total_nutrition: {
+            calories: recipe.calories,
+            protein_g: recipe.proteinG,
+            fat_g: recipe.fatG,
+            carbs_g: recipe.carbsG,
+            fiber_g: recipe.fiberG,
+          },
           calories: recipe.calories,
           protein_g: recipe.proteinG,
           fat_g: recipe.fatG,

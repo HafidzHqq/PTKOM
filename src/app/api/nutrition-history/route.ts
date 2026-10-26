@@ -19,13 +19,20 @@ const foodSchema = z.object({
 
 const historySchema = z.object({
   foods: z.array(foodSchema).catch([]),
-  total_nutrition: z.object({
-    calories: z.coerce.number().nonnegative().catch(0),
-    protein_g: z.coerce.number().nonnegative().catch(0),
-    fat_g: z.coerce.number().nonnegative().catch(0),
-    carbs_g: z.coerce.number().nonnegative().catch(0),
-    fiber_g: z.coerce.number().nonnegative().catch(0),
-  }).catch({ calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 }),
+  total_nutrition: z
+    .object({
+      calories: z.coerce.number().nonnegative().catch(0),
+      protein_g: z.coerce.number().nonnegative().catch(0),
+      fat_g: z.coerce.number().nonnegative().catch(0),
+      carbs_g: z.coerce.number().nonnegative().catch(0),
+      fiber_g: z.coerce.number().nonnegative().catch(0),
+    })
+    .optional(),
+  calories: z.coerce.number().nonnegative().optional(),
+  protein_g: z.coerce.number().nonnegative().optional(),
+  fat_g: z.coerce.number().nonnegative().optional(),
+  carbs_g: z.coerce.number().nonnegative().optional(),
+  fiber_g: z.coerce.number().nonnegative().optional(),
   logged_at: z.string().optional(),
 });
 
@@ -146,15 +153,47 @@ export async function POST(request: NextRequest) {
   try {
     const loggedAtDate = nutrition.logged_at ? new Date(nutrition.logged_at) : new Date();
 
+    const sumFromFoods = nutrition.foods.reduce(
+      (acc, f) => ({
+        calories: acc.calories + (f.nutrition?.calories || 0),
+        protein_g: acc.protein_g + (f.nutrition?.protein_g || 0),
+        fat_g: acc.fat_g + (f.nutrition?.fat_g || 0),
+        carbs_g: acc.carbs_g + (f.nutrition?.carbs_g || 0),
+        fiber_g: acc.fiber_g + (f.nutrition?.fiber_g || 0),
+      }),
+      { calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, fiber_g: 0 }
+    );
+
+    const calories =
+      nutrition.total_nutrition?.calories ??
+      nutrition.calories ??
+      sumFromFoods.calories;
+    const proteinG =
+      nutrition.total_nutrition?.protein_g ??
+      nutrition.protein_g ??
+      sumFromFoods.protein_g;
+    const fatG =
+      nutrition.total_nutrition?.fat_g ??
+      nutrition.fat_g ??
+      sumFromFoods.fat_g;
+    const carbsG =
+      nutrition.total_nutrition?.carbs_g ??
+      nutrition.carbs_g ??
+      sumFromFoods.carbs_g;
+    const fiberG =
+      nutrition.total_nutrition?.fiber_g ??
+      nutrition.fiber_g ??
+      sumFromFoods.fiber_g;
+
     const row = await prisma.nutritionHistory.create({
       data: {
         userId,
         foods: JSON.stringify(nutrition.foods),
-        calories: nutrition.total_nutrition.calories,
-        proteinG: nutrition.total_nutrition.protein_g,
-        fatG: nutrition.total_nutrition.fat_g,
-        carbsG: nutrition.total_nutrition.carbs_g,
-        fiberG: nutrition.total_nutrition.fiber_g,
+        calories,
+        proteinG,
+        fatG,
+        carbsG,
+        fiberG,
         loggedAt: isNaN(loggedAtDate.getTime()) ? new Date() : loggedAtDate,
       },
     });

@@ -136,12 +136,13 @@ export default function AskRecipePage() {
   // Update greeting with user's name when authenticated
   useEffect(() => {
     if (user?.name) {
+      const firstName = user.name.split(" ")[0] || "Sobat Kost";
       setMessages((prev) =>
         prev.map((m) =>
           m.id === "welcome-1"
             ? {
                 ...m,
-                text: `Halo ${user.name.split(" ")[0]}! Mau masak apa hari ini? Masukkan bahan yang kamu punya di sebelah kiri atau ketik pertanyaan langsung di bawah. Aku siap carikan resep sehat, lezat, dan tetap ramah kantong kost!`,
+                text: `Halo ${firstName}! Mau masak apa hari ini? Masukkan bahan yang kamu punya di sebelah kiri atau ketik pertanyaan langsung di bawah. Aku siap carikan resep sehat, lezat, dan tetap ramah kantong kost!`,
               }
             : m
         )
@@ -160,17 +161,23 @@ export default function AskRecipePage() {
     });
   };
 
-  // Submit Request to AI
-  const handleAsk = async (customPrompt?: string) => {
-    const promptToSend = customPrompt || (mode === "chat" ? inputValue : `Buatkan resep lezat dari bahan yang tersedia`);
-    if (!promptToSend.trim() && mode === "chat") return;
-
-    const userMessageText =
-      mode === "pantry" && !customPrompt
-        ? `Tolong buatkan resep dengan bahan: ${ingredientsInput || "Bahan umum kost"}, alat: ${cookingTool}, budget: ${
-            budgetLimit === 0 ? "Bahan yang ada saja (Rp 0)" : `Maksimal Rp ${budgetLimit.toLocaleString("id-ID")}`
-          }, fokus: ${dietaryGoal}.`
-        : promptToSend;
+  // Helper to send query to Chef AI
+  const sendRequestToAI = async ({
+    userDisplayText,
+    promptToSend,
+    ingredients,
+    budget,
+    cookingToolVal,
+    dietaryGoalVal,
+  }: {
+    userDisplayText: string;
+    promptToSend: string;
+    ingredients?: string;
+    budget?: number;
+    cookingToolVal?: string;
+    dietaryGoalVal?: string;
+  }) => {
+    if (isLoading) return;
 
     // Add user message to UI
     const userMsgId = `user-${Date.now()}`;
@@ -179,12 +186,11 @@ export default function AskRecipePage() {
       {
         id: userMsgId,
         role: "user" as const,
-        text: userMessageText,
+        text: userDisplayText,
       },
     ];
 
     setMessages(newHistory);
-    if (mode === "chat") setInputValue("");
     setIsLoading(true);
 
     try {
@@ -193,10 +199,10 @@ export default function AskRecipePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prompt: promptToSend,
-          ingredients: mode === "pantry" ? ingredientsInput : undefined,
-          budget: mode === "pantry" ? budgetLimit : undefined,
-          cookingTool: mode === "pantry" ? cookingTool : undefined,
-          dietaryGoal: mode === "pantry" ? dietaryGoal : undefined,
+          ingredients: ingredients || undefined,
+          budget: budget !== undefined ? budget : undefined,
+          cookingTool: cookingToolVal || undefined,
+          dietaryGoal: dietaryGoalVal || undefined,
           history: newHistory.slice(-6).map((m) => ({
             role: m.role,
             content: m.text,
@@ -234,6 +240,53 @@ export default function AskRecipePage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Submit from bottom chat input bar
+  const handleChatSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const query = inputValue.trim();
+    if (!query || isLoading) return;
+
+    setInputValue("");
+    sendRequestToAI({
+      userDisplayText: query,
+      promptToSend: query,
+      ingredients: ingredientsInput.trim() || undefined,
+      budget: budgetLimit,
+      cookingToolVal: cookingTool,
+      dietaryGoalVal: dietaryGoal,
+    });
+  };
+
+  // Submit from left pantry form ("Racik Resep Sekarang")
+  const handlePantrySubmit = () => {
+    if (isLoading) return;
+    const userText = `Tolong buatkan resep dengan bahan: ${ingredientsInput.trim() || "Bahan umum kost"}, alat: ${cookingTool}, budget: ${
+      budgetLimit === 0 ? "Bahan yang ada saja (Rp 0)" : `Maksimal Rp ${budgetLimit.toLocaleString("id-ID")}`
+    }, fokus: ${dietaryGoal}.`;
+
+    sendRequestToAI({
+      userDisplayText: userText,
+      promptToSend: `Buatkan resep lezat dan bergizi dari bahan ${ingredientsInput.trim() || "seadanya di kost"} dengan alat ${cookingTool}`,
+      ingredients: ingredientsInput.trim() || "Bahan umum kost",
+      budget: budgetLimit,
+      cookingToolVal: cookingTool,
+      dietaryGoalVal: dietaryGoal,
+    });
+  };
+
+  // Submit predefined prompt suggestion or chip
+  const handlePromptSuggestion = (prompt: string) => {
+    if (isLoading) return;
+    sendRequestToAI({
+      userDisplayText: prompt,
+      promptToSend: prompt,
+      ingredients: ingredientsInput.trim() || undefined,
+      budget: budgetLimit,
+      cookingToolVal: cookingTool,
+      dietaryGoalVal: dietaryGoal,
+    });
   };
 
   // Save AI Recipe directly to database catalog
@@ -319,6 +372,13 @@ export default function AskRecipePage() {
               },
             },
           ],
+          total_nutrition: {
+            calories: recipe.nutrition.calories,
+            protein_g: recipe.nutrition.protein_g,
+            fat_g: recipe.nutrition.fat_g,
+            carbs_g: recipe.nutrition.carbs_g,
+            fiber_g: recipe.nutrition.fiber_g,
+          },
           calories: recipe.nutrition.calories,
           protein_g: recipe.nutrition.protein_g,
           fat_g: recipe.nutrition.fat_g,
@@ -615,7 +675,7 @@ _Dibuat dengan Chef AI DompetKost_`;
                   <button
                     type="button"
                     disabled={isLoading}
-                    onClick={() => handleAsk()}
+                    onClick={() => handlePantrySubmit()}
                     className="self-stretch p-3.5 bg-orange-700 rounded-full inline-flex justify-center items-center gap-2 hover:bg-[#B34718] active:scale-[0.99] transition disabled:opacity-50 cursor-pointer shadow-xs"
                   >
                     {isLoading ? (
@@ -666,7 +726,7 @@ _Dibuat dengan Chef AI DompetKost_`;
                       key={item.title}
                       type="button"
                       disabled={isLoading}
-                      onClick={() => handleAsk(item.prompt)}
+                      onClick={() => handlePromptSuggestion(item.prompt)}
                       className="group self-stretch p-3.5 bg-stone-50 rounded-2xl outline outline-1 outline-stone-200 hover:outline-orange-300 hover:bg-orange-50/50 transition cursor-pointer text-left disabled:opacity-50"
                     >
                       <div className="flex items-center justify-between">
@@ -760,7 +820,7 @@ _Dibuat dengan Chef AI DompetKost_`;
                                 key={item.title}
                                 type="button"
                                 disabled={isLoading}
-                                onClick={() => handleAsk(item.prompt)}
+                                onClick={() => handlePromptSuggestion(item.prompt)}
                                 className="px-3 py-1.5 bg-stone-50 rounded-full outline outline-1 outline-stone-200 inline-flex justify-center items-center gap-1.5 cursor-pointer hover:bg-orange-50 hover:outline-orange-300 transition disabled:opacity-50"
                               >
                                 <span className="justify-start text-stone-600 text-xs font-normal font-['Inter']">{item.title}</span>
@@ -958,7 +1018,7 @@ _Dibuat dengan Chef AI DompetKost_`;
                               type="button"
                               disabled={isLoading}
                               onClick={() =>
-                                handleAsk(
+                                handlePromptSuggestion(
                                   `Buatkan alternatif atau variasi menu lain yang berbeda dari "${msg.recipe?.title}" dengan bahan serupa.`
                                 )
                               }
@@ -981,7 +1041,7 @@ _Dibuat dengan Chef AI DompetKost_`;
                               key={i}
                               type="button"
                               disabled={isLoading}
-                              onClick={() => handleAsk(sug)}
+                              onClick={() => handlePromptSuggestion(sug)}
                               className="px-3 py-1.5 bg-stone-50 rounded-full outline outline-1 outline-stone-200 text-stone-600 text-xs font-normal font-['Inter'] hover:bg-orange-50 hover:outline-orange-300 transition cursor-pointer disabled:opacity-50"
                             >
                               &ldquo;{sug}&rdquo;
@@ -1017,10 +1077,7 @@ _Dibuat dengan Chef AI DompetKost_`;
             {/* Chat Input Bar */}
             <div data-layer="ChatInputBar" className="Chatinputbar self-stretch p-2 bg-stone-50 rounded-full outline outline-1 outline-stone-200 inline-flex justify-between items-center mt-2">
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleAsk();
-                }}
+                onSubmit={handleChatSubmit}
                 className="w-full flex items-center justify-between pl-4 pr-1 gap-2"
               >
                 <input
