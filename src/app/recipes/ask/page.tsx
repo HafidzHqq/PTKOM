@@ -914,12 +914,18 @@ _Dibuat dengan Chef AI DompetKost_`;
                               </button>
                             </div>
                             <div data-layer="IngredientsList" className="Ingredientslist self-stretch flex flex-col justify-start items-start gap-1.5 bg-stone-50 p-3 rounded-xl">
-                              {msg.recipe.ingredients.map((ing, i) => (
-                                <div key={i} className="inline-flex justify-start items-center gap-2">
-                                  <div className="w-1.5 h-1.5 bg-orange-700 rounded-full shrink-0" />
-                                  <span className="text-stone-600 text-xs font-normal font-['Inter']">{ing}</span>
-                                </div>
-                              ))}
+                              {msg.recipe.ingredients.map((ing, i) => {
+                                const ingText =
+                                  typeof ing === "string"
+                                    ? ing
+                                    : (ing as any)?.name || (ing as any)?.item || JSON.stringify(ing);
+                                return (
+                                  <div key={i} className="inline-flex justify-start items-center gap-2">
+                                    <div className="w-1.5 h-1.5 bg-orange-700 rounded-full shrink-0" />
+                                    <span className="text-stone-600 text-xs font-normal font-['Inter']">{ingText}</span>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
 
@@ -927,16 +933,26 @@ _Dibuat dengan Chef AI DompetKost_`;
                           <div data-layer="StepsBox" className="Stepsbox self-stretch flex flex-col justify-start items-start gap-2">
                             <h4 className="text-stone-800 text-xs font-bold font-['Inter']">Langkah Memasak:</h4>
                             <div data-layer="StepsList" className="Stepslist self-stretch flex flex-col justify-start items-start gap-2.5">
-                              {msg.recipe.steps.map((step, i) => (
-                                <div key={i} className="inline-flex justify-start items-start gap-2.5">
-                                  <div className="w-5 h-5 bg-orange-50 rounded-full flex justify-center items-center shrink-0 mt-0.5">
-                                    <span className="text-orange-700 text-xs font-bold font-['Inter']">{i + 1}</span>
+                              {msg.recipe.steps.map((step, i) => {
+                                const stepText =
+                                  typeof step === "string"
+                                    ? step
+                                    : (step as any)?.description ||
+                                      (step as any)?.text ||
+                                      (step as any)?.instruction ||
+                                      (step as any)?.step ||
+                                      JSON.stringify(step);
+                                return (
+                                  <div key={i} className="inline-flex justify-start items-start gap-2.5">
+                                    <div className="w-5 h-5 bg-orange-50 rounded-full flex justify-center items-center shrink-0 mt-0.5">
+                                      <span className="text-orange-700 text-xs font-bold font-['Inter']">{i + 1}</span>
+                                    </div>
+                                    <p className="flex-1 text-stone-600 text-xs font-normal font-['Inter'] leading-relaxed">
+                                      {stepText}
+                                    </p>
                                   </div>
-                                  <p className="flex-1 text-stone-600 text-xs font-normal font-['Inter'] leading-relaxed">
-                                    {step}
-                                  </p>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
 
@@ -949,7 +965,11 @@ _Dibuat dengan Chef AI DompetKost_`;
                               <div className="flex flex-col justify-start items-start gap-0.5">
                                 <span className="text-amber-900 text-xs font-bold font-['Inter']">Tips Chef:</span>
                                 <p className="text-amber-800 text-xs font-normal font-['Inter'] leading-relaxed">
-                                  {msg.recipe.chefTips}
+                                  {Array.isArray(msg.recipe.chefTips)
+                                    ? msg.recipe.chefTips.map((t) => (typeof t === "string" ? t : (t as any)?.tip || JSON.stringify(t))).join(" ")
+                                    : typeof msg.recipe.chefTips === "string"
+                                    ? msg.recipe.chefTips
+                                    : (msg.recipe.chefTips as any)?.tip || JSON.stringify(msg.recipe.chefTips)}
                                 </p>
                               </div>
                             </div>

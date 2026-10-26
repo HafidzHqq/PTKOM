@@ -107,6 +107,81 @@ function cleanJson(str: string) {
   return JSON.parse(str.substring(start, end + 1));
 }
 
+export function normalizeRecipe(raw: any): GeneratedRecipe | null {
+  if (!raw || typeof raw !== "object" || !raw.title) return null;
+
+  const rawSteps = Array.isArray(raw.steps) ? raw.steps : [];
+  const steps: string[] = rawSteps
+    .map((s: any, idx: number) => {
+      if (typeof s === "string") return s;
+      if (s && typeof s === "object") {
+        return s.description || s.text || s.instruction || s.step || `Langkah ${idx + 1}`;
+      }
+      return String(s || "");
+    })
+    .filter(Boolean);
+
+  const rawIngredients = Array.isArray(raw.ingredients) ? raw.ingredients : [];
+  const ingredients: string[] = rawIngredients
+    .map((ing: any) => {
+      if (typeof ing === "string") return ing;
+      if (ing && typeof ing === "object") {
+        const name = ing.name || ing.item || ing.ingredient || "";
+        const amount = ing.amount || ing.quantity || ing.portion || "";
+        const cost = ing.estimatedCost || ing.cost || ing.price;
+        const costStr = cost
+          ? ` (Rp ${typeof cost === "number" ? cost.toLocaleString("id-ID") : cost})`
+          : "";
+        return `${amount ? `${amount} ` : ""}${name}${costStr}`.trim() || JSON.stringify(ing);
+      }
+      return String(ing || "");
+    })
+    .filter(Boolean);
+
+  let chefTips: string | undefined = undefined;
+  if (typeof raw.chefTips === "string") {
+    chefTips = raw.chefTips;
+  } else if (Array.isArray(raw.chefTips)) {
+    chefTips = raw.chefTips
+      .map((t: any) => (typeof t === "string" ? t : t?.tip || t?.text || JSON.stringify(t)))
+      .filter(Boolean)
+      .join(" ");
+  } else if (raw.chefTips && typeof raw.chefTips === "object") {
+    chefTips = raw.chefTips.tip || raw.chefTips.text || JSON.stringify(raw.chefTips);
+  }
+
+  const rawTags = Array.isArray(raw.healthTags) ? raw.healthTags : [];
+  const healthTags: string[] = rawTags
+    .map((t: any) => (typeof t === "string" ? t : String(t)))
+    .filter(Boolean);
+
+  const nutrition =
+    raw.nutrition && typeof raw.nutrition === "object"
+      ? {
+          calories: Number(raw.nutrition.calories) || 0,
+          protein_g: Number(raw.nutrition.protein_g ?? raw.nutrition.protein) || 0,
+          fat_g: Number(raw.nutrition.fat_g ?? raw.nutrition.fat) || 0,
+          carbs_g: Number(raw.nutrition.carbs_g ?? raw.nutrition.carbs) || 0,
+          fiber_g: Number(raw.nutrition.fiber_g ?? raw.nutrition.fiber) || 0,
+        }
+      : { calories: 300, protein_g: 10, fat_g: 10, carbs_g: 40, fiber_g: 2 };
+
+  return {
+    title: String(raw.title || "Resep Kost Praktis"),
+    description: String(raw.description || "Menu lezat hemat bergizi."),
+    category: String(raw.category || "Lauk Hemat"),
+    cookTimeMinutes: Number(raw.cookTimeMinutes) || 15,
+    portions: Number(raw.portions) || 1,
+    estimatedCost: Number(raw.estimatedCost) || 10000,
+    cookingTool: String(raw.cookingTool || "Wajan / Teflon"),
+    ingredients: ingredients.length ? ingredients : ["Bahan sesuai persediaan di kost"],
+    steps: steps.length ? steps : ["Masak semua bahan hingga matang."],
+    nutrition,
+    chefTips: chefTips || "Masak dengan api sedang dan bumbui secukupnya agar pas di lidah.",
+    healthTags: healthTags.length ? healthTags : ["Hemat", "Praktis"],
+  };
+}
+
 // ----------------------------------------------------
 // HEURISTIC / LOCAL INTELLIGENCE ENGINE FOR CHEF KOST
 // ----------------------------------------------------
@@ -1084,7 +1159,7 @@ Target Gizi: ${input.dietaryGoal || "Seimbang & Bergizi"}
         resultText = completion.choices[0]?.message?.content || "";
       } else if (provider === "mistral") {
         const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
-        const modelName = process.env.MISTRAL_MODEL || "mistral-large-latest";
+        const modelName = process.env.MISTRAL_MODEL || "pixtral-12b-2409";
 
         const chatResponse = await mistral.chat.complete({
           model: modelName,
@@ -1107,7 +1182,7 @@ Target Gizi: ${input.dietaryGoal || "Seimbang & Bergizi"}
         const parsed = cleanJson(resultText);
         return {
           replyText: parsed.replyText || "Ini rekomendasi resep terbaik untukmu:",
-          recipe: parsed.recipe || null,
+          recipe: normalizeRecipe(parsed.recipe),
           suggestions: Array.isArray(parsed.suggestions)
             ? parsed.suggestions
             : [
