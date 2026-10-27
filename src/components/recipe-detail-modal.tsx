@@ -99,10 +99,10 @@ export default function RecipeDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-8 shadow-2xl my-3 sm:my-0">
         {/* Top Action Buttons (Save/Bookmark & Close) */}
-        <div className="absolute top-5 right-5 z-20 flex items-center gap-2">
+        <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 flex items-center gap-2">
           {onToggleSave && (
             <button
               onClick={() => onToggleSave(recipe)}
@@ -137,7 +137,7 @@ export default function RecipeDetailModal({
         </div>
 
         {/* Hero Image or Fallback Header */}
-        <div className="relative -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 h-56 sm:h-64 overflow-hidden rounded-t-3xl bg-neutral-900">
+        <div className="relative -mx-4 -mt-4 sm:-mx-8 sm:-mt-8 mb-5 sm:mb-6 h-48 sm:h-64 overflow-hidden rounded-t-2xl sm:rounded-t-3xl bg-neutral-900">
           {recipe.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -155,7 +155,7 @@ export default function RecipeDetailModal({
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
           {/* Badge Kategori & AI */}
-          <div className="absolute bottom-4 left-6 right-6 flex flex-wrap items-center justify-between gap-2 text-white">
+          <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-6 sm:right-6 flex flex-wrap items-center justify-between gap-2 text-white">
             <div className="flex items-center gap-2">
               <span className="rounded-full bg-orange-600/90 backdrop-blur-md px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
                 {recipe.category}
@@ -216,7 +216,7 @@ export default function RecipeDetailModal({
               Kalkulasi Standar AI
             </span>
           </div>
-          <div className="grid grid-cols-5 gap-2 text-center">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-center">
             <div className="rounded-xl bg-white p-2.5 shadow-xs border border-neutral-200/60">
               <span className="text-[10px] text-neutral-400 font-bold block uppercase">Kalori</span>
               <span className="text-base sm:text-lg font-black text-neutral-900">{recipe.calories}</span>

@@ -51,8 +51,8 @@ export default function TermsAndOnboarding() {
     <>
       {/* 1. First-time 1-Screen Onboarding Consent Modal (§7.2) */}
       {showOnboarding && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-300">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-stone-200 space-y-6 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-300">
+          <div className="w-full max-w-md rounded-2xl sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-stone-200 space-y-5 sm:space-y-6 animate-in zoom-in-95 duration-200 my-auto">
             <div className="flex items-center gap-4">
               <span className="p-3.5 rounded-2xl bg-orange-50 border border-orange-100 text-orange-700 shrink-0">
                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,8 +121,8 @@ export default function TermsAndOnboarding() {
 
       {/* 2. Catatan & Ketentuan Full Modal (§7.1 & §7.2) */}
       {showTerms && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-300">
-          <div className="w-full max-w-lg max-h-[85vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-stone-200 overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-300">
+          <div className="w-full max-w-lg max-h-[88vh] sm:max-h-[85vh] flex flex-col rounded-2xl sm:rounded-3xl bg-white shadow-2xl border border-stone-200 overflow-hidden animate-in zoom-in-95 duration-200 my-auto">
             {/* Modal Header */}
             <div className="p-5 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
               <div className="flex items-center gap-3">

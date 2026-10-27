@@ -188,26 +188,26 @@ export default function UploadRecipeModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 sm:p-8 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+      <div className="relative w-full max-w-2xl max-h-[92vh] sm:max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-4 sm:p-8 shadow-2xl my-4 sm:my-0">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-neutral-100 pb-4 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+        <div className="flex items-start justify-between gap-3 border-b border-neutral-100 pb-4 mb-5 sm:mb-6">
+          <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
+            <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-neutral-900">Upload Resep Baru</h2>
-              <p className="text-xs text-neutral-500">
+            <div className="min-w-0">
+              <h2 className="text-base sm:text-xl font-bold text-neutral-900">Upload Resep Baru</h2>
+              <p className="text-[11px] sm:text-xs text-neutral-500 leading-snug">
                 Resep akan diverifikasi oleh AI untuk memastikan kelayakan makanan & menghitung gizi otomatis.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition"
+            className="shrink-0 rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -226,7 +226,7 @@ export default function UploadRecipeModal({
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Judul & Kategori */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="sm:col-span-2">
               <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1">
                 Judul Resep <span className="text-red-500">*</span>
@@ -276,7 +276,7 @@ export default function UploadRecipeModal({
           </div>
 
           {/* Porsi, Waktu, & Biaya */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <div>
               <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1">
                 Porsi
@@ -460,13 +460,13 @@ export default function UploadRecipeModal({
             {/* Jika Diterima AI (Beneran Makanan) */}
             {aiResult && aiResult.is_food && (
               <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50/70 p-4 sm:p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-start sm:items-center gap-2 min-w-0">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">
                       ✓
                     </span>
-                    <span className="text-sm font-bold text-emerald-900">
-                      Terverifikasi Makanan Nyata & Layak Konsumsi
+                    <span className="text-xs sm:text-sm font-bold text-emerald-900 leading-snug">
+                      Terverifikasi Makanan Nyata &amp; Layak Konsumsi
                     </span>
                   </div>
                   <button
@@ -479,7 +479,7 @@ export default function UploadRecipeModal({
                 </div>
 
                 {/* Macro Nutrition Grid */}
-                <div className="grid grid-cols-5 gap-2 pt-1 text-center">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 pt-1 text-center">
                   <div className="rounded-xl bg-white p-2 border border-emerald-100 shadow-xs">
                     <p className="text-[10px] text-neutral-500 font-bold uppercase">Kalori</p>
                     <p className="text-sm sm:text-base font-extrabold text-neutral-900">{aiResult.nutrition.calories}</p>
@@ -518,7 +518,7 @@ export default function UploadRecipeModal({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-neutral-100">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-neutral-100">
             <button
               type="button"
               onClick={onClose}
@@ -530,7 +530,7 @@ export default function UploadRecipeModal({
             <button
               type="submit"
               disabled={isSubmitting || !aiResult || !aiResult.is_food}
-              className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-orange-700 disabled:opacity-40 transition active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-orange-600 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-orange-700 disabled:opacity-40 transition active:scale-[0.98]"
             >
               {isSubmitting ? "Menyimpan ke Menu..." : "Simpan & Publikasikan Resep"}
             </button>
