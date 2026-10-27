@@ -80,8 +80,13 @@ export default function FoodDetailPage() {
           
           <h1 className="text-3xl md:text-4xl font-black text-neutral-900 mb-3 tracking-tight">{food.name}</h1>
           
+          <div className="mb-2">
+            <span className="inline-block text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+              Estimasi harga
+            </span>
+          </div>
           <div className="text-4xl md:text-5xl font-black text-emerald-600 mb-8 tracking-tight">
-            Rp {Math.round(food.calculatedPrice || food.pricePerPortion || 0).toLocaleString('id-ID')}
+            ± Rp {Math.round(food.calculatedPrice || food.pricePerPortion || 0).toLocaleString('id-ID')}
             {isMasak && <span className="text-base text-neutral-400 font-medium ml-2">/ porsi</span>}
           </div>
 
@@ -125,10 +130,10 @@ export default function FoodDetailPage() {
                   <div key={idx} className="flex justify-between items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0">
                     <div>
                       <p className="font-bold text-neutral-800">{item.ingredient.name}</p>
-                      <p className="text-xs font-medium text-neutral-400">{item.quantity} {item.unit} (Rp {Math.round(item.ingredient.pricePerUnit).toLocaleString('id-ID')}/{item.ingredient.unit})</p>
+                      <p className="text-xs font-medium text-neutral-400">{item.quantity} {item.unit} (est. Rp {Math.round(item.ingredient.pricePerUnit).toLocaleString('id-ID')}/{item.ingredient.unit})</p>
                     </div>
                     <div className="font-black text-neutral-900">
-                      Rp {Math.round(cost).toLocaleString('id-ID')}
+                      ± Rp {Math.round(cost).toLocaleString('id-ID')}
                     </div>
                   </div>
                 );

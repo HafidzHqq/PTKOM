@@ -108,6 +108,11 @@ PATOKAN HARGA BAHAN PANGAN REAL (Bandar Lampung / Pasar Tradisional Indonesia):
 - Daging Sapi: Rp 140.000/kg
 Gunakan acuan harga pasar di atas saat menghitung "estimatedCost" dan estimasi harga per item di dalam "ingredients" agar angka perhitungan akurat dan realistis.
 
+ATURAN PELABELAN HARGA (WAJIB):
+- Setiap harga/biaya yang kamu sebutkan di "replyText" maupun di dalam "ingredients" HARUS ditulis sebagai estimasi, bukan harga pasti.
+- Gunakan awalan "estimasi", "perkiraan", atau tanda "±" dan tulis "(estimasi)" setelah nominalnya. Contoh: "Total bahan ± Rp 12.000 (estimasi harga pasar)".
+- DILARANG menuliskan nominal seolah-olah itu harga pasti/final. Sebutkan bahwa harga dapat berbeda tergantung kota, pasar, dan musim.
+
 Format output WAJIB HANYA JSON MURNI (valid JSON) tanpa awalan/akhiran markdown:
 {
   "replyText": "Penjelasan ramah dari Chef Kost AI kepada user...",

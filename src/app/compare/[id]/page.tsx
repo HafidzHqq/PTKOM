@@ -114,9 +114,12 @@ export default function ComparePage() {
               </svg>
             </div>
             <h4 className="font-black text-neutral-900 text-xl text-center mb-2">Beli Jadi</h4>
-            <div className="text-3xl font-black text-emerald-600 text-center mb-6">
-              Rp {Math.round(beli.pricePerPortion || 0).toLocaleString('id-ID')}
+            <div className="text-3xl font-black text-emerald-600 text-center mb-2">
+              ± Rp {Math.round(beli.pricePerPortion || 0).toLocaleString('id-ID')}
             </div>
+            <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider text-center mb-6">
+              Estimasi muncul per porsi
+            </p>
             <Link 
               href={`/foods/${beli.id}`}
               className="block w-full py-4 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-colors"
@@ -133,9 +136,12 @@ export default function ComparePage() {
               </svg>
             </div>
             <h4 className="font-black text-neutral-900 text-xl text-center mb-2">Masak Sendiri</h4>
-            <div className="text-3xl font-black text-emerald-600 text-center mb-6">
-              Rp {Math.round(masak.pricePerPortion || 0).toLocaleString('id-ID')}
+            <div className="text-3xl font-black text-emerald-600 text-center mb-2">
+              ± Rp {Math.round(masak.pricePerPortion || 0).toLocaleString('id-ID')}
             </div>
+            <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider text-center mb-6">
+              Estimasi modal per porsi
+            </p>
             <Link 
               href={`/foods/${masak.id}`}
               className="block w-full py-4 text-center text-sm font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-colors"
@@ -148,17 +154,20 @@ export default function ComparePage() {
         {/* Breakdown Masak */}
         {masak.cookDetails && (
           <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm border border-neutral-100">
-            <h3 className="font-black text-neutral-900 text-xl mb-6">Rincian Biaya Masak</h3>
+            <h3 className="font-black text-neutral-900 text-xl mb-1">Rincian Biaya Masak</h3>
+            <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-6">
+              Estimasi harga bahan pasar
+            </p>
             <div className="space-y-4">
               {masak.cookDetails.breakdown.map((item: any, idx: number) => (
                 <div key={idx} className="flex justify-between items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0">
                   <span className="text-sm font-medium text-neutral-600">{item.ingredient}</span>
-                  <span className="text-sm font-bold text-neutral-900">Rp {Math.round(item.cost).toLocaleString('id-ID')}</span>
+                  <span className="text-sm font-bold text-neutral-900">± Rp {Math.round(item.cost).toLocaleString('id-ID')}</span>
                 </div>
               ))}
               <div className="pt-3 border-t border-neutral-100 flex justify-between items-center">
-                <span className="text-sm font-bold text-neutral-800">Total Modal ({masak.cookDetails.portions} porsi)</span>
-                <span className="text-base font-black text-emerald-600">Rp {Math.round(masak.cookDetails.totalCost).toLocaleString('id-ID')}</span>
+                <span className="text-sm font-bold text-neutral-800">Total Modal Estimasi ({masak.cookDetails.portions} porsi)</span>
+                <span className="text-base font-black text-emerald-600">± Rp {Math.round(masak.cookDetails.totalCost).toLocaleString('id-ID')}</span>
               </div>
             </div>
           </div>

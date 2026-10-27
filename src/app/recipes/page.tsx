@@ -195,6 +195,13 @@ export default function RecipesPage() {
     fetchRecipes();
   }, []);
 
+  // Prefill search from URL (?search=...) — dipakai tombol "Lihat Resep" di Dashboard
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search).get("search");
+    if (q) setSearchQuery(q);
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
@@ -306,11 +313,20 @@ export default function RecipesPage() {
 
         // Search Filter
         if (searchQuery.trim() !== "") {
-          const q = searchQuery.toLowerCase();
-          const titleMatch = r.title.toLowerCase().includes(q);
-          const descMatch = r.description?.toLowerCase().includes(q) || false;
-          const ingMatch = r.ingredients.toLowerCase().includes(q);
-          if (!titleMatch && !descMatch && !ingMatch) return false;
+          const q = searchQuery.toLowerCase().trim();
+          const haystack = `${r.title} ${r.description ?? ""} ${r.ingredients}`.toLowerCase();
+          if (!haystack.includes(q)) {
+            // Fallback: cocokkan per kata kunci (min. 3 huruf, abaikan kata umum)
+            const STOPWORDS = new Set([
+              "dan", "yang", "untuk", "dengan", "atau", "paket", "porsi", "versi",
+              "khas", "ala", "saji", "kost", "hemat", "enak", "gurih", "spesial",
+            ]);
+            const tokens = q
+              .split(/\s+/)
+              .filter((t) => t.length >= 3 && !STOPWORDS.has(t));
+            if (tokens.length === 0) return false;
+            if (!tokens.some((t) => haystack.includes(t))) return false;
+          }
         }
         return true;
       })
@@ -804,16 +820,29 @@ export default function RecipesPage() {
                     Jelajahi Semua Resep
                   </button>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setSelectedCategory("Semua");
-                    }}
-                    className="h-10 px-5 bg-stone-800 hover:bg-stone-900 text-white rounded-[10px] text-xs font-semibold font-['Inter'] transition shadow-xs cursor-pointer"
-                  >
-                    Reset Filter
-                  </button>
+                  <div className="flex flex-wrap items-center justify-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setSelectedCategory("Semua");
+                      }}
+                      className="h-10 px-5 bg-stone-800 hover:bg-stone-900 text-white rounded-[10px] text-xs font-semibold font-['Inter'] transition shadow-xs cursor-pointer"
+                    >
+                      Reset Filter
+                    </button>
+                    {searchQuery.trim() && (
+                      <Link
+                        href={`/recipes/ask?q=${encodeURIComponent(
+                          `Buatkan resep ${searchQuery.trim()} versi hemat dan bergizi untuk anak kost`
+                        )}`}
+                        className="h-10 px-5 bg-orange-700 hover:bg-[#B34718] text-white rounded-[10px] text-xs font-semibold font-['Inter'] transition shadow-xs cursor-pointer flex items-center gap-2"
+                      >
+                        <span>✨</span>
+                        <span>Minta Chef AI Buatkan</span>
+                      </Link>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -922,8 +951,11 @@ export default function RecipesPage() {
                             <span>{recipe.cookTimeMinutes} mnt</span>
                           </span>
 
-                          <span className="h-6 px-2.5 rounded-[100px] bg-orange-700/90 backdrop-blur-md text-white font-semibold shadow-sm inline-flex items-center">
-                            Rp {recipe.estimatedCost.toLocaleString("id-ID")}
+                          <span
+                            className="h-6 px-2.5 rounded-[100px] bg-orange-700/90 backdrop-blur-md text-white font-semibold shadow-sm inline-flex items-center"
+                            title="Perkiraan biaya per porsi (bisa berbeda dengan harga pasar)"
+                          >
+                            Est. Rp {recipe.estimatedCost.toLocaleString("id-ID")}
                           </span>
                         </div>
                       </div>

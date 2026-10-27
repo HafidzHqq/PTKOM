@@ -760,10 +760,10 @@ export default function RiceCookerHacks() {
                     </div>
                     <div className="text-right shrink-0">
                       <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block">
-                        Modal / Porsi
+                        Estimasi Modal / Porsi
                       </span>
                       <span className="text-base sm:text-lg font-black text-orange-900">
-                        Rp {recipe.costPerPortion.toLocaleString("id-ID")}
+                        ± Rp {recipe.costPerPortion.toLocaleString("id-ID")}
                       </span>
                     </div>
                   </div>

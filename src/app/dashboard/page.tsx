@@ -793,11 +793,11 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Price */}
-                      <div className="flex items-baseline gap-1">
+                      <div className="flex items-baseline gap-1" title="Perkiraan harga pasar, bisa berbeda tergantung kota dan tempat">
                         <span className="text-xl font-bold text-[#C65320]">
-                          Rp{rec.estimated_price_idr.toLocaleString("id-ID")}
+                          Est. Rp{rec.estimated_price_idr.toLocaleString("id-ID")}
                         </span>
-                        <span className="text-[11px] text-[#77736B]"> (perkiraan)</span>
+                        <span className="text-[11px] text-[#77736B]"> (estimasi)</span>
                       </div>
 
                       {/* Tags */}
@@ -880,35 +880,48 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    {/* Action Button: Catat ke Diari */}
-                    <button
-                      onClick={() => handleLogRecommendation(rec, idx)}
-                      disabled={isLogging || isLogged}
-                      className={`h-[42px] w-full rounded-[10px] text-xs font-bold flex items-center justify-center gap-2 transition shadow-xs active:scale-[0.98] cursor-pointer ${
-                        isLogged
-                          ? "bg-emerald-600 text-white cursor-default"
-                          : "bg-[#C65320] hover:bg-[#A84317] text-white"
-                      } disabled:opacity-75`}
-                    >
-                      {isLogging ? (
-                        <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" />
-                      ) : isLogged ? (
-                        <>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                          <span>Tercatat di Diari</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19" />
-                            <line x1="5" y1="12" x2="19" y2="12" />
-                          </svg>
-                          <span>Catat ke Diari</span>
-                        </>
-                      )}
-                    </button>
+                    {/* Action Buttons: Lihat Resep & Catat ke Diari */}
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/recipes?search=${encodeURIComponent(rec.food_name)}`}
+                        title={`Cari resep ${rec.food_name}`}
+                        className="h-[42px] px-3.5 rounded-[10px] text-xs font-semibold bg-[#FAF9F6] border border-[#E8E4DC] hover:bg-[#F0EEE7] hover:border-[#C65320]/50 text-[#292721] flex items-center justify-center gap-1.5 transition shrink-0 active:scale-[0.98]"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C65320" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                        </svg>
+                        <span>Lihat Resep</span>
+                      </Link>
+                      <button
+                        onClick={() => handleLogRecommendation(rec, idx)}
+                        disabled={isLogging || isLogged}
+                        className={`h-[42px] flex-1 rounded-[10px] text-xs font-bold flex items-center justify-center gap-2 transition shadow-xs active:scale-[0.98] cursor-pointer ${
+                          isLogged
+                            ? "bg-emerald-600 text-white cursor-default"
+                            : "bg-[#C65320] hover:bg-[#A84317] text-white"
+                        } disabled:opacity-75`}
+                      >
+                        {isLogging ? (
+                          <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" />
+                        ) : isLogged ? (
+                          <>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>Tercatat</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="12" y1="5" x2="12" y2="19" />
+                              <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            <span>Catat ke Diari</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
               );

@@ -43,6 +43,83 @@ function sanitizeFlavorTags(rawTags: unknown[]): FlavorTag[] {
   return cleaned.length > 0 ? cleaned : ["gurih-renyah", "berkuah-segar"];
 }
 
+// Kata kunci objek yang jelas BUKAN makanan/minuman (validasi cepat sebelum AI)
+const NON_FOOD_KEYWORDS = [
+  "kucing",
+  "anjing",
+  "hewan",
+  "binatang",
+  "burung",
+  "ikan hias",
+  "laptop",
+  "komputer",
+  "keyboard",
+  "mouse",
+  "monitor",
+  "handphone",
+  "smartphone",
+  "hp",
+  "charger",
+  "sepatu",
+  "sandal",
+  "baju",
+  "kaos",
+  "celana",
+  "jaket",
+  "tas",
+  "dompet",
+  "topi",
+  "kacamata",
+  "buku",
+  "pulpen",
+  "pensil",
+  "kertas",
+  "meja",
+  "kursi",
+  "lemari",
+  "kasur",
+  "bantal",
+  "motor",
+  "mobil",
+  "helm",
+  "sepeda",
+  "kunci",
+  "uang",
+  "koin",
+  "orang",
+  "manusia",
+  "wajah",
+  "muka",
+  "selfie",
+  "tangan",
+  "kaki",
+  "rambut",
+  "dinding",
+  "langit",
+  "pemandangan",
+];
+
+function detectNonFoodKeyword(input?: string): string | null {
+  if (!input) return null;
+  const lower = input.toLowerCase();
+  for (const kw of NON_FOOD_KEYWORDS) {
+    if (lower.includes(kw)) return kw;
+  }
+  return null;
+}
+
+export interface NonFoodResult {
+  is_food: false;
+  detected_object?: string;
+  error_message: string;
+}
+
+export type FoodAnalysisResponse = FoodAnalysisResult | NonFoodResult;
+
+export function isNonFoodResult(result: FoodAnalysisResponse): result is NonFoodResult {
+  return (result as NonFoodResult).is_food === false;
+}
+
 // 3.1c Pencocokan hasil AI ke CULINARY_CATALOG agar gizi memakai data lokal TKPI
 function matchWithLocalCatalog(foodName: string): FoodItem | null {
   const nameNorm = foodName.toLowerCase().trim();
@@ -98,8 +175,20 @@ export interface FoodAnalysisResult {
   disclaimer_key?: string;
 }
 
-export async function analyzeFoodWithAI(imageBase64?: string, text?: string): Promise<FoodAnalysisResult> {
+export async function analyzeFoodWithAI(imageBase64?: string, text?: string): Promise<FoodAnalysisResponse> {
   const providers: string[] = [];
+
+  // Validasi cepat: input teks yang jelas bukan makanan langsung ditolak
+  if (!imageBase64 && text) {
+    const keyword = detectNonFoodKeyword(text);
+    if (keyword) {
+      return {
+        is_food: false,
+        detected_object: keyword,
+        error_message: `Objek "${keyword}" bukan makanan atau minuman. Silakan masukkan nama hidangan atau foto makanan yang ingin direview.`,
+      };
+    }
+  }
 
   if (process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY_2) providers.push("gemini");
   if (process.env.GROQ_API_KEY) providers.push("groq");
@@ -230,6 +319,19 @@ export async function analyzeFoodWithAI(imageBase64?: string, text?: string): Pr
       const jsonMatch = resultText.match(/\{[\s\S]*\}/);
       const parsedRaw = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(resultText);
 
+      // Tahap 0: AI menyatakan objek BUKAN makanan -> hentikan, jangan fallback ke katalog
+      if (parsedRaw && parsedRaw.is_food === false) {
+        return {
+          is_food: false,
+          detected_object:
+            typeof parsedRaw.detected_object === "string" ? parsedRaw.detected_object : undefined,
+          error_message:
+            typeof parsedRaw.error_message === "string" && parsedRaw.error_message.length > 5
+              ? parsedRaw.error_message
+              : "Objek yang dipindai bukan makanan atau minuman. Silakan arahkan kamera ke hidangan makanan atau minuman yang ingin kamu review.",
+        };
+      }
+
       // Normalize & enrich with TKPI Indonesian Local Catalog
       return processAndValidateAIResult(parsedRaw, text);
     } catch (error) {
@@ -356,7 +458,19 @@ function processAndValidateAIResult(raw: any, queryText?: string): FoodAnalysisR
   };
 }
 
-function generateCatalogFallback(text?: string): FoodAnalysisResult {
+function generateCatalogFallback(text?: string): FoodAnalysisResponse {
+  // Jangan pernah menebak "Nasi Telur Dadar" untuk input yang jelas bukan makanan
+  if (text) {
+    const keyword = detectNonFoodKeyword(text);
+    if (keyword) {
+      return {
+        is_food: false,
+        detected_object: keyword,
+        error_message: `Objek "${keyword}" bukan makanan atau minuman. Silakan masukkan nama hidangan atau foto makanan yang ingin direview.`,
+      };
+    }
+  }
+
   const match = matchWithLocalCatalog(text || "Nasi Telur Dadar");
   const baseItem = match || CULINARY_CATALOG[1]; // Telur Dadar
 

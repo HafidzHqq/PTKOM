@@ -397,46 +397,6 @@ export default function HistoryPage() {
     return tips.join(" ");
   }, [recent7Days]);
 
-  // Export CSV Handler
-  const handleExportCSV = () => {
-    if (entries.length === 0) {
-      showNotification("Belum ada data diari untuk diekspor!");
-      return;
-    }
-    const headers = [
-      "Tanggal",
-      "Waktu",
-      "Menu Makanan",
-      "Kalori (kkal)",
-      "Protein (g)",
-      "Lemak (g)",
-      "Karbo (g)",
-      "Serat (g)",
-      "Estimasi Biaya (Rp)",
-    ];
-    const rows = entries.map((entry) => {
-      const d = new Date(entry.logged_at);
-      const dateStr = d.toLocaleDateString("id-ID");
-      const timeStr = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }).replace(":", ".");
-      const menuNames = entry.foods.map((f) => f.name).join(" + ").replace(/"/g, '""');
-      const cost = entry.foods.reduce((sum, f) => sum + estimateFoodCost(f.name), 0);
-      return `"${dateStr}","${timeStr}","${menuNames}",${Math.round(entry.calories)},${entry.protein_g.toFixed(1)},${entry.fat_g.toFixed(1)},${entry.carbs_g.toFixed(1)},${entry.fiber_g.toFixed(1)},${cost}`;
-    });
-
-    const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\r\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    const today = new Date().toISOString().split("T")[0];
-    link.setAttribute("href", url);
-    link.setAttribute("download", `diari-kuliner-dompetkost-${today}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    showNotification("Berkas CSV berhasil diunduh.");
-  };
-
   // Clear History Handler
   const handleClearHistory = async () => {
     if (!user) {
@@ -577,24 +537,6 @@ export default function HistoryPage() {
 
               <button
                 type="button"
-                onClick={handleExportCSV}
-                disabled={entries.length === 0}
-                style={{
-                  height: 44,
-                  outline: "1px #E8E4DC solid",
-                  outlineOffset: "-1px",
-                }}
-                className="px-4 bg-white hover:bg-[#FAF9F6] text-[#555149] rounded-[10px] text-[13px] font-semibold flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs"
-                title="Ekspor catatan ke CSV"
-              >
-                <svg className="w-[18px] h-[18px]" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 12v3a1.5 1.5 0 001.5 1.5h9a1.5 1.5 0 001.5-1.5v-3M9 2.5v9m0 0l-3.5-3.5M9 11.5l3.5-3.5" />
-                </svg>
-                <span>Ekspor CSV</span>
-              </button>
-
-              <button
-                type="button"
                 onClick={() => {
                   if (!user) {
                     setShowLoginModal(true);
@@ -694,7 +636,7 @@ export default function HistoryPage() {
                 }}
                 className="w-full"
               >
-                TOTAL JAJAN 7 HARI
+                TOTAL JAJAN 7 HARI (ESTIMASI)
               </div>
               <div
                 style={{
@@ -737,7 +679,7 @@ export default function HistoryPage() {
                 }}
                 className="w-full"
               >
-                RATA-RATA / HARI
+                RATA-RATA / HARI (ESTIMASI)
               </div>
               <div
                 style={{

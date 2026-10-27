@@ -266,6 +266,14 @@ export default function AnalyzePage() {
     stopCamera();
   };
 
+  const handleRetakePhoto = () => {
+    setPreview(null);
+    setFoodName("");
+    setAnalyzeError(null);
+    setResult(null);
+    startCamera(cameraFacingMode);
+  };
+
   // 3.2e Timeout request AI: 20 detik dengan AbortController
   const handleAnalyze = async () => {
     if (!preview && !foodName.trim()) return;
@@ -297,7 +305,7 @@ export default function AnalyzePage() {
       clearTimeout(timeoutId);
       const data = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || data.is_food === false) {
         throw new Error(data.error || "Gagal menganalisis hidangan");
       }
 
@@ -921,35 +929,67 @@ export default function AnalyzePage() {
               )}
             </button>
 
-            {/* Timeout & Graceful Failure UI */}
+            {/* Timeout & Graceful Failure UI / Non-Food Alert */}
             {analyzeError && (
-              <div className="w-full p-4 bg-amber-50 outline outline-1 outline-amber-200 text-sm text-amber-950 space-y-3 font-['Inter']">
+              <div
+                className={`w-full p-4 outline outline-1 text-sm space-y-3 font-['Inter'] rounded-2xl ${
+                  analyzeError.toLowerCase().includes("bukan makanan")
+                    ? "bg-rose-50 outline-rose-300 text-rose-950"
+                    : "bg-amber-50 outline-amber-200 text-amber-950"
+                }`}
+              >
                 <div className="flex items-start gap-2.5">
-                  <svg className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
+                  {analyzeError.toLowerCase().includes("bukan makanan") ? (
+                    <svg className="w-5 h-5 text-rose-700 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  )}
                   <div>
-                    <strong className="font-bold">Perlu Bantuan Review:</strong>
-                    <p className="mt-0.5 leading-relaxed text-amber-900">{analyzeError}</p>
+                    <strong className="font-bold">
+                      {analyzeError.toLowerCase().includes("bukan makanan")
+                        ? "Bukan Makanan Terdeteksi:"
+                        : "Perlu Bantuan Review:"}
+                    </strong>
+                    <p className={`mt-0.5 leading-relaxed ${analyzeError.toLowerCase().includes("bukan makanan") ? "text-rose-900" : "text-amber-900"}`}>
+                      {analyzeError}
+                    </p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (lastPayload) handleAnalyze();
-                    }}
-                    className="h-9 px-3.5 bg-orange-700 hover:bg-[#B34718] text-white font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer font-['Inter']"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    <span>Coba Lagi</span>
-                  </button>
+                  {analyzeError.toLowerCase().includes("bukan makanan") ? (
+                    <button
+                      type="button"
+                      onClick={handleRetakePhoto}
+                      className="h-9 px-3.5 bg-rose-700 hover:bg-rose-800 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer font-['Inter'] rounded-xl"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span>Ambil Foto Makanan Lain</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (lastPayload) handleAnalyze();
+                      }}
+                      className="h-9 px-3.5 bg-orange-700 hover:bg-[#B34718] text-white font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer font-['Inter'] rounded-xl"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>Coba Lagi</span>
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => setCatalogModalOpen(true)}
-                    className="h-9 px-3.5 bg-white hover:bg-stone-100 outline outline-1 outline-stone-300 text-stone-800 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer font-['Inter']"
+                    className="h-9 px-3.5 bg-white hover:bg-stone-100 outline outline-1 outline-stone-300 text-stone-800 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer font-['Inter'] rounded-xl"
                   >
                     <svg className="w-3.5 h-3.5 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -1380,7 +1420,7 @@ export default function AnalyzePage() {
                       {item.name}
                     </p>
                     <p className="text-xs text-stone-500">
-                      {item.venue.toUpperCase()} • Rp {item.priceRange.min.toLocaleString("id-ID")} - {item.priceRange.max.toLocaleString("id-ID")}
+                      {item.venue.toUpperCase()} • Estimasi Rp {item.priceRange.min.toLocaleString("id-ID")} - {item.priceRange.max.toLocaleString("id-ID")}
                     </p>
                   </div>
                   <div className="text-right shrink-0">

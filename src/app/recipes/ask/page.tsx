@@ -176,15 +176,40 @@ export default function AskRecipePage() {
     }
   }, [user]);
 
-  // Add quick ingredient chip to input
-  const handleAddIngredient = (item: string) => {
+  // Handle query parameter ?q=... from catalog search or dashboard
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) {
+      setInputValue(q);
+      setMode("chat");
+    }
+  }, []);
+
+  // Toggle quick ingredient chip (add or remove)
+  const handleToggleIngredient = (item: string) => {
     setIngredientsInput((prev) => {
       const trimmed = prev.trim();
       if (!trimmed) return item;
-      const lowerArr = trimmed.split(",").map((s) => s.trim().toLowerCase());
-      if (lowerArr.includes(item.toLowerCase())) return prev;
-      return `${trimmed}, ${item}`;
+      const items = trimmed
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const existsIndex = items.findIndex(
+        (s) => s.toLowerCase() === item.toLowerCase()
+      );
+      if (existsIndex >= 0) {
+        items.splice(existsIndex, 1);
+        return items.join(", ");
+      } else {
+        items.push(item);
+        return items.join(", ");
+      }
     });
+  };
+
+  const handleClearIngredients = () => {
+    setIngredientsInput("");
   };
 
   // Helper to send query to Chef AI
@@ -432,7 +457,7 @@ export default function AskRecipePage() {
 _${recipe.description}_
 
 Waktu: ${recipe.cookTimeMinutes} menit | Porsi: ${recipe.portions} orang
-Perkiraan Biaya: Rp ${recipe.estimatedCost.toLocaleString("id-ID")}
+Estimasi Biaya (belum tentu sama dengan harga pasar): Rp ${recipe.estimatedCost.toLocaleString("id-ID")}
 Alat: ${recipe.cookingTool}
 
 *Nilai Gizi*:
@@ -548,12 +573,12 @@ _Dibuat dengan Chef AI DompetKost_`;
           </button>
         </div>
 
-        {/* Main Grid (MainGrid Figma): Left Column (540px) & Right Column (flex-1) */}
-        <div className="self-stretch flex flex-col lg:flex-row justify-start items-start gap-7">
+        {/* Main Grid (MainGrid Figma): Two symmetrical columns */}
+        <div className="self-stretch grid grid-cols-1 lg:grid-cols-2 items-stretch gap-7">
           {/* Left Column: Input Panel (Pantry or Prompt Suggestions) */}
-          <div className="w-full lg:w-[540px] shrink-0">
+          <div className="w-full h-full min-h-0 flex flex-col">
             {mode === "pantry" ? (
-              <div className="w-full p-6 sm:p-8 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6">
+              <div className="w-full h-full lg:h-[760px] p-6 sm:p-7 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-5 overflow-y-auto chat-scroll">
                 <div className="self-stretch flex justify-between items-center">
                   <div className="inline-flex justify-start items-center gap-2.5">
                     <svg className="w-5 h-5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -569,19 +594,34 @@ _Dibuat dengan Chef AI DompetKost_`;
                   </div>
                 </div>
 
-                <div className="self-stretch flex flex-col justify-start items-start gap-5">
+                {/* Bahan & kondisi memasak */}
+                <div className="self-stretch flex flex-col justify-start items-start gap-4">
                   {/* Bahan yang ada di kost */}
                   <div className="self-stretch flex flex-col justify-start items-start gap-2">
                     <div className="self-stretch flex justify-between items-center">
                       <label className="text-stone-800 text-xs font-bold font-['Inter']">
                         Bahan yang Ada di Kost:
                       </label>
-                      <span className="text-stone-400 text-xs font-normal font-['Inter']">
-                        Contoh: Telur, nasi putih, bawang, kecap
-                      </span>
+                      {ingredientsInput.trim() ? (
+                        <button
+                          type="button"
+                          onClick={handleClearIngredients}
+                          className="text-stone-400 hover:text-red-600 text-[11px] font-medium font-['Inter'] transition cursor-pointer flex items-center gap-1"
+                          title="Hapus semua bahan"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span>Bersihkan</span>
+                        </button>
+                      ) : (
+                        <span className="text-stone-400 text-[11px] font-normal font-['Inter']">
+                          Ketik atau klik chip di bawah
+                        </span>
+                      )}
                     </div>
 
-                    <div className="self-stretch h-28 p-3.5 bg-stone-50 rounded-2xl outline outline-1 outline-stone-200 flex justify-start items-start focus-within:outline-orange-700 transition">
+                    <div className="self-stretch h-24 p-3 bg-stone-50 rounded-2xl outline outline-1 outline-stone-200 flex justify-start items-start focus-within:outline-orange-700 transition">
                       <textarea
                         rows={3}
                         value={ingredientsInput}
@@ -591,20 +631,21 @@ _Dibuat dengan Chef AI DompetKost_`;
                       />
                     </div>
 
-                    {/* Quick Chips */}
-                    <div className="self-stretch flex flex-wrap justify-start items-center gap-1.5 pt-1">
+                    {/* Quick Chips with Click-to-Add/Remove Toggle */}
+                    <div className="self-stretch flex flex-wrap justify-start items-center gap-1.5 pt-0.5">
                       {COMMON_INGREDIENTS.map((item) => {
                         const isAdded = ingredientsInput.toLowerCase().includes(item.toLowerCase());
                         return (
                           <button
                             key={item}
                             type="button"
-                            onClick={() => handleAddIngredient(item)}
+                            onClick={() => handleToggleIngredient(item)}
                             className={`px-2.5 py-1 rounded-full text-xs font-['Inter'] inline-flex justify-center items-center gap-1 transition cursor-pointer ${
                               isAdded
-                                ? "bg-orange-50 text-orange-700 font-bold outline outline-1 outline-orange-200"
+                                ? "bg-orange-100 text-orange-800 font-bold outline outline-1 outline-orange-300 shadow-2xs"
                                 : "bg-stone-50 text-stone-600 font-normal outline outline-1 outline-stone-200 hover:bg-stone-100"
                             }`}
+                            title={isAdded ? "Klik untuk menghapus" : "Klik untuk menambahkan"}
                           >
                             <span>{isAdded ? "✓" : "+"}</span>
                             <span>{item}</span>
@@ -726,7 +767,7 @@ _Dibuat dengan Chef AI DompetKost_`;
               </div>
             ) : (
               /* Mode Chat: Inspirasi Tanya Chef AI */
-              <div className="w-full p-6 sm:p-8 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6">
+              <div className="w-full h-full lg:h-[760px] p-6 sm:p-8 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6 overflow-y-auto chat-scroll">
                 <div className="self-stretch flex justify-between items-center border-b border-stone-100 pb-3">
                   <div className="inline-flex justify-start items-center gap-2.5">
                     <svg className="w-5 h-5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -788,9 +829,9 @@ _Dibuat dengan Chef AI DompetKost_`;
           </div>
 
           {/* Right Column: Interactive Chat & Generated Recipe Stream */}
-          <div data-layer="PercakapanDenganChefAi" className="Percakapandenganchefai flex-1 p-6 sm:p-8 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-between items-start gap-6 min-h-[640px]">
+          <div data-layer="PercakapanDenganChefAi" className="Percakapandenganchefai w-full p-5 sm:p-6 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-stretch gap-4 h-[68vh] min-h-[500px] overflow-hidden lg:h-[760px] lg:max-h-none lg:sticky lg:top-24">
             {/* Chef Header */}
-            <div data-layer="ChefHeader" className="Chefheader self-stretch pb-4 border-b border-stone-200 inline-flex justify-between items-center">
+            <div data-layer="ChefHeader" className="Chefheader self-stretch shrink-0 pb-4 border-b border-stone-200 inline-flex justify-between items-center">
               <div data-layer="ChefAvatarRow" className="Chefavatarrow inline-flex justify-start items-center gap-3">
                 <div data-layer="ChefAvatar" className="Chefavatar w-10 h-10 p-2.5 bg-orange-700 rounded-full flex justify-center items-center gap-2.5 shadow-xs">
                   <div className="w-5 h-5 relative overflow-hidden flex items-center justify-center">
@@ -811,7 +852,7 @@ _Dibuat dengan Chef AI DompetKost_`;
             </div>
 
             {/* Chat Body */}
-            <div data-layer="ChatBody" className="Chatbody self-stretch flex flex-col justify-start items-start gap-4 flex-1 overflow-y-auto pr-1">
+            <div data-layer="ChatBody" className="Chatbody self-stretch flex flex-col justify-start items-start gap-4 flex-1 min-h-0 overflow-y-auto chat-scroll pr-2">
               {/* Message List */}
               {messages.map((msg) => (
                 <div key={msg.id} className="self-stretch">
@@ -897,6 +938,14 @@ _Dibuat dengan Chef AI DompetKost_`;
                                   {msg.recipe.nutrition.calories} Kkal
                                 </span>
                               </div>
+                              <div className="inline-flex justify-start items-center gap-1" title="Perkiraan biaya dari Chef AI, bisa berbeda dengan harga pasar">
+                                <svg className="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span className="justify-start text-emerald-700 text-xs font-bold font-['Inter']">
+                                  Est. Rp {msg.recipe.estimatedCost.toLocaleString("id-ID")}
+                                </span>
+                              </div>
                             </div>
                           </div>
 
@@ -941,10 +990,13 @@ _Dibuat dengan Chef AI DompetKost_`;
                             </div>
                             <div data-layer="IngredientsList" className="Ingredientslist self-stretch flex flex-col justify-start items-start gap-1.5 bg-stone-50 p-3 rounded-xl">
                               {msg.recipe.ingredients.map((ing, i) => {
+                                const ingObj = typeof ing === "object" && ing !== null ? (ing as Record<string, unknown>) : null;
                                 const ingText =
                                   typeof ing === "string"
                                     ? ing
-                                    : (ing as any)?.name || (ing as any)?.item || JSON.stringify(ing);
+                                    : (typeof ingObj?.name === "string" ? ingObj.name : null) ||
+                                      (typeof ingObj?.item === "string" ? ingObj.item : null) ||
+                                      JSON.stringify(ing);
                                 return (
                                   <div key={i} className="inline-flex justify-start items-center gap-2">
                                     <div className="w-1.5 h-1.5 bg-orange-700 rounded-full shrink-0" />
@@ -960,13 +1012,14 @@ _Dibuat dengan Chef AI DompetKost_`;
                             <h4 className="text-stone-800 text-xs font-bold font-['Inter']">Langkah Memasak:</h4>
                             <div data-layer="StepsList" className="Stepslist self-stretch flex flex-col justify-start items-start gap-2.5">
                               {msg.recipe.steps.map((step, i) => {
+                                const stepObj = typeof step === "object" && step !== null ? (step as Record<string, unknown>) : null;
                                 const stepText =
                                   typeof step === "string"
                                     ? step
-                                    : (step as any)?.description ||
-                                      (step as any)?.text ||
-                                      (step as any)?.instruction ||
-                                      (step as any)?.step ||
+                                    : (typeof stepObj?.description === "string" ? stepObj.description : null) ||
+                                      (typeof stepObj?.text === "string" ? stepObj.text : null) ||
+                                      (typeof stepObj?.instruction === "string" ? stepObj.instruction : null) ||
+                                      (typeof stepObj?.step === "string" ? stepObj.step : null) ||
                                       JSON.stringify(step);
                                 return (
                                   <div key={i} className="inline-flex justify-start items-start gap-2.5">
@@ -994,10 +1047,18 @@ _Dibuat dengan Chef AI DompetKost_`;
                                   <ChatMarkdown
                                     text={
                                       Array.isArray(msg.recipe.chefTips)
-                                        ? msg.recipe.chefTips.map((t) => (typeof t === "string" ? t : (t as any)?.tip || JSON.stringify(t))).join(" ")
+                                        ? msg.recipe.chefTips
+                                            .map((t) => {
+                                              if (typeof t === "string") return t;
+                                              const tObj = typeof t === "object" && t !== null ? (t as Record<string, unknown>) : null;
+                                              return typeof tObj?.tip === "string" ? tObj.tip : JSON.stringify(t);
+                                            })
+                                            .join(" ")
                                         : typeof msg.recipe.chefTips === "string"
                                         ? msg.recipe.chefTips
-                                        : (msg.recipe.chefTips as any)?.tip || JSON.stringify(msg.recipe.chefTips)
+                                        : typeof (msg.recipe.chefTips as Record<string, unknown>)?.tip === "string"
+                                        ? String((msg.recipe.chefTips as Record<string, unknown>).tip)
+                                        : JSON.stringify(msg.recipe.chefTips)
                                     }
                                   />
                                 </div>
@@ -1125,7 +1186,7 @@ _Dibuat dengan Chef AI DompetKost_`;
             </div>
 
             {/* Chat Input Bar */}
-            <div data-layer="ChatInputBar" className="Chatinputbar self-stretch p-2 bg-stone-50 rounded-full outline outline-1 outline-stone-200 inline-flex justify-between items-center mt-2">
+            <div data-layer="ChatInputBar" className="Chatinputbar self-stretch shrink-0 p-2 bg-stone-50 rounded-full outline outline-1 outline-stone-200 inline-flex justify-between items-center">
               <form
                 onSubmit={handleChatSubmit}
                 className="w-full flex items-center justify-between pl-4 pr-1 gap-2"

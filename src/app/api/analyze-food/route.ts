@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { analyzeFoodWithAI } from "@/lib/ai/roundRobin";
+import { analyzeFoodWithAI, isNonFoodResult } from "@/lib/ai/roundRobin";
 import { aiFoodAnalysisSchema } from "@/lib/validators";
 
 export const maxDuration = 60; // Limit execution to 60s for Vercel Hobby
@@ -27,13 +27,40 @@ export async function POST(req: NextRequest) {
 
     let result = await analyzeFoodWithAI(cleanBase64, text);
 
+    // Tahap 0: Objek bukan makanan -> tolak scan, jangan simpan ke diary
+    if (isNonFoodResult(result)) {
+      const label = result.detected_object ? ` (terdeteksi: ${result.detected_object})` : "";
+      return NextResponse.json(
+        {
+          is_food: false,
+          error: `Objek yang dipindai bukan makanan atau minuman${label}. Silakan arahkan kamera ke hidangan makanan atau minuman yang ingin kamu review.`,
+          detected_object: result.detected_object,
+          retryable: true,
+        },
+        { status: 422 },
+      );
+    }
+
     // 3.1a Validasi Zod output AI
     const validation = aiFoodAnalysisSchema.safeParse(result);
     if (!validation.success) {
       console.warn("[POST /api/analyze-food] Initial schema validation warning:", validation.error.format());
       // Retry once if invalid
       try {
-        result = await analyzeFoodWithAI(cleanBase64, text);
+        const retryResult = await analyzeFoodWithAI(cleanBase64, text);
+        if (isNonFoodResult(retryResult)) {
+          const label = retryResult.detected_object ? ` (terdeteksi: ${retryResult.detected_object})` : "";
+          return NextResponse.json(
+            {
+              is_food: false,
+              error: `Objek yang dipindai bukan makanan atau minuman${label}. Silakan arahkan kamera ke hidangan makanan atau minuman yang ingin kamu review.`,
+              detected_object: retryResult.detected_object,
+              retryable: true,
+            },
+            { status: 422 },
+          );
+        }
+        result = retryResult;
       } catch (retryErr) {
         console.warn("[POST /api/analyze-food] Retry failed, using processed output:", retryErr);
       }
