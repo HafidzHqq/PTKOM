@@ -760,7 +760,7 @@ export default function WartegPlateBuilder() {
       <canvas ref={canvasRef} className="hidden" />
 
       {/* Intro Header */}
-      <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 p-6 md:p-8 text-white shadow-sm relative overflow-hidden">
+      <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 p-4 sm:p-6 md:p-8 text-white shadow-sm relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-bold text-amber-50 mb-3 border border-white/20">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -814,7 +814,7 @@ export default function WartegPlateBuilder() {
         {/* Menu Selection (Left Column) */}
         <div className="lg:col-span-7 space-y-5">
           {/* Category Filter Pills (Fase 4.1a) */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
             {categories.map((cat) => (
               <button
                 key={cat.key}
@@ -832,7 +832,7 @@ export default function WartegPlateBuilder() {
           </div>
 
           {/* Menu Items Grid */}
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
               <div>
                 <h3 className="text-base font-black text-neutral-900">
@@ -911,7 +911,7 @@ export default function WartegPlateBuilder() {
 
         {/* Piring Warteg Preview & Kasir (Right Column) */}
         <div className="lg:col-span-5 space-y-5 lg:sticky lg:top-24">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 shadow-sm space-y-5">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm space-y-5">
             {/* Visual Piring */}
             <div className="relative rounded-2xl border-4 border-amber-100 bg-gradient-to-br from-amber-50/60 via-white to-orange-50/40 p-5 text-center min-h-[190px] flex flex-col justify-between items-center shadow-inner">
               <span className="text-[11px] font-bold uppercase tracking-wider text-amber-900/80 bg-amber-100/70 px-3.5 py-1 rounded-full border border-amber-200">
@@ -1003,7 +1003,7 @@ export default function WartegPlateBuilder() {
             </div>
 
             {/* Nutrition Highlights */}
-            <div className="grid grid-cols-4 gap-2 text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
               <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-2.5">
                 <p className="text-[10px] font-bold text-neutral-500 uppercase">Kalori</p>
                 <p className="text-base font-black text-black mt-0.5">{totalCalories}</p>

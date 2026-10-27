@@ -516,7 +516,7 @@ export default function RiceCookerHacks() {
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Banner */}
-      <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 p-6 md:p-8 text-white shadow-sm relative overflow-hidden">
+      <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 p-4 sm:p-6 md:p-8 text-white shadow-sm relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-bold text-amber-50 mb-3 border border-white/20">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -534,7 +534,7 @@ export default function RiceCookerHacks() {
       </div>
 
       {/* 4.3d Peringatan Keselamatan Rice Cooker Anak Kost */}
-      <div className="rounded-2xl border border-amber-300 bg-amber-50/90 p-5 sm:p-6 shadow-xs space-y-3">
+      <div className="rounded-2xl border border-amber-300 bg-amber-50/90 p-4 sm:p-6 shadow-xs space-y-3">
         <div className="flex items-center gap-2.5">
           <span className="p-1.5 rounded-lg bg-amber-200 text-amber-900 border border-amber-300">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -577,7 +577,7 @@ export default function RiceCookerHacks() {
       </div>
 
       {/* 4.3b Filter "Pakai yang ada di kost" */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 shadow-xs space-y-4">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-sm sm:text-base font-black text-neutral-900 flex items-center gap-2">
@@ -653,7 +653,7 @@ export default function RiceCookerHacks() {
       </div>
 
       {/* Category Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
         {([
           { key: "all" as const, label: "Semua Resep (12)" },
           { key: "nasi" as const, label: "Aneka Nasi (5)" },
@@ -728,7 +728,7 @@ export default function RiceCookerHacks() {
                 }`}
               >
                 {/* Card Header */}
-                <div className="p-5 sm:p-6 space-y-3">
+                <div className="p-4 sm:p-6 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
@@ -828,7 +828,7 @@ export default function RiceCookerHacks() {
 
                 {/* Accordion Content (4.3a) */}
                 {isExpanded && (
-                  <div className="border-t border-neutral-100 bg-neutral-50/70 p-5 sm:p-6 space-y-4">
+                  <div className="border-t border-neutral-100 bg-neutral-50/70 p-4 sm:p-6 space-y-4">
                     {/* Ingredients with estimated cost */}
                     <div>
                       <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">
