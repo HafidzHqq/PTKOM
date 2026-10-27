@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import UploadRecipeModal from "@/components/upload-recipe-modal";
-import RecipeDetailModal, { RecipeData } from "@/components/recipe-detail-modal";
+import { RecipeData } from "@/components/recipe-detail-modal";
 import RiceCookerHacks from "@/components/rice-cooker-hacks";
 
 const CATEGORIES = [
@@ -152,6 +153,7 @@ function ChefAiCalloutCard() {
 
 export default function RecipesPage() {
   const { user } = useAuth();
+  const router = useRouter();
 
   const [recipes, setRecipes] = useState<RecipeData[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -163,8 +165,6 @@ export default function RecipesPage() {
 
   // Modals state
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<RecipeData | null>(null);
-  const [isLogging, setIsLogging] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -224,18 +224,6 @@ export default function RecipesPage() {
       )
     );
 
-    if (selectedRecipe && selectedRecipe.id === recipe.id) {
-      setSelectedRecipe((prev) =>
-        prev
-          ? {
-              ...prev,
-              isSaved: nextSaved,
-              saveCount: Math.max(0, (prev.saveCount || 0) + (nextSaved ? 1 : -1)),
-            }
-          : null
-      );
-    }
-
     try {
       const res = await fetch(`/api/recipes/${recipe.id}/save`, {
         method: "POST",
@@ -282,9 +270,6 @@ export default function RecipesPage() {
       } else {
         showToast(`Resep "${recipeToDelete.title}" berhasil dihapus.`);
         setRecipes((prev) => prev.filter((r) => r.id !== recipeToDelete.id));
-        if (selectedRecipe && selectedRecipe.id === recipeToDelete.id) {
-          setSelectedRecipe(null);
-        }
       }
     } catch (err) {
       console.error("Gagal menghapus resep:", err);
@@ -292,59 +277,6 @@ export default function RecipesPage() {
     } finally {
       setIsDeleting(false);
       setRecipeToDelete(null);
-    }
-  };
-
-  const handleLogToDiary = async (recipe: RecipeData) => {
-    if (!user) {
-      setShowAuthModal(true);
-      return;
-    }
-
-    setIsLogging(true);
-    try {
-      const res = await fetch("/api/nutrition-history", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          foods: [
-            {
-              name: recipe.title,
-              portion_grams: 250,
-              nutrition: {
-                calories: recipe.calories,
-                protein_g: recipe.proteinG,
-                fat_g: recipe.fatG,
-                carbs_g: recipe.carbsG,
-                fiber_g: recipe.fiberG,
-              },
-            },
-          ],
-          total_nutrition: {
-            calories: recipe.calories,
-            protein_g: recipe.proteinG,
-            fat_g: recipe.fatG,
-            carbs_g: recipe.carbsG,
-            fiber_g: recipe.fiberG,
-          },
-          calories: recipe.calories,
-          protein_g: recipe.proteinG,
-          fat_g: recipe.fatG,
-          carbs_g: recipe.carbsG,
-          fiber_g: recipe.fiberG,
-        }),
-      });
-
-      if (res.ok) {
-        showToast(`Berhasil mencatat "${recipe.title}" ke Diari Gizi!`);
-      } else {
-        showToast("Gagal mencatat ke diari.");
-      }
-    } catch (err) {
-      console.error(err);
-      showToast("Terjadi kesalahan koneksi.");
-    } finally {
-      setIsLogging(false);
     }
   };
 
@@ -582,13 +514,7 @@ export default function RecipesPage() {
             {/* Tab: Resep Saya */}
             <button
               type="button"
-              onClick={() => {
-                if (!user) {
-                  setShowAuthModal(true);
-                } else {
-                  setActiveTab("my_recipes");
-                }
-              }}
+              onClick={() => setActiveTab("my_recipes")}
               data-layer="Recipe tab"
               className={`RecipeTab h-12 px-1 border-b-2 flex justify-start items-center gap-2 overflow-hidden cursor-pointer transition ${
                 activeTab === "my_recipes"
@@ -624,13 +550,7 @@ export default function RecipesPage() {
             {/* Tab: Resep Tersimpan */}
             <button
               type="button"
-              onClick={() => {
-                if (!user) {
-                  setShowAuthModal(true);
-                } else {
-                  setActiveTab("saved");
-                }
-              }}
+              onClick={() => setActiveTab("saved")}
               data-layer="Recipe tab"
               className={`RecipeTab h-12 px-1 border-b-2 flex justify-start items-center gap-2 overflow-hidden cursor-pointer transition ${
                 activeTab === "saved"
@@ -779,7 +699,11 @@ export default function RecipesPage() {
               </span>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) =>
+                  setSortBy(
+                    e.target.value as "terbaru" | "termurah" | "protein-tertinggi" | "tercepat"
+                  )
+                }
                 className="h-9 px-3 rounded-[10px] bg-white outline outline-1 outline-offset-[-1px] outline-stone-200 text-xs font-medium font-['Inter'] text-stone-700 focus:outline-orange-700 transition cursor-pointer"
               >
                 <option value="terbaru">Terbaru</option>
@@ -835,14 +759,20 @@ export default function RecipesPage() {
               </div>
               <div>
                 <h3 className="text-xl font-normal font-['Instrument_Serif'] text-stone-800 mb-1">
-                  {activeTab === "saved"
+                  {!user && activeTab !== "all"
+                    ? "Masuk Dulu Yuk"
+                    : activeTab === "saved"
                     ? "Belum Ada Resep Tersimpan"
                     : activeTab === "my_recipes"
                     ? "Belum Ada Resep yang Kamu Upload"
                     : "Resep Tidak Ditemukan"}
                 </h3>
                 <p className="text-xs text-stone-500 font-['Inter'] max-w-sm mx-auto leading-relaxed">
-                  {activeTab === "saved"
+                  {!user && activeTab !== "all"
+                    ? activeTab === "saved"
+                      ? "Masuk ke akunmu dulu untuk melihat daftar resep yang sudah kamu simpan."
+                      : "Masuk ke akunmu dulu untuk melihat dan mengelola resep yang kamu upload."
+                    : activeTab === "saved"
                     ? "Simpan resep favoritmu dengan menekan tombol hati agar mudah dibuka sewaktu-waktu."
                     : activeTab === "my_recipes"
                     ? "Kamu belum mengupload resep apapun. Ayo bagikan menu andalan kostmu sekarang!"
@@ -850,7 +780,14 @@ export default function RecipesPage() {
                 </p>
               </div>
               <div className="flex items-center gap-3 mt-2">
-                {activeTab === "my_recipes" ? (
+                {!user && activeTab !== "all" ? (
+                  <Link
+                    href="/login"
+                    className="h-10 px-5 bg-orange-700 hover:bg-[#B34718] text-white rounded-[10px] text-xs font-semibold font-['Inter'] transition shadow-xs cursor-pointer flex items-center"
+                  >
+                    Masuk Sekarang →
+                  </Link>
+                ) : activeTab === "my_recipes" ? (
                   <button
                     type="button"
                     onClick={() => setIsUploadOpen(true)}
@@ -899,8 +836,16 @@ export default function RecipesPage() {
                     {/* Recipe Card */}
                     <div
                       data-layer="Recipe card"
-                      onClick={() => setSelectedRecipe(recipe)}
-                      className="RecipeCard group bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-stone-200 overflow-hidden flex flex-col justify-start items-start transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
+                      role="link"
+                      tabIndex={0}
+                      onClick={() => router.push(`/recipes/${recipe.id}`)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          router.push(`/recipes/${recipe.id}`);
+                        }
+                      }}
+                      className="RecipeCard group bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-stone-200 overflow-hidden flex flex-col justify-start items-start transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-600"
                     >
                       {/* Media container */}
                       <div
@@ -1087,8 +1032,8 @@ export default function RecipesPage() {
                           </div>
 
                           {/* View details prompt */}
-                          <div className="flex items-center justify-between text-xs font-semibold font-['Inter'] text-orange-700 pt-0.5">
-                            <span>Lihat Resep & Langkah</span>
+                          <div className="flex items-center justify-between text-xs font-semibold font-['Inter'] text-orange-700 group-hover:text-orange-800 pt-0.5">
+                            <span>Lihat Resep &amp; Langkah</span>
                             <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
@@ -1155,20 +1100,39 @@ export default function RecipesPage() {
         }}
       />
 
-      {/* Recipe Detail Modal */}
-      <RecipeDetailModal
-        recipe={selectedRecipe}
-        onClose={() => setSelectedRecipe(null)}
-        onLogToDiary={handleLogToDiary}
-        isLogging={isLogging}
-        onToggleSave={handleToggleSave}
-        isSaving={savingId === selectedRecipe?.id}
-        currentUserId={currentUserId}
-        onDeleteRecipe={async (r) => {
-          setRecipeToDelete(r);
-        }}
-        isDeleting={isDeleting}
-      />
+      {/* Auth Prompt Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl outline outline-1 outline-stone-200 text-center flex flex-col items-center">
+            <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-700 flex items-center justify-center mb-4">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-normal font-['Instrument_Serif'] text-stone-900 mb-2">
+              Masuk Diperlukan
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-600 font-['Inter'] mb-6 leading-relaxed">
+              Kamu perlu masuk ke akun terlebih dahulu untuk menyimpan resep favorit atau mengunggah resep kreasi kost kamu.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+              <button
+                type="button"
+                onClick={() => setShowAuthModal(false)}
+                className="w-full h-11 rounded-[12px] text-xs sm:text-sm font-semibold font-['Inter'] text-stone-700 bg-stone-100 hover:bg-stone-200 transition cursor-pointer"
+              >
+                Nanti Saja
+              </button>
+              <Link
+                href="/login"
+                className="w-full h-11 rounded-[12px] bg-orange-700 hover:bg-[#B34718] text-xs sm:text-sm font-semibold font-['Inter'] text-white flex items-center justify-center transition shadow-xs cursor-pointer"
+              >
+                Masuk Sekarang →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

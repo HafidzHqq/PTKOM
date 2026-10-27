@@ -1,6 +1,35 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
 import { Mistral } from "@mistralai/mistralai";
+import { prisma } from "@/lib/prisma";
+
+/**
+ * Ambil acuan harga bahan pangan terkini langsung dari tabel Ingredient (database),
+ * supaya estimasi biaya resep AI selalu konsisten dengan data harga pasar yang tersimpan.
+ */
+async function getIngredientPriceReference(): Promise<string> {
+  try {
+    const ingredients = await prisma.ingredient.findMany({
+      orderBy: { name: "asc" },
+      select: { name: true, unit: true, pricePerUnit: true, region: true },
+    });
+
+    if (ingredients.length === 0) return "";
+
+    const region = ingredients[0]?.region || "Bandar Lampung";
+
+    const lines = ingredients.map(
+      (i) => `- ${i.name}: Rp ${Math.round(i.pricePerUnit).toLocaleString("id-ID")}/${i.unit}`
+    );
+
+    return `\n\nACUAN HARGA BAHAN PANGAN REAL DARI DATABASE (${region}, update terakhir):\n${lines.join(
+      "\n"
+    )}\nGunakan harga di atas sebagai dasar perhitungan "estimatedCost" dan harga per item pada array "ingredients" agar akurat.`;
+  } catch (error) {
+    console.error("[Ask Recipe AI] Gagal memuat acuan harga bahan dari database:", error);
+    return "";
+  }
+}
 
 export interface AskRecipeRequest {
   prompt?: string;
@@ -58,6 +87,26 @@ ATURAN OUTPUT MUTLAK:
   Balas dengan santai dan beri semangat memasak di "replyText", dan WAJIB SET "recipe": null.
 - HANYA JIKA pengguna MEMINTA RESEP, menyebutkan bahan makanan yang ingin dimasak, atau meminta ide masakan:
   Berikan objek "recipe" yang lengkap sesuai format JSON di bawah.
+
+ATURAN FORMATTING TEKS PADA "replyText":
+- DILARANG menggunakan karakter asterisk (*) atau bintang liar untuk bullet points atau penekanan berlebihan. Jangan menuliskan teks seperti "*Catatan:*" atau "**Judul**" jika tidak diperlukan. Tuliskan teks secara bersih dan natural.
+- Jika perlu membuat daftar atau poin-poin penjelasan, gunakan nomor (1., 2.) atau tanda strip (-), jangan gunakan asterisk (*).
+- Tulisan harus mengalir hangat, santai, komunikatif, dan langsung nyaman dibaca seperti obrolan WhatsApp/chat anak muda.
+
+PATOKAN HARGA BAHAN PANGAN REAL (Bandar Lampung / Pasar Tradisional Indonesia):
+- Beras: Rp 15.100/kg (~Rp 1.500/porsi)
+- Telur Ayam: Rp 28.500/kg (~Rp 1.800 - 2.000/butir)
+- Daging Ayam: Rp 33.800/kg (~Rp 8.500/250g)
+- Tempe: Rp 5.000/papan
+- Tahu: Rp 4.000/bungkus
+- Minyak Goreng: Rp 21.000/liter (~Rp 1.000/pemakaian)
+- Bawang Merah & Putih: Rp 1.000 - 1.500 untuk bumbu 1 porsi
+- Cabai Merah: Rp 1.000 - 2.000 untuk bumbu pedas 1 porsi
+- Sayuran (Kangkung, Bayam, Sawi): Rp 2.500 - 3.000/ikat
+- Mie Instan: Rp 3.000/bungkus
+- Ikan Lele / Nila: Rp 25.000 - 30.000/kg
+- Daging Sapi: Rp 140.000/kg
+Gunakan acuan harga pasar di atas saat menghitung "estimatedCost" dan estimasi harga per item di dalam "ingredients" agar angka perhitungan akurat dan realistis.
 
 Format output WAJIB HANYA JSON MURNI (valid JSON) tanpa awalan/akhiran markdown:
 {
@@ -1075,12 +1124,14 @@ export async function askRecipeWithAI(input: AskRecipeRequest): Promise<AskRecip
   if (!ingredientsText && !hasRecipeIntent(promptText)) {
     userContent = `Pesan Pengguna: "${promptText}". Pengguna sedang menyapa atau berbincang santai. Balas dengan ramah dan tanyakan bahan yang dimiliki, serta WAJIB set "recipe": null.`;
   } else {
+    const priceRef = await getIngredientPriceReference();
     userContent = `
 Permintaan User: ${promptText || "Buatkan ide resep hemat & lezat"}
 Bahan yang tersedia: ${ingredientsText || "Bebas / Bahan umum anak kost"}
 Target Budget: ${input.budget ? `Maksimal Rp ${input.budget.toLocaleString("id-ID")}` : "Hemat anak kost"}
 Alat Masak Tersedia: ${input.cookingTool || "Rice Cooker atau Teflon Kompor Sederhana"}
 Target Gizi: ${input.dietaryGoal || "Seimbang & Bergizi"}
+${priceRef}
     `.trim();
   }
 

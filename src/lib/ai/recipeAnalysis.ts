@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
 import { Mistral } from "@mistralai/mistralai";
+import { prisma } from "@/lib/prisma";
 
 export interface RecipeAnalysisInput {
   title: string;
@@ -8,6 +9,30 @@ export interface RecipeAnalysisInput {
   steps?: string;
   imageBase64?: string;
   portions?: number;
+}
+
+/**
+ * Mengambil acuan harga bahan pokok dari tabel Ingredient di database
+ * agar AI menghitung estimasi biaya resep sesuai harga pasar riil.
+ */
+async function getIngredientPriceReference(): Promise<string> {
+  try {
+    const ingredients = await prisma.ingredient.findMany({
+      orderBy: { name: "asc" },
+      select: { name: true, unit: true, pricePerUnit: true, region: true },
+    });
+
+    if (ingredients.length === 0) return "";
+
+    const lines = ingredients.map(
+      (i) => `- ${i.name}: Rp ${Math.round(i.pricePerUnit).toLocaleString("id-ID")}/${i.unit}`
+    );
+
+    return `\nACUAN HARGA BAHAN DARI DATABASE (Gunakan untuk menghitung estimated_cost agar akurat):\n${lines.join("\n")}`;
+  } catch (error) {
+    console.error("[Recipe Analysis] Gagal memuat harga bahan dari database:", error);
+    return "";
+  }
 }
 
 export interface RecipeAnalysisResult {
@@ -167,6 +192,7 @@ function fallbackAnalyzeRecipe(input: RecipeAnalysisInput): RecipeAnalysisResult
 }
 
 export async function verifyAndAnalyzeRecipeWithAI(input: RecipeAnalysisInput): Promise<RecipeAnalysisResult> {
+  const priceRef = await getIngredientPriceReference();
   const textPrompt = `
 Judul Resep: ${input.title}
 Porsi: ${input.portions || 1} porsi
@@ -175,6 +201,7 @@ ${input.ingredients}
 
 Langkah Memasak:
 ${input.steps || "Tidak disertakan"}
+${priceRef}
   `.trim();
 
   let cleanBase64 = input.imageBase64;

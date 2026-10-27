@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import ChatMarkdown from "@/components/chat-markdown";
 import { GeneratedRecipe } from "@/lib/ai/askRecipe";
 
 interface ChatMessage {
@@ -108,7 +109,32 @@ export default function AskRecipePage() {
   const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [thinkingStep, setThinkingStep] = useState(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const THINKING_STEPS = [
+    "Membaca pertanyaanmu...",
+    "Menganalisis bahan yang tersedia...",
+    "Meracik resep terbaik...",
+    "Menghitung nilai gizi & estimasi biaya...",
+    "Menyiapkan tips dari Chef AI...",
+    "Hampir selesai...",
+  ];
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+    if (isLoading) {
+      setThinkingStep(0);
+      interval = setInterval(() => {
+        setThinkingStep((prev) => (prev + 1) % THINKING_STEPS.length);
+      }, 2000);
+    } else {
+      setThinkingStep(0);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading]);
 
   // Per-recipe action states
   const [savingRecipeTitle, setSavingRecipeTitle] = useState<string | null>(null);
@@ -793,7 +819,7 @@ _Dibuat dengan Chef AI DompetKost_`;
                     <div data-layer="UserMessage" className="Usermessage self-stretch flex flex-col justify-start items-end gap-1 my-2">
                       <div data-layer="UserBubble" className="Userbubble max-w-[560px] p-4 bg-orange-700 rounded-2xl inline-flex justify-start items-start gap-2.5 shadow-xs">
                         <div className="justify-start text-white text-xs font-normal font-['Inter'] leading-relaxed">
-                          {msg.text}
+                          <ChatMarkdown text={msg.text} tone="light" />
                         </div>
                       </div>
                       <div className="justify-start text-stone-400 text-[10px] font-normal font-['Inter'] px-1">
@@ -803,8 +829,8 @@ _Dibuat dengan Chef AI DompetKost_`;
                   ) : (
                     <div data-layer="ChefMessage" className="Chefmessage self-stretch flex flex-col justify-start items-start gap-3 my-2">
                       <div data-layer="ChefBubble" className="Chefbubble max-w-[560px] p-4 bg-stone-50 rounded-2xl inline-flex justify-start items-start gap-2.5">
-                        <div className="justify-start text-stone-700 text-xs font-normal font-['Inter'] leading-relaxed whitespace-pre-line">
-                          {msg.text}
+                        <div className="justify-start text-stone-700 text-xs font-normal font-['Inter'] leading-relaxed">
+                          <ChatMarkdown text={msg.text} />
                         </div>
                       </div>
 
@@ -842,9 +868,9 @@ _Dibuat dengan Chef AI DompetKost_`;
                               <h3 className="justify-start text-stone-800 text-2xl font-normal font-['Instrument_Serif']">
                                 {msg.recipe.title}
                               </h3>
-                              <p className="justify-start text-stone-500 text-xs font-normal font-['Inter'] leading-relaxed">
-                                {msg.recipe.description}
-                              </p>
+                              <div className="justify-start text-stone-500 text-xs font-normal font-['Inter'] leading-relaxed">
+                                <ChatMarkdown text={msg.recipe.description} />
+                              </div>
                             </div>
                             <div data-layer="RecipeMeta" className="Recipemeta inline-flex flex-wrap justify-start items-center gap-3 shrink-0">
                               <div className="inline-flex justify-start items-center gap-1">
@@ -947,9 +973,9 @@ _Dibuat dengan Chef AI DompetKost_`;
                                     <div className="w-5 h-5 bg-orange-50 rounded-full flex justify-center items-center shrink-0 mt-0.5">
                                       <span className="text-orange-700 text-xs font-bold font-['Inter']">{i + 1}</span>
                                     </div>
-                                    <p className="flex-1 text-stone-600 text-xs font-normal font-['Inter'] leading-relaxed">
-                                      {stepText}
-                                    </p>
+                                    <div className="flex-1 text-stone-600 text-xs font-normal font-['Inter'] leading-relaxed">
+                                      <ChatMarkdown text={stepText} />
+                                    </div>
                                   </div>
                                 );
                               })}
@@ -964,13 +990,17 @@ _Dibuat dengan Chef AI DompetKost_`;
                               </svg>
                               <div className="flex flex-col justify-start items-start gap-0.5">
                                 <span className="text-amber-900 text-xs font-bold font-['Inter']">Tips Chef:</span>
-                                <p className="text-amber-800 text-xs font-normal font-['Inter'] leading-relaxed">
-                                  {Array.isArray(msg.recipe.chefTips)
-                                    ? msg.recipe.chefTips.map((t) => (typeof t === "string" ? t : (t as any)?.tip || JSON.stringify(t))).join(" ")
-                                    : typeof msg.recipe.chefTips === "string"
-                                    ? msg.recipe.chefTips
-                                    : (msg.recipe.chefTips as any)?.tip || JSON.stringify(msg.recipe.chefTips)}
-                                </p>
+                                <div className="text-amber-800 text-xs font-normal font-['Inter'] leading-relaxed">
+                                  <ChatMarkdown
+                                    text={
+                                      Array.isArray(msg.recipe.chefTips)
+                                        ? msg.recipe.chefTips.map((t) => (typeof t === "string" ? t : (t as any)?.tip || JSON.stringify(t))).join(" ")
+                                        : typeof msg.recipe.chefTips === "string"
+                                        ? msg.recipe.chefTips
+                                        : (msg.recipe.chefTips as any)?.tip || JSON.stringify(msg.recipe.chefTips)
+                                    }
+                                  />
+                                </div>
                               </div>
                             </div>
                           )}
@@ -1086,7 +1116,7 @@ _Dibuat dengan Chef AI DompetKost_`;
                       <span className="h-1.5 w-1.5 bg-orange-700 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                       <span className="h-1.5 w-1.5 bg-orange-700 rounded-full animate-bounce"></span>
                     </div>
-                    <span>Chef AI sedang meracik resep & menghitung nilai gizinya...</span>
+                    <span>{THINKING_STEPS[thinkingStep]}</span>
                   </div>
                 </div>
               )}

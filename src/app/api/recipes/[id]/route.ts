@@ -14,6 +14,17 @@ export async function GET(
       return NextResponse.json({ success: false, message: "ID resep tidak valid" }, { status: 400 });
     }
 
+    // Ambil session user aktif jika ada
+    const session = await getServerSession(authOptions);
+    let currentDbUserId: number | null = null;
+    if (session?.user?.email) {
+      const dbUser = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true },
+      });
+      if (dbUser) currentDbUserId = dbUser.id;
+    }
+
     const recipe = await prisma.recipe.findUnique({
       where: { id: recipeId },
       include: {
@@ -22,7 +33,17 @@ export async function GET(
             id: true,
             name: true,
             image: true,
+            email: true,
           },
+        },
+        savedBy: currentDbUserId
+          ? {
+              where: { userId: currentDbUserId },
+              select: { id: true },
+            }
+          : false,
+        _count: {
+          select: { savedBy: true },
         },
       },
     });
@@ -31,7 +52,20 @@ export async function GET(
       return NextResponse.json({ success: false, message: "Resep tidak ditemukan" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, data: recipe });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data = recipe as any;
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...data,
+        isSaved: Boolean(data.savedBy && data.savedBy.length > 0),
+        saveCount: data._count?.savedBy || 0,
+        savedBy: undefined,
+        _count: undefined,
+      },
+      currentUserId: currentDbUserId,
+    });
   } catch (error) {
     console.error("[GET /api/recipes/[id]] Error:", error);
     return NextResponse.json({ success: false, message: "Gagal mengambil data resep" }, { status: 500 });
