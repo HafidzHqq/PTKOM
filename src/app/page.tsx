@@ -86,9 +86,9 @@ export default function Home() {
         <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 z-10 flex-1 flex flex-col justify-between pt-3 sm:pt-4 pb-4 sm:pb-6 items-center text-center">
           {/* Top cluster: headline (kept above the mascot's eyes) */}
           <div className="flex flex-col items-center text-center max-w-3xl">
-            <h1 className="text-xl sm:text-4xl lg:text-[2.75rem] leading-tight sm:leading-[1.15] font-black text-black tracking-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl leading-[1.15] font-normal text-[#292721] tracking-tight font-['Instrument_Serif']">
               Makan Enak ala Anak Kost, <br className="hidden sm:block" />
-              <span className="text-neutral-700">
+              <span className="block mt-1.5 text-xl sm:text-3xl lg:text-4xl text-[#77736B]">
                 Dompet Aman, Badan Nyaman.
               </span>
             </h1>
