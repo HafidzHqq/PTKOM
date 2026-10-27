@@ -49,21 +49,21 @@ export default function Home() {
 
       {/* Main Content Area: Centered */}
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 z-10 flex-1 flex flex-col justify-end pb-16 sm:pb-24 items-center text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900 text-white text-xs sm:text-sm font-medium mb-4 shadow-xs">
+        <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-neutral-900 text-white text-[11px] sm:text-sm font-medium mb-4 shadow-xs">
           <svg className="w-4 h-4 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
           </svg>
           <span>Asisten Kuliner &amp; Gizi Cerdas Anak Kost</span>
         </div>
 
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-black tracking-tight leading-[1.15]">
-          Makan Enak ala Anak Kost, <br />
+        <h1 className="text-[1.75rem] leading-[1.2] sm:text-6xl sm:leading-[1.15] lg:text-7xl font-black text-black tracking-tight">
+          Makan Enak ala Anak Kost, <br className="hidden sm:block" />
           <span className="text-neutral-700">
             Dompet Aman, Badan Nyaman.
           </span>
         </h1>
 
-        <p className="mt-4 sm:mt-6 text-base sm:text-xl text-neutral-600 font-medium max-w-2xl leading-relaxed px-2">
+        <p className="mt-4 sm:mt-6 text-sm sm:text-xl text-neutral-600 font-medium max-w-2xl leading-relaxed px-2">
           Temukan dan upload resep hemat anak kost, diverifikasi langsung oleh AI untuk keamanan makanan dan kalkulasi gizi akurat.
         </p>
 

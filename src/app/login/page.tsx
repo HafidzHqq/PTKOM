@@ -108,7 +108,7 @@ function LoginContent() {
       </div>
 
       {/* SISI KANAN: Form Login Interaktif */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-between p-6 sm:p-12 md:p-16 xl:p-20 bg-white">
+      <div className="w-full lg:w-1/2 flex flex-col justify-between p-5 sm:p-12 md:p-16 xl:p-20 bg-white">
         {/* Navigasi Kembali */}
         <div className="w-full max-w-md mx-auto">
           <Link
