@@ -49,15 +49,8 @@ export default function Home() {
 
       {/* Main Content Area: split so the mascot face stays fully visible */}
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 z-10 flex-1 flex flex-col justify-between pt-3 sm:pt-4 pb-4 sm:pb-6 items-center text-center">
-        {/* Top cluster: badge + headline (kept above the mascot's eyes) */}
+        {/* Top cluster: headline (kept above the mascot's eyes) */}
         <div className="flex flex-col items-center text-center max-w-3xl">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-neutral-900/90 text-white text-[11px] sm:text-sm font-medium mb-2 sm:mb-3 shadow-xs backdrop-blur-xs">
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-            </svg>
-            <span>Asisten Kuliner &amp; Gizi Cerdas Anak Kost</span>
-          </div>
-
           <h1 className="text-xl sm:text-4xl lg:text-[2.75rem] leading-tight sm:leading-[1.15] font-black text-black tracking-tight">
             Makan Enak ala Anak Kost, <br className="hidden sm:block" />
             <span className="text-neutral-700">
@@ -66,12 +59,8 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* Bottom cluster: description + CTAs (kept below the mascot's chin) */}
+        {/* Bottom cluster: CTAs (kept below the mascot's chin) */}
         <div className="flex flex-col items-center text-center max-w-xl">
-          <p className="text-xs sm:text-sm text-neutral-700 font-medium leading-relaxed px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/80 shadow-xs mb-3 sm:mb-4">
-            Temukan dan upload resep hemat anak kost, diverifikasi langsung oleh AI untuk keamanan makanan dan kalkulasi gizi akurat.
-          </p>
-
           <div className="flex flex-row justify-center items-center gap-3 w-full sm:w-auto">
             <Link
               href="/recipes"
