@@ -223,7 +223,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
         {/* Profile Card */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="rounded-2xl border border-neutral-200/90 bg-white/95 backdrop-blur-md p-8 shadow-xs flex flex-col items-center text-center space-y-6">
+          <div className="rounded-2xl border border-neutral-200/90 bg-white/95 backdrop-blur-md p-6 sm:p-8 shadow-xs flex flex-col items-center text-center space-y-5 sm:space-y-6">
             {user?.image && !imgError ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -231,10 +231,10 @@ export default function ProfilePage() {
                 alt={user.name || "Avatar"}
                 referrerPolicy="no-referrer"
                 onError={() => setImgError(true)}
-                className="h-28 w-28 rounded-full border-4 border-amber-200 shadow-sm object-cover"
+                className="h-24 w-24 sm:h-28 sm:w-28 rounded-full border-4 border-amber-200 shadow-sm object-cover"
               />
             ) : (
-              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-amber-100 text-4xl font-black text-amber-900 shadow-sm border-4 border-amber-200">
+              <div className="flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center rounded-full bg-amber-100 text-4xl font-black text-amber-900 shadow-sm border-4 border-amber-200">
                 {initial}
               </div>
             )}
@@ -289,12 +289,12 @@ export default function ProfilePage() {
         </div>
 
         {/* BMR Calculator */}
-        <div className="lg:col-span-8 rounded-2xl border border-neutral-200/90 bg-white/95 backdrop-blur-md p-6 md:p-8 shadow-xs space-y-8 relative overflow-hidden">
+          <div className="lg:col-span-8 rounded-2xl border border-neutral-200/90 bg-white/95 backdrop-blur-md p-4 sm:p-6 md:p-8 shadow-xs space-y-6 sm:space-y-8 relative overflow-hidden">
           <div className="flex items-center gap-3 border-b border-neutral-200 pb-4 relative z-10">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-orange-700 border border-amber-200">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-orange-700 border border-amber-200 shrink-0">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
             </span>
-            <h3 className="font-extrabold text-neutral-900 text-lg md:text-xl">Kalkulator Keseimbangan Energi &amp; Porsi</h3>
+            <h3 className="font-extrabold text-neutral-900 text-base sm:text-lg md:text-xl leading-snug">Kalkulator Keseimbangan Energi &amp; Porsi</h3>
           </div>
 
           {loadingProfile ? (
@@ -459,7 +459,7 @@ export default function ProfilePage() {
 
           {/* Results */}
           {bmrResult && (
-            <div className="rounded-2xl bg-amber-50/70 p-6 md:p-8 border border-amber-200/80 relative z-10 space-y-4">
+            <div className="rounded-2xl bg-amber-50/70 p-4 sm:p-6 md:p-8 border border-amber-200/80 relative z-10 space-y-4">
               <h4 className="font-black text-neutral-900 text-center text-lg">Keseimbangan Energi Harian Anda</h4>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                 {[

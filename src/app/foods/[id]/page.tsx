@@ -49,12 +49,12 @@ export default function FoodDetailPage() {
   const isMasak = food.type === "MASAK";
 
   return (
-    <div className="w-full px-4 py-8 md:px-8 lg:px-10 xl:px-12 space-y-8 pb-24">
+    <div className="w-full px-4 py-4 sm:py-8 md:px-8 lg:px-10 xl:px-12 space-y-6 sm:space-y-8 pb-24">
       {/* Header Image Area */}
-      <div className="h-64 bg-emerald-100 relative rounded-lg overflow-hidden">
+      <div className="h-56 sm:h-64 bg-emerald-100 relative rounded-2xl overflow-hidden">
         <button 
           onClick={() => router.back()} 
-          className="absolute top-6 left-6 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-sm z-10 hover:bg-white transition-colors"
+          className="absolute top-4 sm:top-6 left-4 sm:left-6 p-2.5 sm:p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-sm z-10 hover:bg-white transition-colors cursor-pointer"
         >
           <svg className="w-5 h-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -69,29 +69,29 @@ export default function FoodDetailPage() {
       </div>
 
       {/* Content */}
-      <div className="-mt-16 relative z-10 px-4 md:px-8">
-        <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm border border-neutral-100 mb-6">
+      <div className="-mt-12 sm:-mt-16 relative z-10 px-0 sm:px-4 md:px-8">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm border border-neutral-100 mb-6">
           <div className="flex justify-between items-start mb-4">
-            <span className={`px-4 py-1.5 text-xs font-bold rounded ${isMasak ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+            <span className={`px-3 py-1 sm:px-4 sm:py-1.5 text-xs font-bold rounded ${isMasak ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
               {isMasak ? 'Masak Sendiri' : 'Beli Jadi'}
             </span>
             <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">{food.category.replace('_', ' ')}</span>
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-black text-neutral-900 mb-3 tracking-tight">{food.name}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-900 mb-2 sm:mb-3 tracking-tight">{food.name}</h1>
           
-          <div className="mb-2">
+          <div className="mb-1">
             <span className="inline-block text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
               Estimasi harga
             </span>
           </div>
-          <div className="text-4xl md:text-5xl font-black text-emerald-600 mb-8 tracking-tight">
+          <div className="text-3xl sm:text-4xl md:text-5xl font-black text-emerald-600 mb-6 sm:mb-8 tracking-tight">
             ± Rp {Math.round(food.calculatedPrice || food.pricePerPortion || 0).toLocaleString('id-ID')}
-            {isMasak && <span className="text-base text-neutral-400 font-medium ml-2">/ porsi</span>}
+            {isMasak && <span className="text-sm sm:text-base text-neutral-400 font-medium ml-2">/ porsi</span>}
           </div>
 
           {/* Nutrition Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 text-center">
             <div className="bg-neutral-50 p-5 rounded-lg border border-neutral-100">
               <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider">Energi</span>
               <span className="block font-black text-neutral-900 text-2xl mt-1">{Math.round(food.calories)}</span>
@@ -117,22 +117,22 @@ export default function FoodDetailPage() {
 
         {/* Masak Sendiri Details */}
         {isMasak && food.recipeItems && (
-          <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm border border-neutral-100 mb-6">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm border border-neutral-100 mb-6">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-2">
-              <h3 className="font-black text-neutral-900 text-xl">Bahan & Estimasi Biaya</h3>
-              <span className="inline-block px-3 py-1 bg-neutral-100 text-neutral-600 text-xs font-bold rounded">Untuk {food.portionsYielded} porsi</span>
+              <h3 className="font-black text-neutral-900 text-lg sm:text-xl">Bahan &amp; Estimasi Biaya</h3>
+              <span className="inline-block px-3 py-1 bg-neutral-100 text-neutral-600 text-xs font-bold rounded w-fit">Untuk {food.portionsYielded} porsi</span>
             </div>
             
             <div className="space-y-4">
               {food.recipeItems.map((item: any, idx: number) => {
                 const cost = item.quantity * item.ingredient.pricePerUnit;
                 return (
-                  <div key={idx} className="flex justify-between items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0">
-                    <div>
-                      <p className="font-bold text-neutral-800">{item.ingredient.name}</p>
+                  <div key={idx} className="flex justify-between items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0 gap-2">
+                    <div className="min-w-0">
+                      <p className="font-bold text-neutral-800 text-sm truncate">{item.ingredient.name}</p>
                       <p className="text-xs font-medium text-neutral-400">{item.quantity} {item.unit} (est. Rp {Math.round(item.ingredient.pricePerUnit).toLocaleString('id-ID')}/{item.ingredient.unit})</p>
                     </div>
-                    <div className="font-black text-neutral-900">
+                    <div className="font-black text-neutral-900 text-sm sm:text-base shrink-0">
                       ± Rp {Math.round(cost).toLocaleString('id-ID')}
                     </div>
                   </div>
@@ -140,20 +140,20 @@ export default function FoodDetailPage() {
               })}
               
               {/* Gas/Listrik */}
-              <div className="flex justify-between items-center pb-3 border-b border-gray-50">
+              <div className="flex justify-between items-center pb-3 border-b border-gray-50 gap-2">
                 <div>
-                  <p className="font-medium text-gray-800">Gas/Listrik (Estimasi)</p>
+                  <p className="font-medium text-gray-800 text-sm">Gas/Listrik (Estimasi)</p>
                   <p className="text-xs text-gray-500">Waktu masak: {food.cookTimeMinutes} menit</p>
                 </div>
-                <div className="font-bold text-gray-900">
+                <div className="font-bold text-gray-900 text-sm sm:text-base shrink-0">
                   Rp 2.000
                 </div>
               </div>
             </div>
             
-            <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-              <span className="font-bold text-gray-600">Total Biaya Masak</span>
-              <span className="font-bold text-emerald-600 text-xl">
+            <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1">
+              <span className="font-bold text-gray-600 text-sm">Total Biaya Masak</span>
+              <span className="font-bold text-emerald-600 text-lg sm:text-xl">
                 Rp {Math.round((food.recipeItems.reduce((acc: number, item: any) => acc + (item.quantity * item.ingredient.pricePerUnit), 0)) + 2000).toLocaleString('id-ID')}
               </span>
             </div>

@@ -330,7 +330,7 @@ export default function RecipeDetailPage() {
       )}
 
       {/* Main Recipe Content Container */}
-      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8 pt-6 sm:pt-10 flex flex-col gap-8">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8 pt-4 sm:pt-10 pb-12 sm:pb-16 flex flex-col gap-6 sm:gap-8">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between gap-4">
           <Link
@@ -405,13 +405,13 @@ export default function RecipeDetailPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-900/40 to-transparent" />
 
             {/* Badges on hero */}
-            <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="h-7 px-3 rounded-[100px] bg-stone-900/85 backdrop-blur-md text-white text-[11px] font-semibold font-['Inter'] flex items-center tracking-wider uppercase">
+            <div className="absolute top-3 sm:top-4 left-3 sm:left-4 right-3 sm:right-4 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="h-6 sm:h-7 px-2.5 sm:px-3 rounded-[100px] bg-stone-900/85 backdrop-blur-md text-white text-[10px] sm:text-[11px] font-semibold font-['Inter'] flex items-center tracking-wider uppercase">
                   {recipe.category}
                 </span>
                 {recipe.isAiVerified && (
-                  <span className="h-7 px-3 rounded-[100px] bg-emerald-700/90 backdrop-blur-md text-white text-[11px] font-semibold font-['Inter'] flex items-center gap-1.5 shadow-sm">
+                  <span className="h-6 sm:h-7 px-2.5 sm:px-3 rounded-[100px] bg-emerald-700/90 backdrop-blur-md text-white text-[10px] sm:text-[11px] font-semibold font-['Inter'] flex items-center gap-1.5 shadow-sm">
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -424,7 +424,7 @@ export default function RecipeDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowDeleteModal(true)}
-                  className="h-7 px-3 rounded-[100px] bg-red-600/90 backdrop-blur-md text-white text-[11px] font-semibold font-['Inter'] inline-flex items-center gap-1 hover:bg-red-700 transition cursor-pointer"
+                  className="h-6 sm:h-7 px-2.5 sm:px-3 rounded-[100px] bg-red-600/90 backdrop-blur-md text-white text-[10px] sm:text-[11px] font-semibold font-['Inter'] inline-flex items-center gap-1 hover:bg-red-700 transition cursor-pointer"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -435,11 +435,11 @@ export default function RecipeDetailPage() {
             </div>
 
             {/* Bottom info on hero */}
-            <div className="absolute bottom-5 left-5 right-5 text-white flex flex-col gap-2">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-normal font-['Instrument_Serif'] leading-tight tracking-tight text-white drop-shadow-sm">
+            <div className="absolute bottom-4 sm:bottom-5 left-4 sm:left-5 right-4 sm:right-5 text-white flex flex-col gap-2">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-normal font-['Instrument_Serif'] leading-tight tracking-tight text-white drop-shadow-sm">
                 {recipe.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-stone-300 font-['Inter'] pt-1">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-stone-300 font-['Inter'] pt-1">
                 <span className="inline-flex items-center gap-1.5">
                   <svg className="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -463,17 +463,17 @@ export default function RecipeDetailPage() {
         </div>
 
         {/* Author row & Description */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200">
           <div className="flex items-center gap-3">
             {recipe.user?.image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={recipe.user.image}
                 alt={recipe.user.name || "User"}
-                className="w-10 h-10 rounded-full border border-stone-200 object-cover"
+                className="w-10 h-10 rounded-full border border-stone-200 object-cover shrink-0"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-700 font-bold text-sm flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-700 font-bold text-sm flex items-center justify-center shrink-0">
                 {recipe.user?.name?.[0]?.toUpperCase() || "K"}
               </div>
             )}
@@ -485,24 +485,24 @@ export default function RecipeDetailPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full md:w-auto">
             <button
               type="button"
               onClick={handleLogToDiary}
               disabled={isLogging}
-              className="h-10 px-5 rounded-[10px] bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold font-['Inter'] inline-flex items-center gap-2 transition shadow-xs cursor-pointer disabled:opacity-50"
+              className="flex-1 sm:flex-initial justify-center h-10 px-4 sm:px-5 rounded-[10px] bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold font-['Inter'] inline-flex items-center gap-2 transition shadow-xs cursor-pointer disabled:opacity-50"
             >
-              <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               <span>{isLogging ? "Mencatat..." : "Catat ke Diari Gizi"}</span>
             </button>
             <Link
               href={`/recipes/ask?title=${encodeURIComponent(recipe.title)}`}
-              className="h-10 px-4 rounded-[10px] bg-orange-50 hover:bg-orange-100 text-orange-700 outline outline-1 outline-offset-[-1px] outline-orange-200 text-xs font-semibold font-['Inter'] inline-flex items-center gap-1.5 transition"
+              className="flex-1 sm:flex-initial justify-center h-10 px-4 rounded-[10px] bg-orange-50 hover:bg-orange-100 text-orange-700 outline outline-1 outline-offset-[-1px] outline-orange-200 text-xs font-semibold font-['Inter'] inline-flex items-center gap-1.5 transition whitespace-nowrap"
             >
               <span>Tanya Chef AI</span>
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </Link>
@@ -510,7 +510,7 @@ export default function RecipeDetailPage() {
         </div>
 
         {recipe.description && (
-          <div className="p-6 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200">
+          <div className="p-4 sm:p-6 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200">
             <h3 className="text-xs uppercase tracking-wider font-semibold font-['Inter'] text-stone-400 mb-2">
               Tentang Resep
             </h3>
@@ -521,7 +521,7 @@ export default function RecipeDetailPage() {
         )}
 
         {/* Nutrition Breakdown Card */}
-        <div className="p-6 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200 flex flex-col gap-4">
+        <div className="p-4 sm:p-6 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200 flex flex-col gap-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
               <h3 className="text-xl font-normal font-['Instrument_Serif'] text-stone-800">
@@ -605,7 +605,7 @@ export default function RecipeDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Ingredients Column */}
           <div className="lg:col-span-5 flex flex-col gap-4">
-            <div className="p-6 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200">
+            <div className="p-4 sm:p-6 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-2xl font-normal font-['Instrument_Serif'] text-stone-800">
@@ -674,7 +674,7 @@ export default function RecipeDetailPage() {
 
           {/* Steps Column */}
           <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="p-6 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200">
+            <div className="p-4 sm:p-6 rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200">
               <div className="mb-5">
                 <h3 className="text-2xl font-normal font-['Instrument_Serif'] text-stone-800">
                   Langkah-Langkah Memasak
@@ -743,7 +743,7 @@ export default function RecipeDetailPage() {
         </div>
 
         {/* Bottom CTA Banner */}
-        <div className="p-8 rounded-3xl bg-orange-700 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+        <div className="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-orange-700 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
           <div className="max-w-xl">
             <h4 className="text-2xl sm:text-3xl font-normal font-['Instrument_Serif'] text-white mb-2">
               Punya Sisa Bahan Lain di Kamar Kost?
