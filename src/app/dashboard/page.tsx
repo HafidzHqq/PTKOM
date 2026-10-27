@@ -438,7 +438,7 @@ export default function DashboardPage() {
       )}
 
       {/* Main Container 1440px */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-20 pt-10 sm:pt-14 pb-16 flex flex-col gap-10">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-20 pt-6 sm:pt-14 pb-16 flex flex-col gap-8 sm:gap-10">
         
         {/* =========================================================================
             HEADER SECTION
@@ -466,15 +466,15 @@ export default function DashboardPage() {
           </div>
 
           {/* Right Header Actions */}
-          <div className="flex flex-wrap items-center gap-3 self-start lg:self-end">
+          <div className="w-full lg:w-auto flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3 self-start lg:self-end">
             {/* Daily Budget Pill */}
-            <div className="h-11 px-4 py-2.5 bg-[#F0EEE7] rounded-[10px] flex items-center gap-2 text-xs select-none">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#292721" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="h-11 px-4 py-2.5 bg-[#F0EEE7] rounded-[10px] flex items-center justify-between sm:justify-start gap-2 text-xs select-none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#292721" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" />
                 <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
               </svg>
               <span className="text-[#77736B]">Budget hari ini:</span>
-              <span className="font-bold text-[#292721]">
+              <span className="font-bold text-[#292721] ml-auto sm:ml-0">
                 Rp{dailyBudget.toLocaleString("id-ID")}
               </span>
             </div>
@@ -482,7 +482,7 @@ export default function DashboardPage() {
             {/* Catat Makanan Button */}
             <button
               onClick={handleOpenAddModal}
-              className="h-11 px-4 py-2.5 bg-[#C65320] hover:bg-[#A84317] text-white rounded-[10px] flex items-center gap-2 text-xs font-bold transition shadow-xs active:scale-[0.98] cursor-pointer"
+              className="h-11 px-4 py-2.5 bg-[#C65320] hover:bg-[#A84317] text-white rounded-[10px] flex items-center justify-center gap-2 text-xs font-bold transition shadow-xs active:scale-[0.98] cursor-pointer"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19" />
@@ -499,34 +499,34 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Card 1: Keseimbangan Nutrisi (7 Cols on LG) */}
-          <div className="lg:col-span-7 bg-white rounded-[16px] border border-[#E8E4DC] p-7 flex flex-col justify-between shadow-xs">
-            <div className="flex flex-col gap-6">
+          <div className="lg:col-span-7 bg-white rounded-[16px] border border-[#E8E4DC] p-5 sm:p-7 flex flex-col justify-between shadow-xs">
+            <div className="flex flex-col gap-5 sm:gap-6">
               {/* Card Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-2">
                 <div>
-                  <h2 className="text-lg font-bold text-[#292721]">Keseimbangan Nutrisi</h2>
-                  <p className="text-xs text-[#77736B] mt-0.5">Estimasi asupan energi dan makronutrien harianmu.</p>
+                  <h2 className="text-base sm:text-lg font-bold text-[#292721]">Keseimbangan Nutrisi</h2>
+                  <p className="text-[11px] sm:text-xs text-[#77736B] mt-0.5">Estimasi asupan energi dan makronutrien harianmu.</p>
                 </div>
-                <span className="px-3 py-1 bg-[#FAF9F6] border border-[#E8E4DC] rounded-full text-xs font-semibold text-[#555149]">
+                <span className="px-2.5 py-1 bg-[#FAF9F6] border border-[#E8E4DC] rounded-full text-[11px] sm:text-xs font-semibold text-[#555149] shrink-0">
                   {shortDate}
                 </span>
               </div>
 
               {/* Calorie Stats Row */}
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between gap-3 sm:gap-4">
+                <div className="flex flex-col gap-1 min-w-0">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#77736B]">
                     KALORI HARI INI
                   </span>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-4xl sm:text-5xl font-bold text-[#292721] tracking-tight">
+                  <div className="flex items-baseline flex-wrap gap-x-1.5">
+                    <span className="text-3xl sm:text-5xl font-bold text-[#292721] tracking-tight">
                       {consumedCalories.toLocaleString("id-ID")}
                     </span>
-                    <span className="text-sm font-medium text-[#77736B]">
+                    <span className="text-xs sm:text-sm font-medium text-[#77736B]">
                       / {targetCalories.toLocaleString("id-ID")} kkal
                     </span>
                   </div>
-                  <p className="text-xs text-[#555149] font-normal pt-1">
+                  <p className="text-[11px] sm:text-xs text-[#555149] font-normal pt-1">
                     {remainingCalories > 0 ? (
                       <>
                         Tersisa <span className="font-bold text-[#292721]">{remainingCalories.toLocaleString("id-ID")} kkal</span> lagi untuk kebutuhan energimu.
@@ -600,7 +600,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Card 2: Makan Hari Ini (5 Cols on LG) */}
-          <div className="lg:col-span-5 bg-white rounded-[16px] border border-[#E8E4DC] p-7 flex flex-col justify-between shadow-xs">
+          <div className="lg:col-span-5 bg-white rounded-[16px] border border-[#E8E4DC] p-5 sm:p-7 flex flex-col justify-between shadow-xs">
             <div className="flex flex-col gap-4">
               {/* Card Header */}
               <div className="flex items-center justify-between">
@@ -768,7 +768,7 @@ export default function DashboardPage() {
                   className="bg-white rounded-[16px] border border-[#E8E4DC] overflow-hidden flex flex-col justify-between shadow-xs hover:border-[#C65320]/40 transition duration-200"
                 >
                   {/* Top Image Banner */}
-                  <div className="relative w-full h-[178px] overflow-hidden bg-[#FAF9F6]">
+                  <div className="relative w-full h-[150px] sm:h-[178px] overflow-hidden bg-[#FAF9F6]">
                     <img
                       src={imageUrl}
                       alt={rec.food_name}
@@ -780,8 +780,8 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-6 flex flex-col justify-between flex-1 gap-4">
-                    <div className="flex flex-col gap-3.5">
+                  <div className="p-4 sm:p-6 flex flex-col justify-between flex-1 gap-4">
+                    <div className="flex flex-col gap-3 sm:gap-3.5">
                       {/* Name & Venue */}
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="text-lg font-bold text-[#292721] line-clamp-1">

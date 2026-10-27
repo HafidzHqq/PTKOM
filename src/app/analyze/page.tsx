@@ -595,7 +595,7 @@ export default function AnalyzePage() {
   );
 
   return (
-    <div data-layer="Scan & Review Kuliner" className="ScanReviewKuliner w-full max-w-[1440px] mx-auto min-h-[1080px] px-4 sm:px-10 lg:px-20 pt-8 sm:pt-14 pb-16 bg-stone-100 flex flex-col justify-start items-start gap-8">
+    <div data-layer="Scan & Review Kuliner" className="ScanReviewKuliner w-full max-w-[1440px] mx-auto min-h-[calc(100vh-80px)] px-4 sm:px-10 lg:px-20 pt-6 sm:pt-14 pb-16 bg-stone-100 flex flex-col justify-start items-start gap-6 sm:gap-8">
       {/* Header */}
       <div data-layer="Header" className="Header self-stretch flex flex-col justify-start items-start gap-3">
         <div data-layer="Frame 4" className="Frame4 inline-flex justify-start items-center gap-2">
@@ -604,20 +604,20 @@ export default function AnalyzePage() {
             DOMPETKOST / REVIEW KULINER
           </div>
         </div>
-        <div data-layer="Scan & Review Kuliner" className="KatalogResepRamahDompet justify-start text-stone-800 text-5xl font-normal font-['Instrument_Serif']">
+        <div data-layer="Scan & Review Kuliner" className="ScanReviewKuliner KatalogResepRamahDompet justify-start text-stone-800 text-3xl sm:text-4xl lg:text-5xl font-normal font-['Instrument_Serif'] leading-tight">
           Scan & Review Kuliner
         </div>
-        <div data-layer="Subtitle" className="self-stretch justify-start text-stone-500 text-base font-normal font-['Inter']">
+        <div data-layer="Subtitle" className="self-stretch justify-start text-stone-500 text-sm sm:text-base font-normal font-['Inter']">
           Foto piring makanmu atau ketik nama hidangan untuk review kelezatan ala foodie, rekomendasi lauk pelengkap, dan info porsi seimbang.
         </div>
       </div>
 
       {/* Tabs */}
-      <div data-layer="Tabs" className="Tabs self-stretch border-b border-stone-200 inline-flex justify-start items-center">
+      <div data-layer="Tabs" className="Tabs self-stretch border-b border-stone-200 inline-flex justify-start items-center overflow-x-auto no-scrollbar">
         <button
           type="button"
           onClick={() => setActiveTab("analyze")}
-          className={`h-11 px-5 border-b-2 inline-flex justify-center items-center gap-2 transition-colors cursor-pointer ${
+          className={`h-11 px-3 sm:px-5 border-b-2 inline-flex justify-center items-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
             activeTab === "analyze"
               ? "border-orange-700 text-orange-700 font-semibold"
               : "border-transparent text-stone-500 font-normal hover:text-stone-800"
@@ -632,7 +632,7 @@ export default function AnalyzePage() {
         <button
           type="button"
           onClick={() => setActiveTab("insights")}
-          className={`h-11 px-5 border-b-2 inline-flex justify-center items-center gap-2 transition-colors cursor-pointer ${
+          className={`h-11 px-3 sm:px-5 border-b-2 inline-flex justify-center items-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
             activeTab === "insights"
               ? "border-orange-700 text-orange-700 font-semibold"
               : "border-transparent text-stone-500 font-normal hover:text-stone-800"
@@ -647,19 +647,19 @@ export default function AnalyzePage() {
 
       {/* User Auth Status Pill */}
       {user ? (
-        <div className="self-stretch bg-white border border-stone-200 px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-['Inter'] text-stone-700">
-            <span className="w-2 h-2 rounded-full bg-[#557464]" />
-            <span>
+        <div className="self-stretch bg-white border border-stone-200 px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-xs font-['Inter'] text-stone-700 min-w-0">
+            <span className="w-2 h-2 rounded-full bg-[#557464] shrink-0" />
+            <span className="truncate">
               Masuk sebagai <strong className="font-semibold text-stone-900">{user.name || user.email}</strong>
             </span>
           </div>
-          <span className="text-[11px] text-stone-500 font-['Inter']">Diari tersimpan di akun</span>
+          <span className="text-[11px] text-stone-500 font-['Inter'] shrink-0">Diari tersimpan di akun</span>
         </div>
       ) : (
-        <div className="self-stretch bg-amber-50/70 border border-amber-200/80 px-4 py-3 flex items-center justify-between text-xs font-['Inter'] text-amber-900">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+        <div className="self-stretch bg-amber-50/70 border border-amber-200/80 px-4 py-3 flex flex-wrap items-center justify-between gap-2 text-xs font-['Inter'] text-amber-900">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="w-2 h-2 rounded-full bg-[#D97706] shrink-0" />
             <span>
               <strong>Mode Tamu:</strong> Anda bisa review hidangan, namun login untuk simpan ke Diari Kuliner.
             </span>
@@ -677,7 +677,7 @@ export default function AnalyzePage() {
       {activeTab === "analyze" && (
         <div data-layer="Content" className="Content self-stretch flex flex-col lg:flex-row justify-start items-start gap-8">
           {/* DishInput Column */}
-          <div data-layer="DishInput" className="DishInput w-full lg:w-[620px] p-6 bg-white outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6">
+          <div data-layer="DishInput" className="DishInput w-full lg:w-[620px] p-4 sm:p-6 bg-white outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-5 sm:gap-6">
             <div data-layer="Pindai Makanan (Kamera / Foto)" className="PindaiMakananKameraFoto justify-start text-stone-800 text-sm font-semibold font-['Inter']">
               Pindai Makanan (Kamera / Foto)
             </div>
@@ -801,7 +801,7 @@ export default function AnalyzePage() {
 
             {/* Opsi Kosong: Buka Kamera / Pilih File (PhotoInput) */}
             {!isCameraActive && !preview && (
-              <div data-layer="PhotoInput" className="PhotoInput self-stretch min-h-[260px] p-6 bg-stone-50 outline outline-1 outline-dashed outline-stone-300 flex flex-col justify-center items-center gap-4">
+              <div data-layer="PhotoInput" className="PhotoInput self-stretch min-h-[220px] sm:min-h-[260px] p-4 sm:p-6 bg-stone-50 outline outline-1 outline-dashed outline-stone-300 flex flex-col justify-center items-center gap-4">
                 <div data-layer="CameraIcon" className="CameraIcon w-14 h-14 bg-stone-200/80 rounded-full flex items-center justify-center text-stone-600">
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -818,7 +818,7 @@ export default function AnalyzePage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
                   <button
                     type="button"
                     onClick={() => startCamera("environment")}
@@ -1004,7 +1004,7 @@ export default function AnalyzePage() {
           {/* Result Container */}
           <div className="flex-1 w-full lg:w-[684px]">
             {result ? (
-              <section data-layer="ReviewActiveState" className="w-full p-6 bg-white outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6">
+              <section data-layer="ReviewActiveState" className="w-full p-4 sm:p-6 bg-white outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-5 sm:gap-6">
                 {/* 3.2a Penanganan ketidakpastian (confidence < 0.6) */}
                 {(result.low_confidence || (result.confidence && result.confidence < 0.6)) && (
                   <div className="w-full p-4 bg-amber-50 outline outline-1 outline-amber-200 space-y-2.5 font-['Inter']">
@@ -1119,11 +1119,11 @@ export default function AnalyzePage() {
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <button
                         type="button"
                         onClick={() => handlePresetPortion("S")}
-                        className={`h-9 px-3 text-xs font-semibold outline outline-1 transition-all cursor-pointer ${
+                        className={`h-10 px-3 text-xs font-semibold outline outline-1 transition-all cursor-pointer ${
                           portionPreset === "S"
                             ? "bg-orange-700 text-white outline-orange-700"
                             : "bg-white text-stone-700 outline-stone-200 hover:bg-stone-100"
@@ -1134,7 +1134,7 @@ export default function AnalyzePage() {
                       <button
                         type="button"
                         onClick={() => handlePresetPortion("M")}
-                        className={`h-9 px-3 text-xs font-semibold outline outline-1 transition-all cursor-pointer ${
+                        className={`h-10 px-3 text-xs font-semibold outline outline-1 transition-all cursor-pointer ${
                           portionPreset === "M"
                             ? "bg-orange-700 text-white outline-orange-700"
                             : "bg-white text-stone-700 outline-stone-200 hover:bg-stone-100"
@@ -1145,7 +1145,7 @@ export default function AnalyzePage() {
                       <button
                         type="button"
                         onClick={() => handlePresetPortion("L")}
-                        className={`h-9 px-3 text-xs font-semibold outline outline-1 transition-all cursor-pointer ${
+                        className={`h-10 px-3 text-xs font-semibold outline outline-1 transition-all cursor-pointer ${
                           portionPreset === "L"
                             ? "bg-orange-700 text-white outline-orange-700"
                             : "bg-white text-stone-700 outline-stone-200 hover:bg-stone-100"

@@ -22,7 +22,7 @@ function ChefAiCalloutCard() {
   return (
     <div
       data-layer="Chef AI callout"
-      className="ChefAiCallout w-full self-stretch p-8 bg-orange-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-red-200 flex flex-col justify-between items-start gap-6 overflow-hidden shadow-xs hover:shadow-md transition-shadow"
+      className="ChefAiCallout w-full self-stretch p-5 sm:p-8 bg-orange-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-red-200 flex flex-col justify-between items-start gap-5 sm:gap-6 overflow-hidden shadow-xs hover:shadow-md transition-shadow"
     >
       <div
         data-layer="Chef identity"
@@ -359,7 +359,7 @@ export default function RecipesPage() {
       )}
 
       {/* Main Container */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 lg:px-20 pt-10 sm:pt-14 flex flex-col justify-start items-start gap-10 overflow-hidden">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 lg:px-20 pt-6 sm:pt-14 flex flex-col justify-start items-start gap-8 sm:gap-10 overflow-hidden">
         {/* Page header */}
         <div
           data-layer="Page header"
@@ -394,7 +394,7 @@ export default function RecipesPage() {
             >
               <h1
                 data-layer="Title"
-                className="Title self-stretch justify-start text-stone-800 text-4xl sm:text-5xl md:text-6xl font-normal font-['Instrument_Serif'] leading-[1.05] tracking-tight"
+                className="Title self-stretch justify-start text-stone-800 text-3xl sm:text-5xl md:text-6xl font-normal font-['Instrument_Serif'] leading-[1.1] sm:leading-[1.05] tracking-tight"
               >
                 Daftar Resep Anak Kost
               </h1>
@@ -409,7 +409,7 @@ export default function RecipesPage() {
             {/* Action Buttons */}
             <div
               data-layer="Recipe actions"
-              className="RecipeActions flex flex-wrap items-center gap-2.5 overflow-hidden shrink-0"
+              className="RecipeActions w-full sm:w-auto flex flex-wrap items-center gap-2.5 overflow-hidden shrink-0"
             >
               {/* Tanya Chef AI */}
               <Link
@@ -489,7 +489,7 @@ export default function RecipesPage() {
           {/* Recipe collections tabs */}
           <div
             data-layer="Recipe collections"
-            className="RecipeCollections self-stretch border-b border-stone-200 inline-flex justify-start items-start gap-7 overflow-x-auto scrollbar-none"
+            className="RecipeCollections self-stretch border-b border-stone-200 inline-flex justify-start items-start gap-4 sm:gap-7 overflow-x-auto no-scrollbar"
           >
             {/* Tab: Semua Resep */}
             <button
@@ -504,7 +504,7 @@ export default function RecipesPage() {
             >
               <div
                 data-layer="Label"
-                className={`Label justify-start text-sm font-semibold font-['Inter'] ${
+                className={`Label justify-start text-sm font-semibold font-['Inter'] whitespace-nowrap ${
                   activeTab === "all" ? "text-orange-700" : "text-stone-500 hover:text-stone-800"
                 }`}
               >
@@ -540,7 +540,7 @@ export default function RecipesPage() {
             >
               <div
                 data-layer="Label"
-                className={`Label justify-start text-sm font-semibold font-['Inter'] ${
+                className={`Label justify-start text-sm font-semibold font-['Inter'] whitespace-nowrap ${
                   activeTab === "my_recipes" ? "text-orange-700" : "text-stone-500 hover:text-stone-800"
                 }`}
               >
@@ -576,7 +576,7 @@ export default function RecipesPage() {
             >
               <div
                 data-layer="Label"
-                className={`Label justify-start text-sm font-semibold font-['Inter'] ${
+                className={`Label justify-start text-sm font-semibold font-['Inter'] whitespace-nowrap ${
                   activeTab === "saved" ? "text-orange-700" : "text-stone-500 hover:text-stone-800"
                 }`}
               >
@@ -648,7 +648,7 @@ export default function RecipesPage() {
             {/* Category filters */}
             <div
               data-layer="Category filters"
-              className="CategoryFilters self-stretch inline-flex justify-start items-center gap-2 overflow-x-auto pb-1 scrollbar-none"
+              className="CategoryFilters self-stretch inline-flex justify-start items-center gap-2 overflow-x-auto pb-1 no-scrollbar"
             >
               {CATEGORIES.map((cat) => {
                 const isActive = selectedCategory === cat;
@@ -709,7 +709,7 @@ export default function RecipesPage() {
             </div>
 
             {/* Sort Dropdown */}
-            <div className="flex items-center gap-2 self-end sm:self-auto">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto self-stretch sm:self-auto justify-between sm:justify-start">
               <span className="text-xs text-stone-500 font-medium font-['Inter'] whitespace-nowrap">
                 Urutkan:
               </span>
@@ -757,7 +757,7 @@ export default function RecipesPage() {
             </div>
           ) : filteredRecipes.length === 0 ? (
             /* Empty State */
-            <div className="w-full rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200 p-12 text-center shadow-xs flex flex-col items-center justify-center gap-4">
+            <div className="w-full rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-stone-200 p-6 sm:p-12 text-center shadow-xs flex flex-col items-center justify-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-700">
                 {activeTab === "saved" ? (
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -795,7 +795,7 @@ export default function RecipesPage() {
                     : "Tidak ada resep yang cocok dengan kriteria pencarian atau filter yang dipilih."}
                 </p>
               </div>
-              <div className="flex items-center gap-3 mt-2">
+              <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
                 {!user && activeTab !== "all" ? (
                   <Link
                     href="/login"
@@ -879,7 +879,7 @@ export default function RecipesPage() {
                       {/* Media container */}
                       <div
                         data-layer="Media"
-                        className="Media self-stretch h-52 relative overflow-hidden bg-stone-100"
+                        className="Media self-stretch h-48 sm:h-52 relative overflow-hidden bg-stone-100"
                       >
                         {recipe.imageUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -963,7 +963,7 @@ export default function RecipesPage() {
                       {/* Card Content */}
                       <div
                         data-layer="Content"
-                        className="Content self-stretch p-5 flex flex-col justify-between gap-4 flex-1"
+                        className="Content self-stretch p-4 sm:p-5 flex flex-col justify-between gap-3.5 sm:gap-4 flex-1"
                       >
                         <div className="flex flex-col gap-2">
                           {/* Author row & Owner delete */}

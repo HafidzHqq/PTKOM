@@ -103,3 +103,12 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* Hide scrollbar for horizontal category pills and tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

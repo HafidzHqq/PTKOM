@@ -449,7 +449,7 @@ export default function HistoryPage() {
       )}
 
       {/* Main Canvas matching Figma 1440 container */}
-      <main className="w-full max-w-[1440px] mx-auto min-h-[1200px] pt-10 sm:pt-14 pb-16 px-4 sm:px-8 md:px-12 lg:px-20 flex flex-col gap-10">
+      <main className="w-full max-w-[1440px] mx-auto min-h-[calc(100vh-80px)] pt-6 sm:pt-14 pb-16 px-4 sm:px-8 md:px-12 lg:px-20 flex flex-col gap-8 sm:gap-10">
         {/* Top Header Block */}
         <section className="w-full flex flex-col gap-[18px]">
           {/* Breadcrumb indicator */}
@@ -493,7 +493,7 @@ export default function HistoryPage() {
             </div>
 
             {/* Action Buttons matching Figma spec */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="w-full md:w-auto grid grid-cols-[1fr_1fr_auto] sm:flex sm:items-center gap-2 flex-wrap">
               <button
                 type="button"
                 onClick={() => {
@@ -509,7 +509,7 @@ export default function HistoryPage() {
                   outline: "1px #C65320 solid",
                   outlineOffset: "-1px",
                 }}
-                className="px-4 rounded-[10px] text-white text-[13px] font-semibold flex items-center justify-center gap-2 transition hover:bg-[#b0481a] active:scale-95 shadow-xs cursor-pointer"
+                className="px-3 sm:px-4 rounded-[10px] text-white text-[13px] font-semibold flex items-center justify-center gap-2 transition hover:bg-[#b0481a] active:scale-95 shadow-xs cursor-pointer whitespace-nowrap"
                 title="Catat makanan secara cepat"
               >
                 <svg className="w-[18px] h-[18px]" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -525,10 +525,10 @@ export default function HistoryPage() {
                   outline: "1px #E8E4DC solid",
                   outlineOffset: "-1px",
                 }}
-                className="px-3.5 bg-white hover:bg-[#FAF9F6] text-[#555149] rounded-[10px] text-[13px] font-semibold flex items-center justify-center gap-2 transition active:scale-95 shadow-xs"
+                className="px-3 sm:px-3.5 bg-white hover:bg-[#FAF9F6] text-[#555149] rounded-[10px] text-[13px] font-semibold flex items-center justify-center gap-2 transition active:scale-95 shadow-xs whitespace-nowrap"
                 title="Pindai makanan via kamera AI"
               >
-                <svg className="w-[18px] h-[18px] text-[#C65320]" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                <svg className="w-[18px] h-[18px] text-[#C65320] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <circle cx="12" cy="13" r="3" />
                 </svg>
@@ -550,7 +550,7 @@ export default function HistoryPage() {
                   outline: "1px #E8E4DC solid",
                   outlineOffset: "-1px",
                 }}
-                className="px-4 bg-white hover:bg-rose-50/60 text-[#A84A42] rounded-[10px] text-[13px] font-semibold flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs"
+                className="px-3 sm:px-4 bg-white hover:bg-rose-50/60 text-[#A84A42] rounded-[10px] text-[13px] font-semibold flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs whitespace-nowrap"
                 title="Kosongkan diari kuliner"
               >
                 <svg className="w-[18px] h-[18px]" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -568,7 +568,7 @@ export default function HistoryPage() {
                   outline: "1px #E8E4DC solid",
                   outlineOffset: "-1px",
                 }}
-                className="px-[13px] bg-white hover:bg-[#FAF9F6] text-[#555149] rounded-[10px] flex items-center justify-center transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs"
+                className="px-3 sm:px-[13px] bg-white hover:bg-[#FAF9F6] text-[#555149] rounded-[10px] flex items-center justify-center transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs"
                 title="Muat ulang catatan"
               >
                 <svg
@@ -617,7 +617,7 @@ export default function HistoryPage() {
           </div>
 
           {/* 4 Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
             {/* Card 1: TOTAL JAJAN 7 HARI */}
             <div
               style={{
@@ -625,7 +625,7 @@ export default function HistoryPage() {
                 outline: "1px #F0D7C6 solid",
                 outlineOffset: "-1px",
               }}
-              className="h-[154px] p-6 rounded-2xl flex flex-col justify-start items-start gap-[15px]"
+              className="h-auto sm:h-[154px] p-5 sm:p-6 rounded-2xl flex flex-col justify-start items-start gap-2 sm:gap-[15px]"
             >
               <div
                 style={{
@@ -668,7 +668,7 @@ export default function HistoryPage() {
                 outline: "1px #E8E4DC solid",
                 outlineOffset: "-1px",
               }}
-              className="h-[154px] p-6 rounded-2xl flex flex-col justify-start items-start gap-[15px]"
+              className="h-auto sm:h-[154px] p-5 sm:p-6 rounded-2xl flex flex-col justify-start items-start gap-2 sm:gap-[15px]"
             >
               <div
                 style={{
@@ -711,7 +711,7 @@ export default function HistoryPage() {
                 outline: "1px #E8E4DC solid",
                 outlineOffset: "-1px",
               }}
-              className="h-[154px] p-6 rounded-2xl flex flex-col justify-start items-start gap-[15px]"
+              className="h-auto sm:h-[154px] p-5 sm:p-6 rounded-2xl flex flex-col justify-start items-start gap-2 sm:gap-[15px]"
             >
               <div
                 style={{
@@ -765,7 +765,7 @@ export default function HistoryPage() {
                 outline: "1px #E8E4DC solid",
                 outlineOffset: "-1px",
               }}
-              className="h-[154px] p-6 rounded-2xl flex flex-col justify-start items-start gap-[15px] overflow-hidden"
+              className="h-auto sm:h-[154px] p-5 sm:p-6 rounded-2xl flex flex-col justify-start items-start gap-2 sm:gap-[15px] overflow-hidden"
             >
               <div
                 style={{
@@ -1050,9 +1050,9 @@ export default function HistoryPage() {
                     style={{
                       background: "#FAF9F6",
                     }}
-                    className="w-full md:w-[252px] shrink-0 p-6 border-b md:border-b-0 md:border-r border-[#E8E4DC] flex flex-col justify-start gap-[23px]"
+                    className="w-full md:w-[252px] shrink-0 p-4 sm:p-6 border-b md:border-b-0 md:border-r border-[#E8E4DC] flex flex-col justify-start gap-3 sm:gap-[23px]"
                   >
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-1 sm:gap-1.5">
                       <div
                         style={{
                           color: "#77736B",
@@ -1074,101 +1074,94 @@ export default function HistoryPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-4">
-                      {/* Macro row 1: Protein & Lemak */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                          <span
-                            style={{
-                              color: "#77736B",
-                              fontSize: 11,
-                              fontWeight: 400,
-                            }}
-                          >
-                            Protein
-                          </span>
-                          <span
-                            style={{
-                              color: "#555149",
-                              fontSize: 15,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {day.protein_g.toFixed(0)}g
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <span
-                            style={{
-                              color: "#77736B",
-                              fontSize: 11,
-                              fontWeight: 400,
-                            }}
-                          >
-                            Lemak
-                          </span>
-                          <span
-                            style={{
-                              color: "#555149",
-                              fontSize: 15,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {day.fat_g.toFixed(0)}g
-                          </span>
-                        </div>
+                    <div className="grid grid-cols-4 md:grid-cols-2 gap-2 sm:gap-4">
+                      <div className="flex flex-col gap-0.5 sm:gap-1">
+                        <span
+                          style={{
+                            color: "#77736B",
+                            fontSize: 11,
+                            fontWeight: 400,
+                          }}
+                        >
+                          Protein
+                        </span>
+                        <span
+                          style={{
+                            color: "#555149",
+                            fontSize: 15,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {day.protein_g.toFixed(0)}g
+                        </span>
                       </div>
-
-                      {/* Macro row 2: Karbo & Serat */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                          <span
-                            style={{
-                              color: "#77736B",
-                              fontSize: 11,
-                              fontWeight: 400,
-                            }}
-                          >
-                            Karbo
-                          </span>
-                          <span
-                            style={{
-                              color: "#555149",
-                              fontSize: 15,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {day.carbs_g.toFixed(0)}g
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <span
-                            style={{
-                              color: "#77736B",
-                              fontSize: 11,
-                              fontWeight: 400,
-                            }}
-                          >
-                            Serat
-                          </span>
-                          <span
-                            style={{
-                              color: "#555149",
-                              fontSize: 15,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {day.fiber_g.toFixed(0)}g
-                          </span>
-                        </div>
+                      <div className="flex flex-col gap-0.5 sm:gap-1">
+                        <span
+                          style={{
+                            color: "#77736B",
+                            fontSize: 11,
+                            fontWeight: 400,
+                          }}
+                        >
+                          Lemak
+                        </span>
+                        <span
+                          style={{
+                            color: "#555149",
+                            fontSize: 15,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {day.fat_g.toFixed(0)}g
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-0.5 sm:gap-1">
+                        <span
+                          style={{
+                            color: "#77736B",
+                            fontSize: 11,
+                            fontWeight: 400,
+                          }}
+                        >
+                          Karbo
+                        </span>
+                        <span
+                          style={{
+                            color: "#555149",
+                            fontSize: 15,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {day.carbs_g.toFixed(0)}g
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-0.5 sm:gap-1">
+                        <span
+                          style={{
+                            color: "#77736B",
+                            fontSize: 11,
+                            fontWeight: 400,
+                          }}
+                        >
+                          Serat
+                        </span>
+                        <span
+                          style={{
+                            color: "#555149",
+                            fontSize: 15,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {day.fiber_g.toFixed(0)}g
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Right Column: Daily Entries Table */}
-                  <div className="flex-1 pt-5 pb-2 px-4 sm:px-6 flex flex-col gap-4 min-w-0 overflow-x-auto">
+                  <div className="flex-1 pt-5 pb-2 px-4 sm:px-6 flex flex-col gap-4 min-w-0">
                     {/* Day sub-header */}
-                    <div className="w-full flex items-center justify-between gap-4">
+                    <div className="w-full flex flex-wrap items-center justify-between gap-2 sm:gap-4">
                       <span
                         style={{
                           color: "#77736B",
@@ -1178,7 +1171,7 @@ export default function HistoryPage() {
                       >
                         {day.entries.length} catatan makanan
                       </span>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 sm:gap-4">
                         <span
                           style={{
                             color: "#292721",
@@ -1210,9 +1203,9 @@ export default function HistoryPage() {
                     </div>
 
                     {/* Table */}
-                    <div className="w-full flex flex-col min-w-[500px] sm:min-w-0">
+                    <div className="w-full flex flex-col">
                       {/* Column titles */}
-                      <div className="w-full pb-3 flex items-center gap-5">
+                      <div className="hidden sm:flex w-full pb-3 items-center gap-3 lg:gap-5">
                         <div
                           style={{
                             width: 56,
@@ -1272,79 +1265,110 @@ export default function HistoryPage() {
                           : "—";
 
                         return (
-                          <div
-                            key={entry.id}
-                            style={{
-                              minHeight: 60,
-                              paddingTop: 17,
-                              paddingBottom: 17,
-                              borderTop: "1px #E8E4DC solid",
-                            }}
-                            className="w-full flex items-center gap-5"
-                          >
-                            <div
-                              style={{
-                                width: 56,
-                                color: "#77736B",
-                                fontSize: 12,
-                                fontWeight: 400,
-                              }}
-                            >
-                              {timeStr}
+                          <div key={entry.id} className="w-full border-t border-[#E8E4DC]">
+                            {/* Mobile Row (< sm) */}
+                            <div className="sm:hidden flex flex-col gap-1.5 py-3">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex items-baseline gap-2 min-w-0">
+                                  <span className="text-xs font-semibold text-[#77736B] shrink-0">{timeStr}</span>
+                                  <span className="text-[13px] font-medium text-[#292721] leading-tight break-words">{foodNames}</span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteEntry(entry.id)}
+                                  disabled={deletingId === entry.id}
+                                  title="Hapus catatan ini"
+                                  className="p-1 rounded-md text-[#77736B] hover:text-[#A84A42] hover:bg-rose-50 transition cursor-pointer disabled:opacity-40 shrink-0"
+                                >
+                                  {deletingId === entry.id ? (
+                                    <svg className="w-3.5 h-3.5 animate-spin text-[#C65320]" viewBox="0 0 24 24" fill="none">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                    </svg>
+                                  )}
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-[#555149] pt-1">
+                                <span className="font-semibold text-[#C65320] bg-[#FCF0E7] px-2 py-0.5 rounded-md text-[11px]">
+                                  {Math.round(Number(entry.calories))} kkal
+                                </span>
+                                <span className="font-semibold text-[#292721]">
+                                  ± Rp{entryCost.toLocaleString("id-ID")}
+                                </span>
+                              </div>
                             </div>
-                            <div
-                              style={{
-                                color: "#292721",
-                                fontSize: 13,
-                                fontWeight: 500,
-                                lineHeight: "20.80px",
-                              }}
-                              className="flex-1 break-words pr-2"
-                            >
-                              {foodNames}
-                            </div>
-                            <div
-                              style={{
-                                width: 90,
-                                textAlign: "right",
-                                color: "#555149",
-                                fontSize: 13,
-                                fontWeight: 400,
-                              }}
-                            >
-                              {Math.round(Number(entry.calories))} kkal
-                            </div>
-                            <div
-                              style={{
-                                width: 114,
-                                textAlign: "right",
-                                color: "#555149",
-                                fontSize: 13,
-                                fontWeight: 400,
-                              }}
-                            >
-                              ± Rp{entryCost.toLocaleString("id-ID")}
-                            </div>
-                            <div style={{ width: 28 }} className="flex items-center justify-end">
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteEntry(entry.id)}
-                                disabled={deletingId === entry.id}
-                                title="Hapus catatan ini"
-                                className="p-1 rounded-md text-[#77736B] hover:text-[#A84A42] hover:bg-rose-50 transition cursor-pointer disabled:opacity-40"
+
+                            {/* Desktop/Tablet Row (>= sm) */}
+                            <div className="hidden sm:flex w-full items-center gap-3 lg:gap-5 min-h-[60px] py-4">
+                              <div
+                                style={{
+                                  width: 56,
+                                  color: "#77736B",
+                                  fontSize: 12,
+                                  fontWeight: 400,
+                                }}
                               >
-                                {deletingId === entry.id ? (
-                                  <svg className="w-3.5 h-3.5 animate-spin text-[#C65320]" viewBox="0 0 24 24" fill="none">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                                  </svg>
-                                ) : (
-                                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="3 6 5 6 21 6" />
-                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                                  </svg>
-                                )}
-                              </button>
+                                {timeStr}
+                              </div>
+                              <div
+                                style={{
+                                  color: "#292721",
+                                  fontSize: 13,
+                                  fontWeight: 500,
+                                  lineHeight: "20.80px",
+                                }}
+                                className="flex-1 break-words pr-2"
+                              >
+                                {foodNames}
+                              </div>
+                              <div
+                                style={{
+                                  width: 90,
+                                  textAlign: "right",
+                                  color: "#555149",
+                                  fontSize: 13,
+                                  fontWeight: 400,
+                                }}
+                              >
+                                {Math.round(Number(entry.calories))} kkal
+                              </div>
+                              <div
+                                style={{
+                                  width: 114,
+                                  textAlign: "right",
+                                  color: "#555149",
+                                  fontSize: 13,
+                                  fontWeight: 400,
+                                }}
+                              >
+                                ± Rp{entryCost.toLocaleString("id-ID")}
+                              </div>
+                              <div style={{ width: 28 }} className="flex items-center justify-end">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteEntry(entry.id)}
+                                  disabled={deletingId === entry.id}
+                                  title="Hapus catatan ini"
+                                  className="p-1 rounded-md text-[#77736B] hover:text-[#A84A42] hover:bg-rose-50 transition cursor-pointer disabled:opacity-40"
+                                >
+                                  {deletingId === entry.id ? (
+                                    <svg className="w-3.5 h-3.5 animate-spin text-[#C65320]" viewBox="0 0 24 24" fill="none">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                    </svg>
+                                  )}
+                                </button>
+                              </div>
                             </div>
                           </div>
                         );

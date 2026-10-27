@@ -498,10 +498,10 @@ _Dibuat dengan Chef AI DompetKost_`;
       )}
 
       {/* 1440px Container */}
-      <div className="w-full max-w-[1440px] px-6 sm:px-12 lg:px-20 pt-10 sm:pt-14 pb-20 flex flex-col justify-start items-start gap-8">
+      <div className="w-full max-w-[1440px] px-4 sm:px-12 lg:px-20 pt-6 sm:pt-14 pb-20 flex flex-col justify-start items-start gap-6 sm:gap-8">
         {/* Page Header (PageHeader Figma) */}
-        <div className="self-stretch flex flex-col justify-start items-start gap-5">
-          <div className="self-stretch flex justify-between items-center">
+        <div className="self-stretch flex flex-col justify-start items-start gap-4 sm:gap-5">
+          <div className="self-stretch flex flex-wrap justify-between items-center gap-3">
             {/* Breadcrumbs */}
             <div className="inline-flex justify-start items-center gap-2">
               <span className="text-stone-500 text-xs font-semibold font-['Inter'] uppercase tracking-wider">
@@ -516,24 +516,24 @@ _Dibuat dengan Chef AI DompetKost_`;
             {/* Back Button */}
             <Link
               href="/recipes"
-              className="px-4 py-2 bg-white rounded-full outline outline-1 outline-stone-200 inline-flex justify-center items-center gap-2 hover:bg-stone-50 hover:outline-stone-300 transition"
+              className="px-3.5 py-1.5 sm:px-4 sm:py-2 bg-white rounded-full outline outline-1 outline-stone-200 inline-flex justify-center items-center gap-2 hover:bg-stone-50 hover:outline-stone-300 transition"
             >
               <svg className="w-3.5 h-3.5 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               <span className="text-stone-700 text-xs font-bold font-['Inter']">
-                Kembali ke Katalog Resep
+                Katalog Resep
               </span>
             </Link>
           </div>
 
-          <div className="inline-flex justify-start items-center gap-3.5">
+          <div className="inline-flex justify-start items-center gap-3 sm:gap-3.5">
             <div className="w-1.5 self-stretch bg-orange-700 rounded-full" />
             <div className="inline-flex flex-col justify-start items-start gap-1">
-              <h1 className="text-stone-800 text-4xl sm:text-5xl lg:text-6xl font-normal font-['Instrument_Serif'] leading-tight">
+              <h1 className="text-stone-800 text-3xl sm:text-5xl lg:text-6xl font-normal font-['Instrument_Serif'] leading-tight">
                 Tanya Resep ke Chef AI
               </h1>
-              <p className="self-stretch text-stone-500 text-xs sm:text-sm font-normal font-['Inter'] leading-tight">
+              <p className="self-stretch text-stone-500 text-xs sm:text-sm font-normal font-['Inter'] leading-normal">
                 Bingung mau masak apa dengan bahan seadanya di kamar kost? Minta Chef AI racikkan resep lezat, pas di kantong, dan terhitung nilai gizinya!
               </p>
             </div>
@@ -541,35 +541,35 @@ _Dibuat dengan Chef AI DompetKost_`;
         </div>
 
         {/* Page Modes (PageModes Figma) */}
-        <div className="inline-flex justify-start items-center gap-2">
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row justify-start items-stretch sm:items-center gap-2">
           <button
             type="button"
             onClick={() => setMode("pantry")}
-            className={`px-5 py-2.5 rounded-full inline-flex justify-center items-center gap-2 transition cursor-pointer ${
+            className={`px-4 sm:px-5 py-2.5 rounded-full inline-flex justify-center items-center gap-2 transition cursor-pointer ${
               mode === "pantry"
                 ? "bg-orange-700 text-white font-bold"
                 : "bg-white text-stone-600 font-semibold outline outline-1 outline-stone-200 hover:bg-stone-50"
             }`}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-            <span className="text-xs font-['Inter']">Racik dari Bahan di Kost</span>
+            <span className="text-xs font-['Inter'] whitespace-nowrap">Racik dari Bahan di Kost</span>
           </button>
 
           <button
             type="button"
             onClick={() => setMode("chat")}
-            className={`px-5 py-2.5 rounded-full inline-flex justify-center items-center gap-2 transition cursor-pointer ${
+            className={`px-4 sm:px-5 py-2.5 rounded-full inline-flex justify-center items-center gap-2 transition cursor-pointer ${
               mode === "chat"
                 ? "bg-orange-700 text-white font-bold"
                 : "bg-white text-stone-600 font-semibold outline outline-1 outline-stone-200 hover:bg-stone-50"
             }`}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            <span className="text-xs font-['Inter']">Tanya Bebas / Konsultasi</span>
+            <span className="text-xs font-['Inter'] whitespace-nowrap">Tanya Bebas / Konsultasi</span>
           </button>
         </div>
 
@@ -578,7 +578,7 @@ _Dibuat dengan Chef AI DompetKost_`;
           {/* Left Column: Input Panel (Pantry or Prompt Suggestions) */}
           <div className="w-full h-full min-h-0 flex flex-col">
             {mode === "pantry" ? (
-              <div className="w-full h-full lg:h-[760px] p-6 sm:p-7 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-5 overflow-y-auto chat-scroll">
+              <div className="w-full h-full lg:h-[760px] p-4 sm:p-7 bg-white rounded-2xl sm:rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-5 overflow-y-auto chat-scroll">
                 <div className="self-stretch flex justify-between items-center">
                   <div className="inline-flex justify-start items-center gap-2.5">
                     <svg className="w-5 h-5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -767,7 +767,7 @@ _Dibuat dengan Chef AI DompetKost_`;
               </div>
             ) : (
               /* Mode Chat: Inspirasi Tanya Chef AI */
-              <div className="w-full h-full lg:h-[760px] p-6 sm:p-8 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6 overflow-y-auto chat-scroll">
+              <div className="w-full h-full lg:h-[760px] p-4 sm:p-8 bg-white rounded-2xl sm:rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-start gap-6 overflow-y-auto chat-scroll">
                 <div className="self-stretch flex justify-between items-center border-b border-stone-100 pb-3">
                   <div className="inline-flex justify-start items-center gap-2.5">
                     <svg className="w-5 h-5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -829,7 +829,7 @@ _Dibuat dengan Chef AI DompetKost_`;
           </div>
 
           {/* Right Column: Interactive Chat & Generated Recipe Stream */}
-          <div data-layer="PercakapanDenganChefAi" className="Percakapandenganchefai w-full p-5 sm:p-6 bg-white rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-stretch gap-4 h-[68vh] min-h-[500px] overflow-hidden lg:h-[760px] lg:max-h-none lg:sticky lg:top-24">
+          <div data-layer="PercakapanDenganChefAi" className="Percakapandenganchefai w-full p-4 sm:p-6 bg-white rounded-2xl sm:rounded-3xl outline outline-1 outline-stone-200 flex flex-col justify-start items-stretch gap-4 h-[65vh] sm:h-[68vh] min-h-[420px] overflow-hidden lg:h-[760px] lg:max-h-none lg:sticky lg:top-24">
             {/* Chef Header */}
             <div data-layer="ChefHeader" className="Chefheader self-stretch shrink-0 pb-4 border-b border-stone-200 inline-flex justify-between items-center">
               <div data-layer="ChefAvatarRow" className="Chefavatarrow inline-flex justify-start items-center gap-3">
