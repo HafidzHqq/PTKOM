@@ -86,16 +86,16 @@ export default function Home() {
         <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 z-10 flex-1 flex flex-col justify-between pt-3 sm:pt-4 pb-4 sm:pb-6 items-center text-center">
           {/* Top cluster: headline (kept above the mascot's eyes) */}
           <div className="flex flex-col items-center text-center max-w-3xl">
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl leading-[1.15] font-normal text-[#292721] tracking-tight font-['Instrument_Serif']">
-              Makan Enak ala Anak Kost, <br className="hidden sm:block" />
-              <span className="block mt-1.5 text-xl sm:text-3xl lg:text-4xl text-[#77736B]">
-                Dompet Aman, Badan Nyaman.
-              </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl leading-tight font-normal text-[#292721] tracking-tight font-['Instrument_Serif']">
+              Makan Enak ala Anak Kost
             </h1>
           </div>
 
-          {/* Bottom cluster: CTAs (kept below the mascot's chin) */}
+          {/* Bottom cluster: Subtitle & CTAs (kept below the mascot's chin) */}
           <div className="flex flex-col items-center text-center max-w-xl">
+            <p className="text-sm sm:text-base md:text-lg font-medium text-[#77736B] mb-3 sm:mb-4 tracking-normal">
+              Dompet Aman, Badan Nyaman.
+            </p>
             <div className="flex flex-row justify-center items-center gap-3 w-full sm:w-auto">
               <Link
                 href="/recipes"
@@ -118,55 +118,41 @@ export default function Home() {
       <footer className="relative z-10 bg-gradient-to-b from-[#f4f4f4] via-[#F8F6F2] to-[#F3F0E9] border-t border-stone-200/80 text-neutral-900">
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-10 sm:py-12">
           
-          {/* Header Section: Title & Quick Contact */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-stone-200/70">
+          {/* Header Section: Minimalist Title & Subtitle */}
+          <div className="flex flex-col items-start gap-4 mb-10">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-100/90 border border-orange-200 text-orange-800 text-[10px] sm:text-xs font-semibold tracking-wider uppercase mb-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-600" />
-                <span>Pertanyaan Umum &bull; FAQ</span>
-              </div>
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-stone-900 tracking-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal text-[#292721] tracking-tight font-['Instrument_Serif'] leading-tight">
                 Pertanyaan yang Sering Ditanya
               </h2>
-              <p className="mt-1 text-xs sm:text-sm text-stone-600 max-w-2xl">
+              <p className="mt-3 text-sm sm:text-base text-[#77736B] max-w-2xl font-normal">
                 Penjelasan lengkap seputar fitur cerdas, kurasi resep hemat, dan estimasi nutrisi DompetKost.
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-stone-600 shrink-0">
+            <div className="flex items-center gap-2 text-xs text-stone-500">
               <span className="hidden sm:inline">Punya pertanyaan lain?</span>
               <a
                 href="mailto:kontak@dompetkost.id"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-stone-200/80 text-stone-900 hover:text-orange-700 hover:border-orange-300 font-semibold shadow-2xs transition-colors"
+                className="inline-flex items-center gap-1.5 text-[#292721] hover:text-orange-700 font-medium underline decoration-stone-300 underline-offset-4 transition-colors"
               >
-                <svg className="w-3.5 h-3.5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
                 <span>kontak@dompetkost.id</span>
               </a>
             </div>
           </div>
 
-          {/* Grid FAQ: 2 Baris 3 Kolom */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {faqs.map((faq, index) => (
+          {/* Grid FAQ: Clean & Minimalist */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+            {faqs.map((faq) => (
               <div
                 key={faq.question}
-                className="bg-white/80 hover:bg-white border border-stone-200/80 hover:border-orange-200/90 rounded-xl p-4 sm:p-5 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between"
+                className="flex flex-col"
               >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-[10px] font-bold tracking-wider uppercase text-orange-700 bg-orange-50 px-2 py-0.5 rounded border border-orange-100">
-                      0{index + 1}
-                    </span>
-                  </div>
-                  <h3 className="text-sm sm:text-base font-bold text-stone-900 leading-snug">
-                    {faq.question}
-                  </h3>
-                  <p className="mt-2 text-xs sm:text-[13px] leading-relaxed text-stone-600">
-                    {faq.answer}
-                  </p>
-                </div>
+                <h3 className="text-base font-semibold text-[#292721] leading-snug mb-2">
+                  {faq.question}
+                </h3>
+                <p className="text-sm leading-relaxed text-[#77736B]">
+                  {faq.answer}
+                </p>
               </div>
             ))}
           </div>
