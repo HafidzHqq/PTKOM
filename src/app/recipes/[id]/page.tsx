@@ -15,6 +15,7 @@ export default function RecipeDetailPage() {
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dbIngredients, setDbIngredients] = useState<Array<{ name: string; pricePerUnit: number; unit: string }>>([]);
 
   // Interaction states
   const [checkedIngredients, setCheckedIngredients] = useState<Record<number, boolean>>({});
@@ -31,6 +32,25 @@ export default function RecipeDetailPage() {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
+
+  useEffect(() => {
+    // Ambil data bahan & harga pasar dari database untuk estimasi biaya
+    const fetchDbIngredients = async () => {
+      try {
+        const res = await fetch("/api/ingredients");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setDbIngredients(data);
+          }
+        }
+      } catch (err) {
+        console.error("Gagal memuat database bahan:", err);
+      }
+    };
+
+    fetchDbIngredients();
+  }, []);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -107,6 +127,112 @@ export default function RecipeDetailPage() {
   }
 
   const isOwner = Boolean(currentUserId && recipe.userId === currentUserId);
+
+  /* ------------------------------------------------------------------ */
+  /* Estimasi biaya bahan: cocokkan teks bahan resep dengan harga pasar  */
+  /* pada tabel Ingredient di database (Bandar Lampung).                 */
+  /* ------------------------------------------------------------------ */
+  const normalizeText = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9/\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const conversionFactor = (recipeText: string, dbUnit: string): number => {
+    const t = recipeText.toLowerCase();
+    const du = (dbUnit || "").toLowerCase();
+
+    // Satuan belanja (bungkus, ikat, papan, botol, buah)
+    if (du !== "kg" && du !== "liter") {
+      // 1 bungkus tahu biasanya isi 4-5 kotak/potong
+      if (du === "bungkus" && /(kotak|potong|biji|buah)/.test(t)) return 0.25;
+      // 1 papan tempe biasanya dibagi potong/iris
+      if (du === "papan" && /(potong|iris|lembar)/.test(t)) return 0.1;
+      return 1;
+    }
+
+    // Ukuran rumah tangga
+    if (t.includes("sdm")) return 0.015;
+    if (t.includes("sdt")) return 0.005;
+    if (t.includes("ml")) return 0.001;
+    if (/\bg(ram)?\b/.test(t)) return 0.001;
+    if (t.includes("ons")) return 0.1;
+
+    // Jumlah butir/buah/siung → perkiraan berat per satuan (gram)
+    const perPieceGrams: Array<{ keywords: string[]; grams: number }> = [
+      { keywords: ["cabai", "cabe", "rawit"], grams: 5 },
+      { keywords: ["bawang putih"], grams: 5 },
+      { keywords: ["bawang merah"], grams: 8 },
+      { keywords: ["telur"], grams: 55 },
+      { keywords: ["tomat"], grams: 80 },
+      { keywords: ["wortel"], grams: 100 },
+      { keywords: ["pisang"], grams: 100 },
+      { keywords: ["kentang"], grams: 120 },
+      { keywords: ["jeruk"], grams: 80 },
+      { keywords: ["udang"], grams: 10 },
+      { keywords: ["batang", "daun bawang"], grams: 15 },
+    ];
+    const piece = perPieceGrams.find((p) =>
+      p.keywords.some((k) => t.includes(k))
+    );
+    // Satuan kecil (siung, butir, buah, batang) memakai berat per satuan,
+    // satuan besar (kg, ekor, papan) dianggap 1 ons sebagai default aman.
+    const isCountUnit = /(siung|butir|buah|batang|lembar|potong|ekor)/.test(t);
+    if (piece) return piece.grams / 1000;
+    if (isCountUnit) return 0.03;
+    return 0.05;
+  };
+
+  const parseQuantity = (text: string): number => {
+    const t = text.toLowerCase();
+    const fraction = t.match(/(\d+)\s*\/\s*(\d+)/);
+    if (fraction) return parseInt(fraction[1], 10) / parseInt(fraction[2], 10);
+    const number = t.match(/(\d+(?:[.,]\d+)?)/);
+    if (number) return parseFloat(number[1].replace(",", "."));
+    return 1;
+  };
+
+  const estimateIngredientCost = (
+    text: string
+  ): { matched: string; unit: string; pricePerUnit: number; cost: number } | null => {
+    if (!dbIngredients.length) return null;
+    const normalized = normalizeText(text);
+    let best: { name: string; pricePerUnit: number; unit: string } | null = null;
+
+    for (const ing of dbIngredients) {
+      const ingName = normalizeText(ing.name);
+      if (!ingName) continue;
+
+      // Cocokkan bila seluruh kata pada nama bahan ditemukan di teks resep
+      // (mis. "cabai rawit merah" cocok dengan "Cabai Merah").
+      const tokens = ingName.split(" ").filter(Boolean);
+      const isMatch = tokens.every((token) => normalized.includes(token));
+      if (!isMatch) continue;
+
+      // Pilih nama bahan terpanjang agar lebih spesifik (mis. "Bawang Putih"
+      // tidak kalah oleh "Bawang Merah" ketika keduanya cocok).
+      if (!best || ingName.length > normalizeText(best.name).length) {
+        best = ing;
+      }
+    }
+    if (!best) return null;
+
+    const quantity = parseQuantity(text);
+    const factor = conversionFactor(text, best.unit);
+    return {
+      matched: best.name,
+      unit: best.unit,
+      pricePerUnit: best.pricePerUnit,
+      cost: quantity * factor * best.pricePerUnit,
+    };
+  };
+
+  const ingredientEstimates = ingredientList.map((item) => estimateIngredientCost(item));
+  const estimatedIngredientsTotal = ingredientEstimates.reduce(
+    (acc, est) => acc + (est ? est.cost : 0),
+    0
+  );
 
   const toggleIngredient = (idx: number) => {
     setCheckedIngredients((prev) => ({ ...prev, [idx]: !prev[idx] }));
@@ -641,6 +767,7 @@ export default function RecipeDetailPage() {
               <div className="space-y-2">
                 {ingredientList.map((item, idx) => {
                   const isChecked = !!checkedIngredients[idx];
+                  const estimate = ingredientEstimates[idx];
                   return (
                     <label
                       key={idx}
@@ -656,18 +783,46 @@ export default function RecipeDetailPage() {
                         onChange={() => toggleIngredient(idx)}
                         className="mt-0.5 rounded border-stone-300 text-orange-700 focus:ring-orange-500 cursor-pointer"
                       />
-                      <span className="leading-relaxed">{item}</span>
+                      <span className="leading-relaxed flex-1">{item}</span>
+                      {estimate && (
+                        <span
+                          title={`Acuan harga ${estimate.matched}: Rp ${Math.round(
+                            estimate.pricePerUnit
+                          ).toLocaleString("id-ID")}/${estimate.unit}`}
+                          className={`shrink-0 mt-0.5 text-[11px] font-semibold tabular-nums ${
+                            isChecked ? "text-stone-400" : "text-emerald-700"
+                          }`}
+                        >
+                          ± Rp {Math.round(estimate.cost).toLocaleString("id-ID")}
+                        </span>
+                      )}
                     </label>
                   );
                 })}
               </div>
 
               {/* Kost Budget Summary Tip */}
-              <div className="mt-5 pt-4 border-t border-stone-100 flex items-center justify-between text-xs font-['Inter']">
-                <span className="text-stone-500">Biaya per Porsi:</span>
-                <span className="font-bold text-orange-700">
-                  ± Rp {Math.round(recipe.estimatedCost / Math.max(1, recipe.portions)).toLocaleString("id-ID")}
-                </span>
+              <div className="mt-5 pt-4 border-t border-stone-100 flex flex-col gap-2 text-xs font-['Inter']">
+                {estimatedIngredientsTotal > 0 && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-stone-500">Estimasi Bahan (harga pasar):</span>
+                    <span className="font-semibold text-emerald-700">
+                      ± Rp {Math.round(estimatedIngredientsTotal).toLocaleString("id-ID")}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-500">Estimasi Resep:</span>
+                  <span className="font-semibold text-stone-700">
+                    Rp {recipe.estimatedCost.toLocaleString("id-ID")}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-500">Biaya per Porsi:</span>
+                  <span className="font-bold text-orange-700">
+                    ± Rp {Math.round(recipe.estimatedCost / Math.max(1, recipe.portions)).toLocaleString("id-ID")}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

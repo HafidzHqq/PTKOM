@@ -103,7 +103,7 @@ export default function Navbar() {
         {/* SISI KIRI: Logo Brand (Dipisah di kiri) */}
         <div className="flex items-center shrink-0">
           <Link
-            href={user ? "/dashboard" : "/"}
+            href="/"
             className="flex items-center gap-2.5 transition hover:opacity-95"
             aria-label="DompetKost - Beranda"
           >

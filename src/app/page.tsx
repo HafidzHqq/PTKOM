@@ -168,7 +168,6 @@ export default function Home() {
                   className="h-6 w-auto object-contain rounded"
                 />
               </Link>
-              <span className="font-bold text-stone-800">DompetKost</span>
               <span className="text-stone-300">&bull;</span>
               <span className="text-[11px] text-stone-500">Teknik Informatika &bull; ITERA 2026</span>
             </div>
